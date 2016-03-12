@@ -1,0 +1,58 @@
+package constants;
+
+public class PetType {
+
+    public static int 褐色小貓 = 5000000;
+    public static int 褐色小狗 = 5000001;
+    public static int 粉紅兔子 = 5000002;
+    public static int 小魔龍 = 5000003;
+    public static int 黑色小貓 = 5000004;
+    public static int 白色兔子 = 5000005;
+    public static int 哈士奇 = 5000006;
+    public static int 黑色小豬 = 5000007;
+    public static int 熊貓 = 5000008;
+    public static int 迪諾龍 = 5000009;
+    public static int 妮諾龍 = 5000010;
+    public static int 猴子 = 5000011;
+    public static int 小白虎 = 5000012;
+    public static int 大象 = 5000013;
+    public static int 聖誕麋鹿 = 5000014;
+    public static int 麋鹿 = 5000015;
+    public static int 雲豹 = 5000016;
+    public static int 機器人 = 5000017;
+    public static int 哈士奇2 = 5000018;
+    public static int 雪吉拉 = 5000020;
+    public static int 猴子2 = 5000021;
+    public static int 火雞 = 5000022;
+    public static int 小企鵝 = 5000023;
+    public static int 小巴洛古 = 5000024;
+    public static int 黃金肥肥 = 5000025;
+    public static int 齊天大聖 = 5000026;
+    public static int 豬八戒 = 5000027;
+    public static int 神奇寶貝 = 5000028;
+    public static int 寶貝龍 = 5000029;
+    public static int 綠龍 = 5000030;
+    public static int 紅龍 = 5000031;
+    public static int 藍龍 = 5000032;
+    public static int 黑龍 = 5000033;
+    public static int 鬼靈精怪 = 5000036;
+    public static int 雪寶 = 5000041;
+    public static int 機器小子 = 5000047;
+    public static int 機器小子2 = 5000048;
+    public static int 藍鯊機械獸 = 5000049;
+    public static int 紅鷹機械獸 = 5000050;
+    public static int 綠虎機械獸 = 5000051;
+    public static int 黃金機械獸 = 5000052;
+    public static int 機械金剛 = 5000053;
+    public static int 水晶麋鹿 = 5000055;
+    public static int 唐小鴨 = 5000058;
+    public static int 小里波 = 5000040;
+    public static int 奇諾 = 5000042;
+    public static int 小刺蝟 = 5000043;
+    public static int 菇菇寶貝 = 5000046;
+    public static int 嫩寶 = 5000054;
+    public static int 粉紅兔子2 = 5000060;
+    public static int 皮卡啾 = 5000061;
+    public static int 小帥虎 = 5000066;
+    public static int 水星寶寶 = 5000067;
+}
