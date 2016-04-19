@@ -72,7 +72,7 @@ public final class LoginPasswordHandler implements MaplePacketHandler {
                 c.announce(LoginPacket.getAuthSuccess(c));
                 Server server = Server.getInstance();
                 for (World world : server.getWorlds()) {
-                    c.announce(LoginPacket.getServerList(world.getId(), ServerConstants.WORLD_NAMES[world.getId()], world.getFlag(), world.getEventMessage(), world.getChannels()));
+                    c.announce(LoginPacket.getServerList(world.getId(), world.getName(), world.getFlag(), world.getEventMessage(), world.getChannels()));
                 }
                 c.announce(LoginPacket.getEndOfServerList());
             }

@@ -100,6 +100,8 @@ public final class SpawnPetHandler extends AbstractMaplePacketHandler {
             pet.setSummoned(true);
             pet.saveToDb();
             chr.addPet(pet);
+                System.out.println("showPet is "+chr.getClient().getAccountName());
+                System.err.println();
             chr.getMap().broadcastMessage(c.getPlayer(), MaplePacketCreator.showPet(c.getPlayer(), pet, false, false), true);
             c.announce(MaplePacketCreator.petStatUpdate(c.getPlayer()));
             c.announce(MaplePacketCreator.enableActions());

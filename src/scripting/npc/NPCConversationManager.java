@@ -620,4 +620,8 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         return true;
     }
 
+    public void txtPrint(String txt){
+        System.err.println(txt);
+    }
+    
 }

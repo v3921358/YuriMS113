@@ -96,6 +96,7 @@ public class MapleGenericPortal implements MaplePortal {
     public void enterPortal(MapleClient c) {
         boolean changed = false;
         if (getScriptName() != null) {
+            System.err.println(getScriptName());
             changed = PortalScriptManager.getInstance().executePortalScript(this, c);
         } else if (getTargetMapId() != 999999999) {
             MapleMap to = c.getPlayer().getEventInstance() == null ? c.getChannelServer().getMapFactory().getMap(getTargetMapId()) : c.getPlayer().getEventInstance().getMapInstance(getTargetMapId());

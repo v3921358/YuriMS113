@@ -92,7 +92,6 @@ public final class CashOperationHandler extends AbstractMaplePacketHandler {
             }
 
             if (action == 0x03) { // Item
-
                 Item itemz = chr.getCashShop().toItem(cItem);
                 cs.addToInventory(itemz);
                 c.announce(MTSCSPacket.showBoughtCashItem(itemz, c.getAccID()));
@@ -165,17 +164,19 @@ public final class CashOperationHandler extends AbstractMaplePacketHandler {
             }
             c.announce(MTSCSPacket.showWishList(chr));
         } else if (action == 0x06) { // Increase Inventory Slots
-            slea.skip(1);
-            int cash = slea.readInt();
+            //slea.skip(1);
+            int cash = slea.readByte();
             byte mode = slea.readByte();
+            //System.err.println(String.format("cash:%d \n mode:%d", cash, mode));
+
             if (mode == 0) {
                 byte type = slea.readByte();
-                if (cs.getCash(cash) < 4000) {
+                if (cs.getCash(cash) < 100) {
                     return;
                 }
                 if (chr.gainSlots(type, 4, false)) {
                     c.announce(MTSCSPacket.showBoughtInventorySlots(type, chr.getSlots(type)));
-                    cs.gainCash(cash, -4000);
+                    cs.gainCash(cash, -100);
                     c.announce(MTSCSPacket.showCash(chr));
                 }
             } else {
@@ -191,16 +192,15 @@ public final class CashOperationHandler extends AbstractMaplePacketHandler {
                 }
             }
         } else if (action == 0x07) { // Increase Storage Slots
-            slea.skip(1);
-            int cash = slea.readInt();
+            int cash = slea.readByte();
             byte mode = slea.readByte();
             if (mode == 0) {
-                if (cs.getCash(cash) < 4000) {
+                if (cs.getCash(cash) < 100) {
                     return;
                 }
                 if (chr.getStorage().gainSlots(4)) {
                     c.announce(MTSCSPacket.showBoughtStorageSlots(chr.getStorage().getSlots()));
-                    cs.gainCash(cash, -4000);
+                    cs.gainCash(cash, -100);
                     c.announce(MTSCSPacket.showCash(chr));
                 }
             } else {

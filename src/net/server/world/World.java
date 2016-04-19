@@ -52,6 +52,8 @@ import tools.packets.BuddyPacket;
 import tools.packets.GuildPacket;
 import tools.packets.MaplePacketCreator;
 
+import constants.ServerConstants;
+
 /**
  *
  * @author kevintjuh93
@@ -59,6 +61,7 @@ import tools.packets.MaplePacketCreator;
 public class World {
 
     private int id, flag, exprate, droprate, mesorate, bossdroprate;
+    private String name;
     private String eventmsg;
     private List<Channel> channels = new ArrayList<>();
     private Map<Integer, MapleParty> parties = new HashMap<>();
@@ -68,6 +71,7 @@ public class World {
     private Map<Integer, MapleFamily> families = new LinkedHashMap<>();
     private Map<Integer, MapleGuildSummary> gsStore = new HashMap<>();
     private PlayerStorage players = new PlayerStorage();
+    
 
     public World(int world, int flag, String eventmsg, int exprate, int droprate, int mesorate, int bossdroprate) {
         this.id = world;
@@ -79,8 +83,13 @@ public class World {
         this.bossdroprate = bossdroprate;
         runningPartyId.set(1);
         runningMessengerId.set(1);
+        name=ServerConstants.WORLD_NAMES[world];
     }
 
+    public String getName(){
+        return name;
+    }
+    
     public List<Channel> getChannels() {
         return channels;
     }
@@ -243,6 +252,7 @@ public class World {
         }
         if (bDifferentGuild) {
             mc.getMap().broadcastMessage(mc, MaplePacketCreator.removePlayerFromMap(cid), false);
+            System.err.println("spawnPlayerMapobject on setGuildAndRank ");
             mc.getMap().broadcastMessage(mc, MaplePacketCreator.spawnPlayerMapobject(mc), false);
         }
     }

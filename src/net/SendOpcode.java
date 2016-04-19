@@ -23,28 +23,29 @@ package net;
 
 public enum SendOpcode {
 
-    LOGIN_STATUS(0x00),
+    LOGIN_STATUS(0x00, false),
     /* TWMS IGONRE */
-    SERVERLIST(0x02),
-    CHARLIST(0x03),
-    SERVER_IP(0x04),
+    SERVERLIST(0x02, false),
+    CHARLIST(0x03, false),
+    SERVER_IP(0x04, false),
     CHAR_NAME_RESPONSE(0x05),
     ADD_NEW_CHAR_ENTRY(0x06),
     DELETE_CHAR_RESPONSE(0x07),
     CHANGE_CHANNEL(0x08),
-    PING(0x09),
+    PING(0x09, false),
     CS_USE(0x0A),
     CHANNEL_SELECTED(0x0D),
+    GET_HELLO(0x0E, false),
     RELOG_RESPONSE(0x0F),
     SECONDPW_ERROR(0x10),
     CHOOSE_GENDER(0x14),
     GENDER_SET(0x15),//maybe this is RELOG_RESPONSE, can't care less
-    SERVERSTATUS(0x16),//CHECK_USER_LIMIT_RESULT
+    SERVERSTATUS(0x16, false),//CHECK_USER_LIMIT_RESULT
 
     /*CWvsContext::OnPacket*/
     INVENTORY_OPERATION(0x1B),//(0x1D),
     INVENTORY_GROW(0x1C),//(0x1E),
-    UPDATE_STATS(0x1D),//(0x1F),
+    UPDATE_STATS(0x1D, false),//(0x1F),
     TEMPORY_STAT_SET(0x1E),
     TEMPORY_STAT_RESET(0x1F),
     FORCED_STAT_SET(0x20),
@@ -52,8 +53,9 @@ public enum SendOpcode {
     UPDATE_SKILLS(0x22),
     SKILL_USE_RESULT(0x23),
     FAME_RESPONSE(0x24),
-    SHOW_STATUS_INFO(0x25),
-    MEMO_RESULT(0x26),
+    SHOW_STATUS_INFO(0x25, false),
+    SHOW_NOTES(0x26),
+    //MEMO_RESULT(0x26),
     MAP_TRANSFER_RESULT(0x27),
     ANTI_MACRO_RESULT(0x2B),
     QUEST_CLEAR(0x2E),
@@ -110,7 +112,7 @@ public enum SendOpcode {
     FAMILY_JOIN_REQUEST(0x59),
     FAMILY_JOIN_REQUEST_RESULT(0x5A),
     FAMILY_JOIN_ACCEPTED(0x5B),
-    FAMILY_PRIVILEGE_LIST(0x5C),
+    FAMILY_PRIVILEGE_LIST(0x5C, false),
     FAMILY_FAMOUS_POINT_INC_RESULT(0x5D),
     FAMILY_NOTIFY_LOGIN_OR_LOGOUT(0x5E), //? is logged in. LOLWUT
     FAMILY_SET_PRIVILEGE(0x5F),
@@ -142,7 +144,7 @@ public enum SendOpcode {
     /* ??? */
     MACRO_SYS_DATA_INIT(0x7A),
     /*CStage::OnPacket*/
-    SET_FIELD(0x7b),
+    SET_FIELD(0x7b, false),
     SET_ITC(0x7C),
     SET_CASH_SHOP(0x7D),
     SET_BACK_EFFECT(0x7E),
@@ -160,7 +162,7 @@ public enum SendOpcode {
     FIELD_EFFECT(0x87),
     FIELD_OBSTACLE_ONOFF(0x88),
     FIELD_OBSTACLE_ONOFF_STATUS(0x89),
-    FIELD_OBSTACLE_ALL_RESET(0x8A),
+    //FIELD_OBSTACLE_ALL_RESET(0x8A),
     MAP_EFFECT(0x88),
     CASH_SONG(0x89),
     ADMIN_RESULT(0x8A),
@@ -186,7 +188,7 @@ public enum SendOpcode {
     HIT_BY_USER(0xA1), //[4][4]
     /* CUser__OnPetPacket */
     SPAWN_PET(0xA2),
-    MOVE_PET(0xA5),
+    MOVE_PET(0xA5, false),
     PET_CHAT(0xA6),
     PET_LoadExceptionList(0xA8),
     PET_NAMECHANGE(0xA7),
@@ -201,7 +203,7 @@ public enum SendOpcode {
     /* CUserPool__OnUserRemotePacket */
     MOVE_PLAYER(0xB1, false),
     /* CUserRemote__OnAttack */
-    CLOSE_RANGE_ATTACK(0xB2),
+    CLOSE_RANGE_ATTACK(0xB2, false),
     RANGED_ATTACK(0xB3),
     MAGIC_ATTACK(0xB4),
     ENERGY_ATTACK(0xB5),
@@ -243,12 +245,12 @@ public enum SendOpcode {
     SPAWN_MONSTER_CONTROL(0xE7, false),
     MOB_CRC_KEY_CHANGED(0xF2),
     /* CMobPool::OnMobPacket */
-    MOVE_MONSTER(0xE8, false),
+    MOVE_MONSTER(0xE8),
     MOVE_MONSTER_RESPONSE(0xE9, false),
     APPLY_MONSTER_STATUS(0xEB),
     CANCEL_MONSTER_STATUS(0xEC),
-    DAMAGE_MONSTER(0xEF, false),
-    SHOW_MONSTER_HP(0xF3),
+    DAMAGE_MONSTER(0xEF),
+    SHOW_MONSTER_HP(0xF3, false),
     SHOW_DRAGGED(0xF4), //CATCH
     CATCH_MONSTER(0xF5),
     MOONSTER_SPEAKING(0xF6), //[4][4]
@@ -256,7 +258,7 @@ public enum SendOpcode {
     SHOW_MAGNET(0xFD),
     /* CNpcPool__OnPacket */
     SPAWN_NPC(0xF9, false),
-    REMOVE_NPC(0xFA, false),
+    REMOVE_NPC(0xFA),
     SPAWN_NPC_REQUEST_CONTROLLER(0xFB, false),
     NPC_ACTION(0xFC, false),
     /* CEmployeePool::OnPacket */
@@ -265,7 +267,7 @@ public enum SendOpcode {
     SPAWN_MINI_ROOM_BALLOON(0x106),
     /* CDropPool__OnPacket */
     DROP_ITEM_FROM_MAPOBJECT(0x107),
-    REMOVE_ITEM_FROM_MAP(0x108),
+    REMOVE_ITEM_FROM_MAP(0x108, false),
     /* CMessageBoxPool__OnPacket */
     KITE_MESSAGE(0x109),
     SPAWN_KITE(0x10A),
@@ -302,7 +304,7 @@ public enum SendOpcode {
     HORNTAIL_CAVE(0x12E),
     ZAKUM_SHRINE(0x12F),
     /* CScriptMan::OnScriptMessage */
-    NPC_TALK(0x13C, false),
+    NPC_TALK(0x13C),
     /* CShopDlg::OnPacket */
     OPEN_NPC_SHOP(0x13D),
     CONFIRM_SHOP_TRANSACTION(0x13E),
@@ -327,7 +329,7 @@ public enum SendOpcode {
     PARCEL(0x14E),
     CHARGE_PARAM_RESULT(0x15A),
     QUERY_CASH_RESULT(0x157),
-    CASHSHOP_OPERATION(0x158, false),
+    CASHSHOP_OPERATION(0x158),
     KEYMAP(0x163, false),
     AUTO_HP_POT(0x164),
     AUTO_MP_POT(0x165),

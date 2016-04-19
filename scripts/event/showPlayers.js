@@ -1,4 +1,4 @@
-/*
+﻿/*
 	This file is part of the OdinMS Maple Story Server
     Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc>
 		       Matthias Butz <matze@odinms.de>
@@ -19,19 +19,28 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-/*	
-	Author : 		Blue
-	NPC Name: 		Maple 7th Day Market Chick
-	Map(s): 		Everywhere
-	Description: 		Quest - Maple 7th Day Market
-	Quest ID: 		8248
-*/
+var setupTask;
 
-function start(mode, type, selection) {
-	qm.forceStartQuest();
-	qm.forceCompleteQuest();
+function init() {
+    scheduleNew();
 }
 
-function end(mode, type, selection) {
-	qm.forceCompleteQuest();
+function scheduleNew() {
+    var cal = java.util.Calendar.getInstance();
+    cal.set(java.util.Calendar.HOUR, 0);
+    cal.set(java.util.Calendar.MINUTE, 0);
+    cal.set(java.util.Calendar.SECOND, 0);
+    var nextTime = cal.getTimeInMillis();
+    while (nextTime <= java.lang.System.currentTimeMillis())
+        nextTime += 6000 * 1000;
+    setupTask = em.scheduleAtTimestamp("start", nextTime);
+}
+
+function cancelSchedule() {
+    setupTask.cancel(true);
+}
+
+function start() {
+    scheduleNew();
+    em.getChannelServer().yellowWorldMessage("目前上線人數 " + em.getChannelServer().showPlayers() +" 人。");
 }

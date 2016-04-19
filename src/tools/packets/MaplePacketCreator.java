@@ -85,6 +85,7 @@ public class MaplePacketCreator {
         mplew.write(chr.getSkinColor().getId()); // skin color
         mplew.writeInt(chr.getFace()); // face
         mplew.writeInt(chr.getHair()); // hair
+        
         for (int i = 0; i < 3; i++) {
             if (chr.getPet(i) != null) {
                 mplew.writeLong(chr.getPet(i).getExpiration());
@@ -291,9 +292,11 @@ public class MaplePacketCreator {
                 mplew.write(pos);
             }
         }
+        
         mplew.write(item.getType());
         mplew.writeInt(item.getItemId());
         mplew.writeBool(isCash);
+        
         if (isCash) {
             mplew.writeLong(isPet ? item.getPetId() : isRing ? equip.getRingId() : item.getCashId());
         }
@@ -468,13 +471,13 @@ public class MaplePacketCreator {
      */
     public static byte[] getHello(short mapleVersion, byte[] sendIv, byte[] recvIv) {
         final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(8);
-        mplew.writeShort(0x0E);
+        mplew.writeShort(0x0E); // MSEA=13  GMS=14 EMS=15
         mplew.writeShort(mapleVersion);
         mplew.writeShort(1);
         mplew.write(49);
         mplew.write(recvIv);
         mplew.write(sendIv);
-        mplew.write(6);
+        mplew.write(6); // KMS=  KMS測試機=2 日本=3 中國=4 台版測試機=5 台港澳=6 新加坡=7 國際版=8 巴西=9
         return mplew.getPacket();
     }
 
@@ -1338,6 +1341,7 @@ public class MaplePacketCreator {
         serializeMovementList(mplew, moves);
         return mplew.getPacket();
     }
+    
 
     public static byte[] moveSummon(int cid, int oid, Point startPos, List<LifeMovementFragment> moves) {
         final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
@@ -1447,6 +1451,7 @@ public class MaplePacketCreator {
         final MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
         mplew.writeShort(SendOpcode.OPEN_NPC_SHOP.getValue());
         mplew.writeInt(sid);
+        System.err.println(String.format("NPCShop npcID : %d", sid));
         MapleShopItem i = items.get(0);
         mplew.writeShort(items.size()); // item count
 
@@ -4191,7 +4196,7 @@ public class MaplePacketCreator {
 
     public static byte[] noteSendMsg() {
         final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(3);
-        mplew.writeShort(SendOpcode.MEMO_RESULT.getValue());
+        mplew.writeShort(SendOpcode.SHOW_NOTES.getValue());
         mplew.write(4);
         return mplew.getPacket();
     }
@@ -4203,7 +4208,7 @@ public class MaplePacketCreator {
      */
     public static byte[] noteError(byte error) {
         final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(4);
-        mplew.writeShort(SendOpcode.MEMO_RESULT.getValue());
+        mplew.writeShort(SendOpcode.SHOW_NOTES.getValue());
         mplew.write(5);
         mplew.write(error);
         return mplew.getPacket();
@@ -4211,7 +4216,7 @@ public class MaplePacketCreator {
 
     public static byte[] showNotes(ResultSet notes, int count) throws SQLException {
         final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-        mplew.writeShort(SendOpcode.MEMO_RESULT.getValue());
+        mplew.writeShort(SendOpcode.SHOW_NOTES.getValue());
         mplew.write(3);
         mplew.write(count);
         for (int i = 0; i < count; i++) {

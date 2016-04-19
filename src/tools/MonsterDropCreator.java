@@ -69,7 +69,8 @@ public class MonsterDropCreator {
         System.out.println("As you wish.\n\n\n\n");
 
         long currtime = System.currentTimeMillis();
-        addFlagData = Boolean.parseBoolean(args[0]);
+        //addFlagData = Boolean.parseBoolean(args[0]);
+        addFlagData = false;
 
         System.out.println("Loading : Item name string.");
         getAllItems();

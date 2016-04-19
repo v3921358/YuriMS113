@@ -21,6 +21,7 @@
  */
 package tools;
 
+import constants.ServerConstants;
 import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -100,11 +101,12 @@ public class DatabaseConnection {
         }
         try {
             Properties props = new Properties();
-            props.put("user", p.getProperty("Sync.DB_User"));
-            props.put("password", p.getProperty("Sync.DB_Pass"));
+            props.put("user", ServerConstants.DB_USER);
+            props.put("password", ServerConstants.DB_PASS);
             props.put("autoReconnect", "true");
             
-            final Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + p.getProperty("Sync.DB_Name") + "?autoReconnect=true&characterEncoding=utf8", props);
+            String URL = String.format("jdbc:mysql://%s:%s/%s?autoReconnect=true&characterEncoding=utf8", ServerConstants.DB_HOST,ServerConstants.DB_PORT,ServerConstants.DB_NAME);
+            final Connection con = DriverManager.getConnection(URL, props);
             if (!propsInited) {
                 long timeout = getWaitTimeout(con);
                 if (timeout == -1) {

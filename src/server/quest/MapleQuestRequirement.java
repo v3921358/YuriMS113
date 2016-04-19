@@ -87,10 +87,8 @@ public class MapleQuestRequirement {
                         if (quantity < MapleDataTool.getInt(itemEntry.getChildByPath("count"), 0) || MapleDataTool.getInt(itemEntry.getChildByPath("count"), 0) <= 0 && quantity > 0) {
                             return false;
                         }
-                    } else {
-                        if (quantity != 0) {
-                            return false;
-                        }
+                    } else if (quantity != 0) {
+                        return false;
                     }
                 }
                 return true;
@@ -127,10 +125,11 @@ public class MapleQuestRequirement {
                     int mobId = MapleDataTool.getInt(mobEntry.getChildByPath("id"));
                     int killReq = MapleDataTool.getInt(mobEntry.getChildByPath("count"));
                     try {
-                            if (Integer.parseInt(c.getQuest(quest).getProgress(mobId)) < killReq) {
+                        if (Integer.parseInt(c.getQuest(quest).getProgress(mobId)) < killReq) {
                             return false;
                         }
                     } catch (NumberFormatException e) {
+                        continue;
                     }
                 }
                 return true;

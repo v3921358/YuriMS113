@@ -80,6 +80,8 @@ public class MapleQuest {
                 startReqs.add(req);
             }
         }
+        
+        
         MapleData completeReqData = reqData.getChildByPath("1");
         if (completeReqData != null) {
             for (MapleData completeReq : completeReqData.getChildren()) {
@@ -87,15 +89,22 @@ public class MapleQuest {
                 if (req.getType().equals(MapleQuestRequirementType.INFO_NUMBER)) {
                     infoNumber = (short) MapleDataTool.getInt(completeReq, 0);
                 }
+
+                
                 if (req.getType().equals(MapleQuestRequirementType.INFO_EX)) {
                     MapleData zero = completeReq.getChildByPath("0");
                     if (zero != null) {
                         MapleData value = zero.getChildByPath("value");
                         if (value != null) {
-                            infoex = Short.parseShort(MapleDataTool.getString(value, "0"));
+                            try{
+                                infoex = Short.parseShort(MapleDataTool.getString(value, "0"));
+                            }catch(Exception e){
+                                System.out.println(e);
+                            }
                         }
                     }
                 }
+        
                 if (req.getType().equals(MapleQuestRequirementType.MOB)) {
                     for (MapleData mob : completeReq.getChildren()) {
                         relevantMobs.add(MapleDataTool.getInt(mob.getChildByPath("id")));
@@ -105,6 +114,10 @@ public class MapleQuest {
                 completeReqs.add(req);
             }
         }
+        
+        
+        
+        
         MapleData actData = actions.getChildByPath(String.valueOf(id));
         if (actData == null) {
             return;

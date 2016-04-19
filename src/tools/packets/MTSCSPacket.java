@@ -21,6 +21,7 @@ import tools.HexTool;
 import tools.Pair;
 import tools.data.output.MaplePacketLittleEndianWriter;
 import static tools.packets.MaplePacketCreator.addItemInfo;
+import static tools.packets.MaplePacketCreator.addItemInfo;
 
 /**
  *
@@ -571,10 +572,16 @@ public class MTSCSPacket {
         final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(6);
         mplew.writeShort(SendOpcode.CASHSHOP_OPERATION.getValue());
 
-        mplew.write(0x60);
+        mplew.write(0x57);
         mplew.write(type);
         mplew.writeShort(slots);
 
+        //ORG
+         //mplew.write(0x60);
+        //mplew.write(type);
+        //mplew.writeShort(slots);
+        
+        
         return mplew.getPacket();
     }
 
@@ -582,7 +589,7 @@ public class MTSCSPacket {
         final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(5);
         mplew.writeShort(SendOpcode.CASHSHOP_OPERATION.getValue());
 
-        mplew.write(0x62);
+        mplew.write(0x59);
         mplew.writeShort(slots);
 
         return mplew.getPacket();
@@ -592,7 +599,7 @@ public class MTSCSPacket {
         final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(5);
         mplew.writeShort(SendOpcode.CASHSHOP_OPERATION.getValue());
 
-        mplew.write(0x64);
+        mplew.write(0x5B);
         mplew.writeShort(slots);
 
         return mplew.getPacket();
@@ -601,7 +608,7 @@ public class MTSCSPacket {
     public static byte[] takeFromCashInventory(Item item) {
         final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.writeShort(SendOpcode.CASHSHOP_OPERATION.getValue());
-
+        
         mplew.write(0x5F);
         mplew.writeShort(item.getPosition());
         MaplePacketCreator.addItemInfo(mplew, item, true);

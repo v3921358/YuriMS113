@@ -60,5 +60,8 @@ function end(mode, type, selection) {
 			qm.sendOk("Not coded yet.");
 			qm.dispose();
 		}
-	}
+	}else{
+			qm.sendOk("程式還沒寫好....");
+			qm.dispose();
+		}
 }

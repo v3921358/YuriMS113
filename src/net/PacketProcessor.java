@@ -55,11 +55,12 @@ public final class PacketProcessor {
         if (packetId > handlers.length) {
             return null;
         }
+        /*
         for (RecvOpcode header : RecvOpcode.values()) {
             if (header.getValue() == packetId && header.getDebugMode()) {
-                System.out.println("Recv :" + header.toString());
+                System.out.println("封包頭 :" + header.toString());
             }
-        }
+        }*/
         MaplePacketHandler handler = handlers[packetId];
         if (handler != null) {
             return handler;
@@ -210,6 +211,7 @@ public final class PacketProcessor {
             registerHandler(RecvOpcode.USE_MAPLELIFE, new UseMapleLifeHandler());
             registerHandler(RecvOpcode.USE_CATCH_ITEM, new UseCatchItemHandler());
             registerHandler(RecvOpcode.MOB_DAMAGE_MOB_FRIENDLY, new MobDamageMobFriendlyHandler());
+             registerHandler(RecvOpcode.PARTY_SEARCH_END, new PartySearchRegisterHandler());
             registerHandler(RecvOpcode.PARTY_SEARCH_START, new PartySearchStartHandler());
             registerHandler(RecvOpcode.ITEM_GATHER, new ItemIdSortHandler());
             registerHandler(RecvOpcode.LEFT_KNOCKBACK, new LeftKnockbackHandler());

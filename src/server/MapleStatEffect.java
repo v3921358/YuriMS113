@@ -667,7 +667,9 @@ public class MapleStatEffect {
                 } else {
                     target = applyto.getClient().getWorldServer().getChannel(applyto.getClient().getChannel()).getMapFactory().getMap(moveTo);
                     int targetid = target.getId() / 10000000;
-                    if (targetid != 60 && applyto.getMapId() / 10000000 != 61 && targetid != applyto.getMapId() / 10000000 && targetid != 21 && targetid != 20) {
+                    System.err.println(applyto.getMapId());
+                    System.err.println(target.getId());
+                    if (targetid != 60 && applyto.getMapId() / 10000000 != 61 && targetid != applyto.getMapId() / 10000000 && targetid != 21 && targetid != 20 && targetid != 12) {
                         return false;
                     }
                 }

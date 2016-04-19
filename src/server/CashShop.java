@@ -119,7 +119,7 @@ public class CashShop {
             }
 
         } catch (SQLException ex) {
-           FilePrinter.printError("CashShop.txt", ex);
+            FilePrinter.printError("CashShop.txt", ex);
         }
     }
 
@@ -172,7 +172,7 @@ public class CashShop {
                 equip = (Equip) item;
                 isRing = equip.getRingId() > -1;
             }
-            if ((item.getPetId() > -1 ? item.getPetId() : isRing  && equip != null ? equip.getRingId() : item.getCashId()) == cashId) {
+            if ((item.getPetId() > -1 ? item.getPetId() : isRing && equip != null ? equip.getRingId() : item.getCashId()) == cashId) {
                 return item;
             }
         }
@@ -230,14 +230,14 @@ public class CashShop {
             ps.setInt(5, ringid);
             ps.executeUpdate();
         } catch (SQLException ex) {
-             FilePrinter.printError("CashShop.txt", ex);
+            FilePrinter.printError("CashShop.txt", ex);
         } finally {
             try {
                 if (ps != null) {
                     ps.close();
                 }
             } catch (SQLException ex) {
-                 FilePrinter.printError("CashShop.txt", ex);
+                FilePrinter.printError("CashShop.txt", ex);
             }
         }
     }
@@ -252,14 +252,14 @@ public class CashShop {
         Item item;
 
         long period = cItem.getPeriod();
-        if (period <= 0 || ItemConstants.isPet(cItem.getId())) {
-            period = 45;
-        }
+        //if (period <= 0 || ItemConstants.isPet(cItem.getId())) {
+        //    period = 45;
+        //}
 
         if (ii.getInventoryType(cItem.getId()) == MapleInventoryType.EQUIP) {
             Equip eq = (Equip) MapleItemInformationProvider.getInstance().getEquipById(cItem.getId());
 
-            eq.setExpiration((long) (System.currentTimeMillis() + (long) (period * 24 * 60 * 60 * 1000)));
+            //eq.setExpiration((long) (System.currentTimeMillis() + (long) (period * 24 * 60 * 60 * 1000)));
             eq.setGiftFrom(gift);
             eq.setSN(cItem.getSN());
             item = eq;
@@ -268,14 +268,16 @@ public class CashShop {
             if (ItemConstants.isPet(cItem.getId())) {
                 int petId = MaplePet.createPet(cItem.getId());
                 item = new Item(cItem.getId(), (byte) 0, (short) cItem.getCount(), petId);
+                period = 45;
             } else {
                 item = new Item(cItem.getId(), (byte) 0, (short) cItem.getCount());
 
             }
-            item.setExpiration((long) (System.currentTimeMillis() + (long) (period * 24 * 60 * 60 * 1000)));
+            if (period > 0) {
+                item.setExpiration((long) (System.currentTimeMillis() + (long) (period * 24 * 60 * 60 * 1000)));
+            }
             item.setGiftFrom(gift);
             item.setSN(cItem.getSN());
-
         }
         return item;
     }

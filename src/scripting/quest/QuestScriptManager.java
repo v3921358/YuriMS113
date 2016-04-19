@@ -59,9 +59,11 @@ public class QuestScriptManager extends AbstractScriptManager {
             qms.put(c, qm);
             Invocable iv = getInvocable("quest/" + questid + ".js", c);
             if (iv == null) {
+                qm.sendOk("嗨~ 這是沒有動作的任務.\r\n代碼是 #r" + questid + "#k." + "您看到這個就表示這個 任務 沒有動作\r\n如果這是個很重要的 任務 請聯繫 GM\r\n謝謝您 !");
                 qm.dispose();
                 return;
             }
+            
             engine.put("qm", qm);
             scripts.put(c, iv);
             c.getPlayer().setConversation(1);
@@ -105,9 +107,11 @@ public class QuestScriptManager extends AbstractScriptManager {
             qms.put(c, qm);
             Invocable iv = getInvocable("quest/" + questid + ".js", c);
             if (iv == null) {
+                qm.sendOk("嗨~ 這是沒有動作的任務.\r\n代碼是 #r" + questid + "#k." + "您看到這個就表示這個 任務 沒有動作\r\n如果這是個很重要的 任務 請聯繫 GM\r\n謝謝您 !");
                 qm.dispose();
                 return;
             }
+            System.err.println(String.format("任務:%d  玩家:%d", questid, c.getPlayer().getId()));
             engine.put("qm", qm);
             scripts.put(c, iv);
             c.getPlayer().setConversation(1);

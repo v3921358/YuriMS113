@@ -22,6 +22,7 @@
 package scripting;
 
 import client.MapleClient;
+import constants.ServerConstants;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -57,12 +58,17 @@ public abstract class AbstractScriptManager {
             }
             engine = sem.getEngineByName("javascript");
             if (c != null) {
+                
                 c.setScriptEngine(path, engine);
             }
             try (FileReader fr = new FileReader(scriptFile)) {
+            	if (ServerConstants.JAVA_8){
+            		engine.eval("load('nashorn:mozilla_compat.js');");
+            	}
                 engine.eval(fr);
             } catch (final ScriptException | IOException t) {
                 FilePrinter.printError(FilePrinter.INVOCABLE + path.substring(12, path.length()), t, path);
+                System.err.println(t);
                 return null;
             }
         }

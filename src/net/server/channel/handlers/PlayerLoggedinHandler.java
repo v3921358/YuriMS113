@@ -152,9 +152,14 @@ public final class PlayerLoggedinHandler extends AbstractMaplePacketHandler {
         if (!player.isHidden()) {
             player.toggleHide(true);
         }
-
+        
         player.sendKeymap();
         player.sendMacros();
+        if(player.getKeymap().get(91) != null)
+            player.announce(MaplePacketCreator.sendAutoHpPot(player.getKeymap().get(91).getAction()));
+        if(player.getKeymap().get(92) != null)
+            player.announce(MaplePacketCreator.sendAutoMpPot(player.getKeymap().get(92).getAction()));
+
         player.getMap().addPlayer(player);
         World world = server.getWorld(c.getWorld());
         world.getPlayerStorage().addPlayer(player);
@@ -227,5 +232,6 @@ public final class PlayerLoggedinHandler extends AbstractMaplePacketHandler {
         player.checkBerserk();
         player.expirationTask();
         player.setRates();
+        player.getMap().sendPlayerData(player);
     }
 }

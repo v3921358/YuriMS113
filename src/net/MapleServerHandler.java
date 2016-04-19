@@ -78,6 +78,7 @@ public class MapleServerHandler extends IoHandlerAdapter {
                 return;
             }
         } else {
+            System.out.println("IoSession with " + session.getRemoteAddress() + " opened on " + sdf.format(Calendar.getInstance().getTime()));
             FilePrinter.print(FilePrinter.SESSION, "IoSession with " + session.getRemoteAddress() + " opened on " + sdf.format(Calendar.getInstance().getTime()), false);
         }
 
@@ -130,27 +131,48 @@ public class MapleServerHandler extends IoHandlerAdapter {
         if (packetHandler != null && packetHandler.validateState(client)) {
             try {
                 for (RecvOpcode header : RecvOpcode.values()) {
-                 if (header.getValue() == packetId) {
-                 if (header.getDebugMode()) {
-                 System.out.println("Revv :" + header.toString());
-                 System.out.println("Packet to be Recv:\n" + HexTool.toString(content));
-                 }
-                 check = true;
-                 break;
-                 }
-                 }
+                    if (header.getValue() == packetId) {
+
+                        if (header.getDebugMode()) {
+                            PrintReceived(header, content, client);
+                        }
+                        check = true;
+                        break;
+                    }
+                }
                 packetHandler.handlePacket(slea, client);
             } catch (final Throwable t) {
                 FilePrinter.printError(FilePrinter.PACKET_HANDLER + packetHandler.getClass().getName() + ".txt", t, "Error for " + (client.getPlayer() == null ? "" : "player ; " + client.getPlayer() + " on map ; " + client.getPlayer().getMapId() + " - ") + "account ; " + client.getAccountName() + "\r\n" + slea.toString());
                 //client.announce(MaplePacketCreator.enableActions());//bugs sometimes
             }
         }
-        if (!check) {
-         ByteBuffer buffer = ByteBuffer.allocate(2);
-         buffer.putShort(packetId);
-         System.out.println("Unhandled :" + HexTool.toString(buffer.array()));
-         System.out.println("Packet to be Recv:\n" + HexTool.toString(content));
-         }
+        if (!check && packetId != 23) {
+            ByteBuffer buffer = ByteBuffer.allocate(2);
+            buffer.putShort(packetId);
+            FilePrinter.printError("unknowPacket.txt", "未知封包 :" + HexTool.toString(buffer.array()) + "\n 收到的封包:\n" + HexTool.toString(content));
+            PrintUnknowPacket(packetId, content);
+        }
+    }
+
+    @Override
+    public void messageSent(IoSession session, Object message) {
+        byte[] content = (byte[]) message;
+        MapleClient client = (MapleClient) session.getAttribute(MapleClient.CLIENT_KEY);
+        SeekableLittleEndianAccessor slea = new GenericSeekableLittleEndianAccessor(new ByteArrayByteStream(content));
+        short packetId = slea.readShort();
+        try {
+            for (SendOpcode header : SendOpcode.values()) {
+                if (header.getValue() == packetId) {
+                    if (header.getDebugMode()) {
+                        PrintSent(header, content, client);
+                    }
+                    break;
+                }
+            }
+        } catch (final Throwable t) {
+            //FilePrinter.printError(FilePrinter.PACKET_HANDLER + packetHandler.getClass().getName() + ".txt", t, "Error for " + (client.getPlayer() == null ? "" : "player ; " + client.getPlayer() + " on map ; " + client.getPlayer().getMapId() + " - ") + "account ; " + client.getAccountName() + "\r\n" + slea.toString());
+            //client.announce(MaplePacketCreator.enableActions());//bugs sometimes
+        }
     }
 
     @Override
@@ -161,4 +183,36 @@ public class MapleServerHandler extends IoHandlerAdapter {
         }
         super.sessionIdle(session, status);
     }
+
+    public void PrintUnknowPacket(int packetid, byte[] content) {
+
+        System.err.println(String.format("未知封包頭:%d", packetid));
+        System.err.println("未知封:");
+        System.err.println(HexTool.toString(content));
+    }
+
+    public void PrintSent(SendOpcode header, byte[] content, MapleClient client) {
+        String ANSI_RESET = "\u001B[0m";
+        String ANSI_BLUE = "\u001B[34m";
+        System.out.println(""
+                + ANSI_BLUE + String.format("玩家：%s \n", client.getAccountName())
+                + ANSI_BLUE + String.format("封包頭 :%s(%d) \n", header.toString(), header.getValue())
+                + ANSI_BLUE + "送出的封包:\n"
+                + ANSI_BLUE + HexTool.toString(content)
+                + ANSI_RESET + "\n"
+        );
+    }
+
+    public void PrintReceived(RecvOpcode header, byte[] content, MapleClient client) {
+        String ANSI_RESET = "\u001B[0m";
+        String ANSI_GREEN = "\u001B[32m";
+        System.out.println(""
+                + ANSI_GREEN + String.format("玩家：%s \n", client.getAccountName())
+                + ANSI_GREEN + String.format("封包頭 :%s(%d) \n", header.toString(), header.getValue())
+                + ANSI_GREEN + "收到的封包:\n"
+                + ANSI_GREEN + HexTool.toString(content)
+                + ANSI_RESET + "\n"
+        );
+    }
+
 }

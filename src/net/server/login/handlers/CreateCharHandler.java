@@ -61,6 +61,7 @@ public final class CreateCharHandler extends AbstractMaplePacketHandler {
         int shoes = slea.readInt();
         int weapon = slea.readInt();
         int gender = c.getGender();
+        
         newchar.setGender(gender);
         newchar.setName(name);
         if (job == 0) { // Knights of Cygnus

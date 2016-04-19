@@ -713,6 +713,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject {
             if (!hide) {
                 this.hidden = false;
                 announce(MaplePacketCreator.getGMEffect(0x10, (byte) 0));
+                System.err.println("spawnPlayerMapobject on  Hide");
                 getMap().broadcastMessage(this, MaplePacketCreator.spawnPlayerMapobject(this), false);
                 updatePartyMemberHP();
             } else {
@@ -1446,7 +1447,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject {
     public int getAccountID() {
         return accountid;
     }
-
+    
     public int getFH() {
         MapleFoothold fh = getMap().getFootholds().findBelow(getPosition());
         if (fh != null) {
@@ -4438,6 +4439,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject {
             this.getPet(this.getPetIndex(pet)).saveToDb();
         }
         cancelFullnessSchedule(getPetIndex(pet));
+         
         getMap().broadcastMessage(this, MaplePacketCreator.showPet(this, pet, true, hunger), true);
         client.announce(MaplePacketCreator.petStatUpdate(this));
         client.announce(MaplePacketCreator.enableActions());
@@ -4522,6 +4524,16 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject {
     public void sendSpawnData(MapleClient client) {
         if (!this.isHidden() || client.getPlayer().gmLevel() > 0) {
             client.announce(MaplePacketCreator.spawnPlayerMapobject(this));
+            
+            MaplePet[] pets = this.getPets();
+            for (int i = 0; i < this.getPets().length; i++) {
+                if (pets[i] != null) {
+                    pets[i].setPos(this.getMap().getGroundBelow(this.getPosition()));
+                    client.announce(MaplePacketCreator.showPet(this, pets[i], false, false));
+                } else {
+                    break;
+                }
+            }
         }
     }
 

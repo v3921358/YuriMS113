@@ -256,7 +256,7 @@ public class MapleShop {
                 ps.close();
                 return null;
             }
-            ps = con.prepareStatement("SELECT * FROM shopitems WHERE shopid = ? ORDER BY position ASC");
+            ps = con.prepareStatement("SELECT * FROM shopitems WHERE shopid = ? ORDER BY position DESC");
             ps.setInt(1, shopId);
             rs = ps.executeQuery();
 

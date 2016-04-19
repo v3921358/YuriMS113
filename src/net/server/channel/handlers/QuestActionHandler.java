@@ -44,6 +44,7 @@ public final class QuestActionHandler extends AbstractMaplePacketHandler {
             if (slea.available() >= 4) {
                 slea.readInt();
             }
+            System.out.println(String.format("action:%d  quest:%d  npc:%d", action, questid, npc));
             quest.start(player, npc);
         } else if (action == 2) { // Complete Quest
             int npc = slea.readInt();

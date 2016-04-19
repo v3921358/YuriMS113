@@ -80,25 +80,25 @@ public class AdminCommand {
                 } else {
                     player.dropMessage(5, "找不到玩家");
                 }
-             } else if (splitted[0].equalsIgnoreCase("map")) {
-              try {
-              MapleMap target = cserv.getMapFactory().getMap(Integer.parseInt(splitted[1]));
-              MaplePortal targetPortal = null;
-                if (splitted.length > 2) {
-                    try {
-                        targetPortal = target.getPortal(Integer.parseInt(splitted[2]));
-                    } catch (IndexOutOfBoundsException e) {
-                        player.dropMessage(5, "無效的光點位置！");
-                    } catch (NumberFormatException a) {
+            } else if (splitted[0].equalsIgnoreCase("map")) {
+                try {
+                    MapleMap target = cserv.getMapFactory().getMap(Integer.parseInt(splitted[1]));
+                    MaplePortal targetPortal = null;
+                    if (splitted.length > 2) {
+                        try {
+                            targetPortal = target.getPortal(Integer.parseInt(splitted[2]));
+                        } catch (IndexOutOfBoundsException e) {
+                            player.dropMessage(5, "無效的光點位置！");
+                        } catch (NumberFormatException a) {
+                        }
                     }
+                    if (targetPortal == null) {
+                        targetPortal = target.getPortal(0);
+                    }
+                    player.changeMap(target);
+                } catch (Exception e) {
+                    player.dropMessage(5, "找不到此地圖代碼！");
                 }
-                if (targetPortal == null) {
-                    targetPortal = target.getPortal(0);
-                }
-                player.changeMap(target);
-            } catch (Exception e) {
-                player.dropMessage(5, "找不到此地圖代碼！");
-            }
             } else if (splitted[0].equalsIgnoreCase("sp")) {
                 player.setRemainingSp(Integer.parseInt(splitted[1]));
                 player.updateSingleStat(MapleStat.AVAILABLESP, player.getRemainingSp());
@@ -116,40 +116,40 @@ public class AdminCommand {
             } else if (splitted[0].equalsIgnoreCase("warp")) {
                 MapleCharacter victim = cserv.getPlayerStorage().getCharacterByName(splitted[1]);
                 player.changeMap(victim.getMapId(), victim.getMap().findClosestSpawnpoint(victim.getPosition()));
-                player.dropMessage(5,"跟蹤到了！");
+                player.dropMessage(5, "跟蹤到了！");
             } else if (splitted[0].equalsIgnoreCase("warphere")) {
-            	MapleCharacter victim = cserv.getPlayerStorage().getCharacterByName(splitted[1]);
-		victim.changeMap(c.getPlayer().getMap(), c.getPlayer().getMap().findClosestSpawnpoint(c.getPlayer().getPosition()));
-                player.dropMessage(5,"已經把玩家傳送到身旁了！");
+                MapleCharacter victim = cserv.getPlayerStorage().getCharacterByName(splitted[1]);
+                victim.changeMap(c.getPlayer().getMap(), c.getPlayer().getMap().findClosestSpawnpoint(c.getPlayer().getPosition()));
+                player.dropMessage(5, "已經把玩家傳送到身旁了！");
             } else if (splitted[0].equalsIgnoreCase("warpallhere")) {
-            for (MapleCharacter mch : cserv.getPlayerStorage().getAllCharacters()) {
-                if (mch.getMapId() != player.getMapId()) {
-                    mch.changeMap(player.getMap(), player.getPosition());
-                    player.dropMessage(5,"已經把頻道上所有玩家傳送到身旁了！");
-                 } else {
-                    player.dropMessage(5, "找不到玩家傳送到身旁！");          
+                for (MapleCharacter mch : cserv.getPlayerStorage().getAllCharacters()) {
+                    if (mch.getMapId() != player.getMapId()) {
+                        mch.changeMap(player.getMap(), player.getPosition());
+                        player.dropMessage(5, "已經把頻道上所有玩家傳送到身旁了！");
+                    } else {
+                        player.dropMessage(5, "找不到玩家傳送到身旁！");
+                    }
                 }
-            }
-          } else if (splitted[0].equalsIgnoreCase("ban")) {
-            try {
-            try (PreparedStatement p = DatabaseConnection.getConnection().prepareStatement("UPDATE accounts SET banned = 1 WHERE id = " + MapleCharacter.getIdByName(splitted[1]))) {
-                    p.executeUpdate();
+            } else if (splitted[0].equalsIgnoreCase("ban")) {
+                try {
+                    try (PreparedStatement p = DatabaseConnection.getConnection().prepareStatement("UPDATE accounts SET banned = 1 WHERE id = " + MapleCharacter.getIdByName(splitted[1]))) {
+                        p.executeUpdate();
+                    }
+                } catch (Exception e) {
+                    player.message("封鎖失敗 " + splitted[1]);
+                    return true;
                 }
-            } catch (Exception e) {
-                player.message("封鎖失敗 " + splitted[1]);
-                return true;
-            }
-            player.message("封鎖成功 " + splitted[1]);
-          } else if (splitted[0].equalsIgnoreCase("unban")) {
-            try {
-            try (PreparedStatement p = DatabaseConnection.getConnection().prepareStatement("UPDATE accounts SET banned = 0 WHERE id = " + MapleCharacter.getIdByName(splitted[1]))) {
-                    p.executeUpdate();
+                player.message("封鎖成功 " + splitted[1]);
+            } else if (splitted[0].equalsIgnoreCase("unban")) {
+                try {
+                    try (PreparedStatement p = DatabaseConnection.getConnection().prepareStatement("UPDATE accounts SET banned = 0 WHERE id = " + MapleCharacter.getIdByName(splitted[1]))) {
+                        p.executeUpdate();
+                    }
+                } catch (Exception e) {
+                    player.message("解鎖失敗 " + splitted[1]);
+                    return true;
                 }
-            } catch (Exception e) {
-                player.message("解鎖失敗 " + splitted[1]);
-                return true;
-            }
-            player.message("解鎖成功 " + splitted[1]);
+                player.message("解鎖成功 " + splitted[1]);
             } else if (splitted[0].equalsIgnoreCase("npc")) {
                 int npcId = Integer.parseInt(splitted[1], 10);
                 MapleNPC npc = MapleLifeFactory.getNPC(npcId);
@@ -165,53 +165,53 @@ public class AdminCommand {
                     player.dropMessage(5, "npc 不存在");
                 }
             } else if (splitted[0].equalsIgnoreCase("saveall")) {
-            int p = 0;
-            List<Channel> channels = c.getWorldServer().getChannels();
-            for (Channel channel : channels) {
-            for (MapleCharacter chr : cserv.getPlayerStorage().getAllCharacters()) {
-            p++;
-            c.getChannelServer().saveAll();
-            player.dropMessage(5,"[全服存檔] "+p+"個玩家數據保存到數據中.");
-          }
-          }
-           } else if (splitted[0].equals("dc")) {
-            int level = 0;
-            MapleCharacter victim;
-            if (splitted[1].charAt(0) == '-') {
-                level = StringUtil.countCharacters(splitted[1], 'f');
-                victim = cserv.getPlayerStorage().getCharacterByName(splitted[2]);
-            } else {
-                victim = cserv.getPlayerStorage().getCharacterByName(splitted[1]);
-            }
-            victim.getClient().getSession().close();
-            if (level >= 1) {
-                victim.getClient().disconnect(true, false);
-            }
-            if (level >= 2) {
-                victim.saveToDB();
-                cserv.removePlayer(victim);
-            }
-            victim.getClient().disconnect(false, false);
+                int p = 0;
+                List<Channel> channels = c.getWorldServer().getChannels();
+                for (Channel channel : channels) {
+                    for (MapleCharacter chr : cserv.getPlayerStorage().getAllCharacters()) {
+                        p++;
+                        c.getChannelServer().saveAll();
+                        player.dropMessage(5, "[全服存檔] " + p + "個玩家數據保存到數據中.");
+                    }
+                }
+            } else if (splitted[0].equals("dc")) {
+                int level = 0;
+                MapleCharacter victim;
+                if (splitted[1].charAt(0) == '-') {
+                    level = StringUtil.countCharacters(splitted[1], 'f');
+                    victim = cserv.getPlayerStorage().getCharacterByName(splitted[2]);
+                } else {
+                    victim = cserv.getPlayerStorage().getCharacterByName(splitted[1]);
+                }
+                victim.getClient().getSession().close();
+                if (level >= 1) {
+                    victim.getClient().disconnect(true, false);
+                }
+                if (level >= 2) {
+                    victim.saveToDB();
+                    cserv.removePlayer(victim);
+                }
+                victim.getClient().disconnect(false, false);
             } else if (splitted[0].equalsIgnoreCase("online")) {
                 int total = 0;
-                int curConnected = c.getChannelServer().getConnectedClients();  
-                List<Channel> channels = c.getWorldServer().getChannels();    
+                int curConnected = c.getChannelServer().getConnectedClients();
+                List<Channel> channels = c.getWorldServer().getChannels();
                 total += curConnected;
-                for(Channel channel : channels) {  
+                for (Channel channel : channels) {
                     player.dropMessage(5, "頻道 " + String.valueOf(channel.getId()));
                     PlayerStorage all = channel.getPlayerStorage();
-                    for(MapleCharacter chr :all.getAllCharacters()) {
-                    if (chr != null && c.getPlayer().getGMLevel() >= chr.getGMLevel()) {
-                    if (chr.getMap() != null){
-                    player.dropMessage(5, "名稱: " + chr.getName() 
-                                + " 職業: " + chr.getJob()
-                                + " 等級: " + String.valueOf(chr.getLevel())
-                                + " 地圖: " + chr.getMapId()+ " - "+ chr.getMap().getMapName().toString()
-                                + " 財產: " + String.valueOf(chr.getMeso()));
-                   c.getPlayer().dropMessage(6, new StringBuilder().append("當前伺服器總計線上人數: ").append(total).toString());
-                }
-                } 
-                }
+                    for (MapleCharacter chr : all.getAllCharacters()) {
+                        if (chr != null && c.getPlayer().getGMLevel() >= chr.getGMLevel()) {
+                            if (chr.getMap() != null) {
+                                player.dropMessage(5, "名稱: " + chr.getName()
+                                        + " 職業: " + chr.getJob()
+                                        + " 等級: " + String.valueOf(chr.getLevel())
+                                        + " 地圖: " + chr.getMapId() + " - " + chr.getMap().getMapName().toString()
+                                        + " 財產: " + String.valueOf(chr.getMeso()));
+                                c.getPlayer().dropMessage(6, new StringBuilder().append("當前伺服器總計線上人數: ").append(total).toString());
+                            }
+                        }
+                    }
                 }
             } else if (splitted[0].equalsIgnoreCase("item") || splitted[0].equalsIgnoreCase("drop")) {
                 int itemId = Integer.parseInt(splitted[1]);
@@ -251,25 +251,24 @@ public class AdminCommand {
                     player.message("怪物 ID: " + monster.getId());
                 }
             } else if (splitted[0].equalsIgnoreCase("shutdown")) {
-                if(splitted.length > 2 && Integer.parseInt(splitted[1]) >= 0)
-                {
+                if (splitted.length > 2 && Integer.parseInt(splitted[1]) >= 0) {
                     ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-                    executor.schedule(Server.getInstance().shutdownThread(false), Integer.parseInt(splitted[1])* 60, TimeUnit.SECONDS);
+                    executor.schedule(Server.getInstance().shutdownThread(false), Integer.parseInt(splitted[1]) * 60, TimeUnit.SECONDS);
                 }
-             
-             } else if (splitted[0].equals("reload")) {
-             PortalScriptManager.getInstance().clearScripts(); // 傳點腳本
-             MapleMonsterInformationProvider.getInstance().clearDrops(); // 怪物掉落
-             ReactorScriptManager.getInstance().clearDrops(); // 反應堆腳本
-             MapleShopFactory.getInstance().reloadShops(); // 商店腳本
-             for (Channel instance : Channel.getAllInstances()) {
-             instance.reloadEvents(); // 事件腳本
-             }
-             
-             } else if (splitted[0].equals("pos")){
-            Point pos = c.getPlayer().getPosition();
-            c.getPlayer().dropMessage(6, "X: " + pos.x + " | Y: " + pos.y + " | RX0: " + (pos.x + 50) + " | RX1: " + (pos.x - 50) + " | FH: " + c.getPlayer().getFH() + "| CY:"+ pos.y);
-             
+
+            } else if (splitted[0].equals("reload")) {
+                PortalScriptManager.getInstance().clearScripts(); // 傳點腳本
+                MapleMonsterInformationProvider.getInstance().clearDrops(); // 怪物掉落
+                ReactorScriptManager.getInstance().clearDrops(); // 反應堆腳本
+                MapleShopFactory.getInstance().reloadShops(); // 商店腳本
+                for (Channel instance : Channel.getAllInstances()) {
+                    instance.reloadEvents(); // 事件腳本
+                }
+
+            } else if (splitted[0].equals("pos")) {
+                Point pos = c.getPlayer().getPosition();
+                c.getPlayer().dropMessage(6, "X: " + pos.x + " | Y: " + pos.y + " | RX0: " + (pos.x + 50) + " | RX1: " + (pos.x - 50) + " | FH: " + c.getPlayer().getFH() + "| CY:" + pos.y);
+
             } else if (splitted[0].equalsIgnoreCase("spawn")) {
                 final int mid = Integer.parseInt(splitted[1]);
                 int num = 1;
@@ -292,10 +291,10 @@ public class AdminCommand {
                     player.dropMessage(5, "怪物不存在");
                 }
 
-            }  else if (splitted[0].equalsIgnoreCase("notice"))  {
+            } else if (splitted[0].equalsIgnoreCase("notice")) {
                 String text = StringUtil.joinStringFrom(splitted, 1);
                 c.getWorldServer().broadcastPacket(MaplePacketCreator.broadcastMsg(0, text));
-            }  else if (splitted[0].equalsIgnoreCase("管理員幫助") || splitted[0].equalsIgnoreCase("adminhelp")) {
+            } else if (splitted[0].equalsIgnoreCase("管理員幫助") || splitted[0].equalsIgnoreCase("adminhelp")) {
                 player.dropMessage(5, "SyncMs GM 指令");
                 player.dropMessage(5, "!online - 上線人數");
                 player.dropMessage(5, "!notice 訊息 - 公告");
@@ -322,13 +321,10 @@ public class AdminCommand {
                 player.dropMessage(5, "!ban <名字> - 封鎖");
                 player.dropMessage(5, "!unban <名字> - 解鎖");
                 player.dropMessage(5, "!dc <名字> - 斷線");
-                
 
-            } else {
-                if (player.gmLevel() == 5) {
-                    player.message("管理員指令 " + heading + splitted[0] + " 不存在. 可以使用 !管理員幫助/!adminHelp 來查看所有管理員指令.");
-                    return false;
-                }
+            } else if (player.gmLevel() == 5) {
+                player.message("管理員指令 " + heading + splitted[0] + " 不存在. 可以使用 !管理員幫助/!adminHelp 來查看所有管理員指令.");
+                return false;
             }
         } catch (Exception e) {
             if (player.gmLevel() == 5) {

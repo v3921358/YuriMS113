@@ -62,11 +62,16 @@ public class NPCScriptManager extends AbstractScriptManager {
             
             if (filename != null) {
                 iv = getInvocable("npc/world" + c.getWorld() + "/" + filename + ".js", c);
+                System.err.println("filename != null");
             }
-            
             if (iv == null) {
+                System.err.println("iv == null");
                 iv = getInvocable("npc/world" + c.getWorld() + "/" + npc + ".js", c);
+                
             }
+            System.err.println(iv == null );
+            System.err.println(NPCScriptManager.getInstance() == null);
+            
             
             if (iv == null || NPCScriptManager.getInstance() == null) {
                 cm.sendOk("嗨~ 我是沒工作的NPC.\r\n我的代碼是 #r" + npc + "#k." + "您看到這個就表示這個 NPC 沒有工作\r\n如果這是個很重要的 NPC 請聯繫 GM\r\n謝謝您 !");

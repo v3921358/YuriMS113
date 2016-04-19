@@ -33,6 +33,8 @@ import tools.data.input.SeekableLittleEndianAccessor;
 public class PartySearchRegisterHandler extends AbstractMaplePacketHandler {
 
     public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+        if(2>1)
+        return;
         MapleCharacter chr = c.getPlayer();
         int min = slea.readInt();
         int max = slea.readInt();

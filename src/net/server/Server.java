@@ -1,6 +1,6 @@
 /*
  This file is part of the OdinMS Maple Story Server
- Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc>
+ Copyright (C) 2004 Patrick Huy <patrick.huy@frz.cc>
  Matthias Butz <matze@odinms.de>
  Jan Christian Meyer <vimes@odinms.de>
 
@@ -35,6 +35,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -60,14 +61,17 @@ import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
+import scripting.portal.PortalScriptManager;
+import scripting.reactor.ReactorScriptManager;
 import server.CashItemFactory;
 import server.MapleItemInformationProvider;
+import server.MapleShopFactory;
 import server.TimerManager;
+import server.life.MapleMonsterInformationProvider;
 import tools.DatabaseConnection;
 import tools.FilePrinter;
 import tools.packets.MaplePacketCreator;
 import tools.Pair;
-
 
 public class Server implements Runnable {
 
@@ -262,6 +266,7 @@ public class Server implements Runnable {
 
         try {
             for (int i = 0; i < 1; i++) {
+                //int i = 1;
                 System.out.println("建立\t世界伺服器");
                 World world = new World(i,
                         Integer.parseInt(p.getProperty("Sync.Flag")),
@@ -281,19 +286,26 @@ public class Server implements Runnable {
                     world.addChannel(channel);
                     channels.get(i).put(channelid, channel.getIP());
                 }
+
                 world.setServerMessage(p.getProperty("Sync.ServerMessage", ""));
                 System.out.println("世界伺服器讀取完畢\n");
             }
+            Collections.reverse(worlds);
+            System.out.println("");
         } catch (Exception e) {
+            System.err.println(e);
             System.out.println("Setting not found");
             System.exit(0);
         }
 
         acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 30);
         acceptor.setHandler(new MapleServerHandler());
+        Integer port = ServerConstants.HOST_PORT;
         try {
-            acceptor.bind(new InetSocketAddress(8484));
+            acceptor.bind(new InetSocketAddress(port));
         } catch (IOException ex) {
+            System.err.println(ex + ":" + port.toString());
+            System.exit(0);
         }
 
         System.out.println("登入伺服器端口: 8484 \n\n");
@@ -308,8 +320,22 @@ public class Server implements Runnable {
                 command = br.readLine();
 
                 if (command.equalsIgnoreCase("shutdown")) {
-                    this.shutdownThread(false);
+                    this.shutdownThread(false).run();
+                } else if (command.equalsIgnoreCase("saveAll")) {
+                    int channelCount = Integer.parseInt(p.getProperty("Sync.Channels", "1"));
+                    for (int j = 0; j < channelCount; j++) {
+                        worlds.get(0).getChannel(j + 1).saveAll();
+                    }
+                } else if (command.equalsIgnoreCase("reload")) {
+                    PortalScriptManager.getInstance().clearScripts(); // 傳點腳本
+                    MapleMonsterInformationProvider.getInstance().clearDrops(); // 怪物掉落
+                    ReactorScriptManager.getInstance().clearDrops(); // 反應堆腳本
+                    MapleShopFactory.getInstance().reloadShops(); // 商店腳本
+                    for (Channel instance : Channel.getAllInstances()) {
+                        instance.reloadEvents(); // 事件腳本
+                    }
                 }
+
             } catch (IOException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -591,7 +617,15 @@ public class Server implements Runnable {
     }
 
     public World getWorld(int id) {
-        return worlds.get(id);
+        World world = null;
+        for (World w : worlds) {
+            if (w.getId() == id) {
+                world = w;
+                break;
+            }
+        }
+
+        return world;
     }
 
     public List<World> getWorlds() {
@@ -662,7 +696,7 @@ public class Server implements Runnable {
                 online = false;
 
                 if (!restart) {
-                    return;
+                    System.exit(0);
                 } else {
                     System.out.println("\r\n重新啟動伺服器....\r\n");
                     Server.getInstance().setIsShutdownWork(false);

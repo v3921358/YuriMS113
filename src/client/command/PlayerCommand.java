@@ -34,7 +34,7 @@ import tools.StringUtil;
 
 public class PlayerCommand {
 
-           private static ResultSet ranking(boolean gm) {
+    private static ResultSet ranking(boolean gm) {
         try {
             Connection con = (Connection) DatabaseConnection.getConnection();
             PreparedStatement ps;
@@ -46,8 +46,8 @@ public class PlayerCommand {
             return ps.executeQuery();
         } catch (SQLException ex) {
             return null;
-            }
         }
+    }
 
     static void execute(MapleClient c, String[] splitted, char heading) throws SQLException {
         Channel cserv = c.getChannelServer();
@@ -55,7 +55,7 @@ public class PlayerCommand {
         if (splitted[0].equals("expfix") || splitted[0].equalsIgnoreCase("修復")) {
             player.setExp(0);
             player.updateSingleStat(MapleStat.EXP, player.getExp());
-             c.getPlayer().dropMessage(5, "經驗修復完成");
+            c.getPlayer().dropMessage(5, "經驗修復完成");
 
         } else if (splitted[0].equalsIgnoreCase("ea") || splitted[0].equalsIgnoreCase("解卡")) {
             NPCScriptManager.getInstance().dispose(c);
@@ -65,42 +65,48 @@ public class PlayerCommand {
         } else if (splitted[0].equalsIgnoreCase("save") || splitted[0].equalsIgnoreCase("存檔")) {
             c.getPlayer().saveToDB();
             c.getPlayer().dropMessage("保存成功");
-        
+
         } else if (splitted[0].equalsIgnoreCase("fm") || splitted[0].equalsIgnoreCase("自由")) {
             if (player.haveItem(2030000)) { //是否有回家卷軸
-            MapleInventoryManipulator.removeById(c, MapleInventoryType.USE, 2030000, 1, true, false);
-            c.getPlayer().saveLocation("FREE_MARKET");
-            c.getPlayer().changeMap(910000000);
-            c.getPlayer().dropMessage(5, "回到自由了");
-           } else {
-            player.dropMessage("沒有回家卷軸,所以不能使用回自由指令!.");
+                MapleInventoryManipulator.removeById(c, MapleInventoryType.USE, 2030000, 1, true, false);
+                c.getPlayer().saveLocation("FREE_MARKET");
+                c.getPlayer().changeMap(910000000);
+                c.getPlayer().dropMessage(5, "回到自由了");
+            } else {
+                player.dropMessage("沒有回家卷軸,所以不能使用回自由指令!.");
             }
 
-        } else if (splitted[0].equalsIgnoreCase("mob") || splitted[0].equalsIgnoreCase("怪物")){
+        } else if (splitted[0].equalsIgnoreCase("getPos")) {
+                c.getPlayer().dropMessage(5, String.format("x is %d, y is %d", c.getPlayer().getPosition().x, c.getPlayer().getPosition().y));
+
+        } else if (splitted[0].equalsIgnoreCase("mob") || splitted[0].equalsIgnoreCase("怪物")) {
             MapleMonster mob = null;
             for (final MapleMapObject monstermo : c.getPlayer().getMap().getMapObjectsInRange(c.getPlayer().getPosition(), 100000, Arrays.asList(MapleMapObjectType.MONSTER))) {
-            mob = (MapleMonster) monstermo;
-            if (mob.isAlive()) {
-            c.getPlayer().dropMessage(6, "怪物 " + mob.toString());
-            break; 
-            }
+                mob = (MapleMonster) monstermo;
+                if (mob.isAlive()) {
+                    c.getPlayer().dropMessage(6, "怪物 " + mob.toString());
+                    break;
+                }
             }
             if (mob == null) {
                 c.getPlayer().dropMessage(6, "找不到地圖上的怪物");
             }
-            
+
+        } else if (splitted[0].equalsIgnoreCase("mapid") || splitted[0].equalsIgnoreCase("地圖編號")) {
+                    c.getPlayer().dropMessage(6, "地圖編號 " + Integer.toString(c.getPlayer().getMapId()));
         } else if (splitted[0].equalsIgnoreCase("幫助") || splitted[0].equalsIgnoreCase("help")) {
             c.getPlayer().dropMessage(5, "SyncMs 玩家指令");
             c.getPlayer().dropMessage(5, "@解卡/@ea <解除異常>");
-            c.getPlayer().dropMessage(5, "@修復/@expfix <修復經驗假死>");  
+            c.getPlayer().dropMessage(5, "@修復/@expfix <修復經驗假死>");
             c.getPlayer().dropMessage(5, "@存檔/@save <保存資料>");
             c.getPlayer().dropMessage(5, "@自由/@fm <回自由-需要1張回家卷軸>");
             c.getPlayer().dropMessage(5, "@怪物/@mob <查看當前地圖怪物狀態>");
-         } else {
+        } else {
             player.dropMessage("指令: " + heading + splitted[0] + " 不存在. 可以使用 @幫助/@help 來查看所有玩家指令.");
         }
     }
-        private static void compareTime(StringBuilder sb, long timeDiff) {
+
+    private static void compareTime(StringBuilder sb, long timeDiff) {
         double secondsAway = timeDiff / 1000;
         double minutesAway = 0;
         double hoursAway = 0;

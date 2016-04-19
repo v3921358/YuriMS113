@@ -26,7 +26,7 @@
 */
 function start(ms) {
 	if (ms.getPlayer().getMapId() == 110000000 || (ms.getPlayer().getMapId() >= 100000000 && ms.getPlayer().getMapId() < 105040300)) {	
-		ms.explorerQuest(29005, "Beginner Explorer");//Beginner Explorer	
+		ms.explorerQuest(29005, "新手探險家");//新手探險家	
 	} else if (ms.getPlayer().getMapId() >= 105040300 && ms.getPlayer().getMapId() <= 105090900) {
 		ms.explorerQuest(29014, "Sleepywood Explorer");//Sleepywood Explorer
 	} else if (ms.getPlayer().getMapId() >= 200000000 && ms.getPlayer().getMapId() <= 211041800) {

@@ -20,6 +20,7 @@ public enum AutobanFactory {
 
     private int points;
     private long expiretime;
+    private boolean enable = false;
 
     private AutobanFactory() {
         this(1, -1);
@@ -44,16 +45,18 @@ public enum AutobanFactory {
     }
 
     public void addPoint(AutobanManager ban, String reason) {
-        
+
         ban.addPoint(this, reason);
     }
-    
+
     public void clearPoint(AutobanManager ban) {
         ban.clearPoint(this);
     }
 
     public void autoban(MapleCharacter chr, String value) {
-        chr.autoban("[自動鎖定] 原因 (" + this.name() + ": " + value + ")", 1);
-        chr.sendPolice("系統偵測到修改遊戲數據，將進行鎖定");
+        if (this.enable) {
+            chr.autoban("[自動鎖定] 原因 (" + this.name() + ": " + value + ")", 1);
+            chr.sendPolice("系統偵測到修改遊戲數據，將進行鎖定");
+        }
     }
 }

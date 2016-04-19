@@ -43,5 +43,5 @@ function cancelSchedule() {
 function start() {
     scheduleNew();
     var Message = new Array("如有bug請回報GM.", "禁止開外掛", "遊戲愉快!!");
-    em.getChannelServer().yellowWorldMessage("[SncyMS公告] " + Message[Math.floor(Math.random() * Message.length)]);
+    em.getChannelServer().yellowWorldMessage("[YuriMS公告] " + Message[Math.floor(Math.random() * Message.length)]);
 }

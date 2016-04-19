@@ -537,13 +537,12 @@ public class MapleClient {
     }
 
     public final void disconnect(boolean shutdown, boolean cashshop) {//once per MapleClient instance
-
+        //System.out.println("儲存" + this.player.getName() + "中...");
+        
         if (disconnecting) {
             return;
         }
         disconnecting = true;
-
-        System.out.println("儲存" + this.player.getName() + "中");
 
         if (player != null && player.isLoggedin() && player.getClient() != null) {
 

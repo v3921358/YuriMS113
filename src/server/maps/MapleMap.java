@@ -904,7 +904,7 @@ public class MapleMap {
     }
 
     public Point getGroundBelow(Point pos) {
-        Point spos = new Point(pos.x, pos.y - 1);
+        Point spos = new Point(pos.x, pos.y - 3); // 使用 -3 解決寵物重生所造成的的問題。
         spos = calcPointBelow(spos);
         spos.y--;//shouldn't be null!
         return spos;
@@ -1283,25 +1283,19 @@ public class MapleMap {
         }
         //以上都是
 
+        sendPlayerData(chr);
+        
         MaplePet[] pets = chr.getPets();
         for (int i = 0; i < chr.getPets().length; i++) {
             if (pets[i] != null) {
                 pets[i].setPos(getGroundBelow(chr.getPosition()));
-                chr.announce(MaplePacketCreator.showPet(chr, pets[i], false, false));
+                chr.getMap().broadcastMessage(chr, MaplePacketCreator.showPet(chr, pets[i], false, false), true);
             } else {
                 break;
             }
         }
 
-        if (chr.isHidden()) {
-            broadcastGMMessage(chr, MaplePacketCreator.spawnPlayerMapobject(chr), false);
-            chr.announce(MaplePacketCreator.getGMEffect(0x10, (byte) 1));
-        } else {
-            broadcastMessage(chr, MaplePacketCreator.spawnPlayerMapobject(chr), false);
-        }
-
         sendObjectPlacement(chr.getClient());
-
         if (hasForcedEquip()) {
             chr.getClient().announce(MaplePacketCreator.showForcedEquip(-1));
         }
@@ -1359,6 +1353,15 @@ public class MapleMap {
             chr.getClient().announce(MaplePacketCreator.boatPacket(false));
         }
         chr.receivePartyMemberHP();
+    }
+
+    public void sendPlayerData(final MapleCharacter chr) {
+        if (chr.isHidden()) {
+            broadcastGMMessage(chr, MaplePacketCreator.spawnPlayerMapobject(chr), false);
+            chr.announce(MaplePacketCreator.getGMEffect(0x10, (byte) 1));
+        } else {
+            broadcastMessage(chr, MaplePacketCreator.spawnPlayerMapobject(chr), false);
+        }
     }
 
     public MaplePortal findClosestPortal(Point from) {
