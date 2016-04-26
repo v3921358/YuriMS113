@@ -27,7 +27,8 @@ import net.server.Server;
 import tools.FilePrinter;
 import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
-import tools.packets.MTSCSPacket;;
+import tools.packets.CWvsContext;
+import tools.packets.CashShopPacket;;
 
 /**
  *
@@ -44,7 +45,7 @@ public class EnterCashShopHandler extends AbstractMaplePacketHandler {
         try {
 
             if (!Server.getCashShopEnabled() && !c.getPlayer().isGM()) {
-                c.announce(MaplePacketCreator.enableActions());
+                c.announce(CWvsContext.enableActions());
                 c.announce(MaplePacketCreator.blockedMessage2(2));
                 return;
             }
@@ -57,16 +58,16 @@ public class EnterCashShopHandler extends AbstractMaplePacketHandler {
             Server.getInstance().getPlayerBuffStorage().addBuffsToStorage(mc.getId(), mc.getAllBuffs());
             mc.cancelBuffEffects();
             mc.cancelExpirationTask();
-            c.announce(MTSCSPacket.openCashShop(c, false));
-            c.announce(MTSCSPacket.showCashShopAcc(c));
+            c.announce(CashShopPacket.openCashShop(c, false));
+            c.announce(CashShopPacket.showCashShopAcc(c));
             mc.saveToDB();
             mc.getCashShop().open(true);
             mc.getMap().removePlayer(mc);
-            c.announce(MTSCSPacket.showGifts(mc.getCashShop().loadGifts()));
-            c.announce(MTSCSPacket.showCashInventory(c));
-            c.announce(MTSCSPacket.showCash(mc));
-            c.announce(MTSCSPacket.enableCSUse());
-            c.announce(MTSCSPacket.showWishList(mc));
+            c.announce(CashShopPacket.showGifts(mc.getCashShop().loadGifts()));
+            c.announce(CashShopPacket.showCashInventory(c));
+            c.announce(CashShopPacket.showCash(mc));
+            c.announce(CashShopPacket.enableCSUse());
+            c.announce(CashShopPacket.showWishList(mc));
         } catch (Exception e) {
             FilePrinter.printError("EnterCashShop.txt", e);
         }

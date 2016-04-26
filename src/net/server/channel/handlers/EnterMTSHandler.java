@@ -36,7 +36,8 @@ import server.MTSItemInfo;
 import tools.DatabaseConnection;
 import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
-import tools.packets.MTSCSPacket;
+import tools.packets.CWvsContext;
+import tools.packets.CashShopPacket;
 
 public final class EnterMTSHandler extends AbstractMaplePacketHandler {
 
@@ -44,12 +45,12 @@ public final class EnterMTSHandler extends AbstractMaplePacketHandler {
     public final void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
         MapleCharacter chr = c.getPlayer();
         if (!chr.isAlive()) {
-            c.announce(MaplePacketCreator.enableActions());
+            c.announce(CWvsContext.enableActions());
             return;
         }
         if (chr.getLevel() < 10) {
             c.announce(MaplePacketCreator.blockedMessage2(5));
-            c.announce(MaplePacketCreator.enableActions());
+            c.announce(CWvsContext.enableActions());
             return;
         }
 
@@ -58,13 +59,13 @@ public final class EnterMTSHandler extends AbstractMaplePacketHandler {
         chr.saveToDB();
         chr.getMap().removePlayer(c.getPlayer());
         try {
-            c.announce(MTSCSPacket.openCashShop(c, true));
+            c.announce(CashShopPacket.openCashShop(c, true));
         } catch (Exception ex) {
         }
         chr.getCashShop().open(true);// xD
-        c.announce(MTSCSPacket.enableCSUse());
-        c.announce(MTSCSPacket.MTSWantedListingOver(0, 0));
-        c.announce(MTSCSPacket.showMTSCash(c.getPlayer()));
+        c.announce(CashShopPacket.enableCSUse());
+        c.announce(CashShopPacket.MTSWantedListingOver(0, 0));
+        c.announce(CashShopPacket.showMTSCash(c.getPlayer()));
         List<MTSItemInfo> items = new ArrayList<>();
         int pages = 0;
         try {
@@ -112,9 +113,9 @@ public final class EnterMTSHandler extends AbstractMaplePacketHandler {
             ps.close();
         } catch (SQLException e) {
         }
-        c.announce(MTSCSPacket.sendMTS(items, 1, 0, 0, pages));
-        c.announce(MTSCSPacket.transferInventory(getTransfer(chr.getId())));
-        c.announce(MTSCSPacket.notYetSoldInv(getNotYetSold(chr.getId())));
+        c.announce(CashShopPacket.sendMTS(items, 1, 0, 0, pages));
+        c.announce(CashShopPacket.transferInventory(getTransfer(chr.getId())));
+        c.announce(CashShopPacket.notYetSoldInv(getNotYetSold(chr.getId())));
     }
 
     private List<MTSItemInfo> getNotYetSold(int cid) {

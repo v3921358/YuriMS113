@@ -110,6 +110,7 @@ import server.maps.SummonMovementType;
 import tools.ArrayMap;
 import tools.packets.MaplePacketCreator;
 import tools.Pair;
+import tools.packets.CFieldPacket;
 
 /**
  * @author Matze
@@ -822,7 +823,7 @@ public class MapleStatEffect {
             }
         }
         if (sourceid == Corsair.BATTLE_SHIP) {
-            chr.announce(MaplePacketCreator.skillCooldown(5221999, chr.getBattleshipHp()));
+            chr.announce(CFieldPacket.skillCooldown(5221999, chr.getBattleshipHp()));
         }
     }
 
@@ -954,7 +955,7 @@ public class MapleStatEffect {
                 applyto.getMap().broadcastMessage(applyto, mbuff, false);
             }
             if (sourceid == Corsair.BATTLE_SHIP) {
-                applyto.announce(MaplePacketCreator.skillCooldown(5221999, applyto.getBattleshipHp() / 10));
+                applyto.announce(CFieldPacket.skillCooldown(5221999, applyto.getBattleshipHp() / 10));
             }
         }
     }

@@ -29,6 +29,7 @@ import net.AbstractMaplePacketHandler;
 import server.MapleInventoryManipulator;
 import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CWvsContext;
 
 public final class ItemSortHandler extends AbstractMaplePacketHandler {
 
@@ -60,8 +61,8 @@ public final class ItemSortHandler extends AbstractMaplePacketHandler {
                     sorted = true;
                 }
             }
-            c.announce(MaplePacketCreator.finishedSort(inv));
+            c.announce(CWvsContext.finishedSort(inv));
         }
-        c.announce(MaplePacketCreator.enableActions());
+        c.announce(CWvsContext.enableActions());
     }
 }

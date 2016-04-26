@@ -25,6 +25,7 @@ import java.util.concurrent.ScheduledFuture;
 import server.Timer.EventTimer;
 import server.maps.MapleMap;
 import tools.Pair;
+import tools.packets.CWvsContext;
 import tools.packets.MaplePacketCreator;
 
 public class MapleOxQuiz extends MapleEvent {
@@ -102,7 +103,7 @@ public class MapleOxQuiz extends MapleEvent {
                     }
                 }
                 if (toSend.getCharacters().size() - number <= 1 || timesAsked == 10) {
-                    toSend.broadcastMessage(MaplePacketCreator.broadcastMsg(6, "The event has ended"));
+                    toSend.broadcastMessage(CWvsContext.broadcastMsg(6, "The event has ended"));
                     unreset();
                     for (MapleCharacter chr : toSend.getCharacters()) {
                         if (chr != null && !chr.isGM() && chr.isAlive()) {

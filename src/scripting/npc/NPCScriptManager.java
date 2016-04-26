@@ -62,15 +62,11 @@ public class NPCScriptManager extends AbstractScriptManager {
             
             if (filename != null) {
                 iv = getInvocable("npc/world" + c.getWorld() + "/" + filename + ".js", c);
-                System.err.println("filename != null");
             }
             if (iv == null) {
-                System.err.println("iv == null");
                 iv = getInvocable("npc/world" + c.getWorld() + "/" + npc + ".js", c);
                 
             }
-            System.err.println(iv == null );
-            System.err.println(NPCScriptManager.getInstance() == null);
             
             
             if (iv == null || NPCScriptManager.getInstance() == null) {
@@ -108,6 +104,7 @@ public class NPCScriptManager extends AbstractScriptManager {
             try {
                 iv.invokeFunction("action", mode, type, selection);
             } catch (ScriptException | NoSuchMethodException t) {
+                System.err.println(t);
                 if (getCM(c) != null) {
                     FilePrinter.printError(FilePrinter.NPC + getCM(c).getNpc() + ".txt", t);
                     notice(c, getCM(c).getNpc());

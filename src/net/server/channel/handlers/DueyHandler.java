@@ -42,6 +42,7 @@ import tools.DatabaseConnection;
 import tools.FilePrinter;
 import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CWvsContext;
 
 public final class DueyHandler extends AbstractMaplePacketHandler {
 
@@ -186,7 +187,7 @@ public final class DueyHandler extends AbstractMaplePacketHandler {
             if ( dp != null && dp.getItem() != null) {
                 if (!MapleInventoryManipulator.checkSpace(c, dp.getItem().getItemId(), dp.getItem().getQuantity(), dp.getItem().getOwner())) {
                     c.getPlayer().dropMessage(1, "Your inventory is full");
-                    c.announce(MaplePacketCreator.enableActions());
+                    c.announce(CWvsContext.enableActions());
                     return;
                 } else {
                     MapleInventoryManipulator.addFromDrop(c, dp.getItem(), false);

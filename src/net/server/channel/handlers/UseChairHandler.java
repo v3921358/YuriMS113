@@ -26,6 +26,7 @@ import client.inventory.MapleInventoryType;
 import net.AbstractMaplePacketHandler;
 import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CWvsContext;
 
 public final class UseChairHandler extends AbstractMaplePacketHandler {
 
@@ -37,6 +38,6 @@ public final class UseChairHandler extends AbstractMaplePacketHandler {
         }
         c.getPlayer().setChair(itemId);
         c.getPlayer().getMap().broadcastMessage(c.getPlayer(), MaplePacketCreator.showChair(c.getPlayer().getId(), itemId), false);
-        c.announce(MaplePacketCreator.enableActions());
+        c.announce(CWvsContext.enableActions());
     }
 }

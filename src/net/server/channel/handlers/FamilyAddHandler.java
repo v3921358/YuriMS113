@@ -26,6 +26,7 @@ import client.MapleClient;
 import net.AbstractMaplePacketHandler;
 import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CWvsContext;
 import tools.packets.FamilyPacket;
 
 /**
@@ -44,6 +45,6 @@ public final class FamilyAddHandler extends AbstractMaplePacketHandler {
         } else {
             c.getPlayer().dropMessage("The player cannot be found!");
         }
-        c.announce(MaplePacketCreator.enableActions());
+        c.announce(CWvsContext.enableActions());
     }
 }

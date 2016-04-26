@@ -49,6 +49,11 @@ public class FredrickHandler extends AbstractMaplePacketHandler {
         MapleCharacter chr = c.getPlayer();
         byte operation = slea.readByte();
 
+        if(2>1){
+            chr.dropMessage(1, "此功能尚未修好，你可能要重新登入。");
+            return;
+        }
+        
         switch (operation) {
             case 20:
                 break;

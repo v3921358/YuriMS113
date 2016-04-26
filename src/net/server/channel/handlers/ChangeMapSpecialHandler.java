@@ -26,6 +26,7 @@ import net.AbstractMaplePacketHandler;
 import server.MaplePortal;
 import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CWvsContext;
 
 public final class ChangeMapSpecialHandler extends AbstractMaplePacketHandler {
 
@@ -36,7 +37,7 @@ public final class ChangeMapSpecialHandler extends AbstractMaplePacketHandler {
         slea.readShort();
         MaplePortal portal = c.getPlayer().getMap().getPortal(startwp);
         if (portal == null || c.getPlayer().portalDelay() > System.currentTimeMillis() || c.getPlayer().getBlockedPortals().contains(portal.getScriptName())) {
-            c.announce(MaplePacketCreator.enableActions());
+            c.announce(CWvsContext.enableActions());
             return;
         }
         portal.enterPortal(c);

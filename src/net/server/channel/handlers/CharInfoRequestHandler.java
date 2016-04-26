@@ -26,6 +26,7 @@ import client.MapleClient;
 import net.AbstractMaplePacketHandler;
 import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CWvsContext;
 
 public final class CharInfoRequestHandler extends AbstractMaplePacketHandler {
 
@@ -38,7 +39,7 @@ public final class CharInfoRequestHandler extends AbstractMaplePacketHandler {
         if (player.isHidden() && !c.getPlayer().isGM()) {
             return;
         }
-        c.announce(MaplePacketCreator.enableActions());
+        c.announce(CWvsContext.enableActions());
         c.announce(MaplePacketCreator.charInfo(player));
     }
 }

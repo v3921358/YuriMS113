@@ -24,6 +24,7 @@ import java.util.concurrent.ScheduledFuture;
 import server.Timer.EventTimer;
 import server.life.MobSkillFactory;
 import server.maps.MapleMap;
+import tools.packets.CWvsContext;
 import tools.packets.MaplePacketCreator;
 
 
@@ -191,7 +192,7 @@ public class MapleSnowball extends MapleEvent {
                     if (damage == 0) {
                         if (Math.random() < 0.2) {
                             chr.getClient().getSession().write(MaplePacketCreator.leftKnockBack());
-                            chr.getClient().getSession().write(MaplePacketCreator.enableActions());
+                            chr.getClient().getSession().write(CWvsContext.enableActions());
                         }
                     } else {
                         ball.setPositionX(ball.getPosition() + 1);
@@ -205,7 +206,7 @@ public class MapleSnowball extends MapleEvent {
                                 sb.getSnowBall(i).setInvis(true);
                                 map.broadcastMessage(MaplePacketCreator.rollSnowball(i + 2, sb.getSnowBall(0), sb.getSnowBall(1))); //inviseble
                             }
-                            chr.getMap().broadcastMessage(MaplePacketCreator.broadcastMsg(6, "Congratulations! Team " + (team == 0 ? "Story" : "Maple") + " has won the Snowball Event!"));
+                            chr.getMap().broadcastMessage(CWvsContext.broadcastMsg(6, "Congratulations! Team " + (team == 0 ? "Story" : "Maple") + " has won the Snowball Event!"));
 
                             for (MapleCharacter chrz : chr.getMap().getCharacters()) {
                                 if ((team == 0 && chrz.getPosition().y > -80) || (team == 1 && chrz.getPosition().y <= -80)) { //winner

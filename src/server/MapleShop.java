@@ -37,6 +37,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import tools.DatabaseConnection;
+import tools.packets.CWvsContext;
 import tools.packets.MaplePacketCreator;
 
 /**
@@ -224,8 +225,8 @@ public class MapleShop {
                 c.getPlayer().gainMeso(-price, false, true, false);
                 c.announce(MaplePacketCreator.shopTransaction((byte) 0x8));
             } else {
-                c.announce(MaplePacketCreator.broadcastMsg(1, "你沒有足夠的楓幣。"));
-                c.announce(MaplePacketCreator.enableActions());
+                c.announce(CWvsContext.broadcastMsg(1, "你沒有足夠的楓幣。"));
+                c.announce(CWvsContext.enableActions());
             }
         }
     }

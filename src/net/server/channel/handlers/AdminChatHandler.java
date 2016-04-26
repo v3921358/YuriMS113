@@ -4,6 +4,7 @@ import client.MapleClient;
 import net.AbstractMaplePacketHandler;
 import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CWvsContext;
 
 /**
  *
@@ -18,7 +19,7 @@ public class AdminChatHandler extends AbstractMaplePacketHandler {
         }
         byte mode = slea.readByte();
         //not saving slides...
-        byte[] packet = MaplePacketCreator.broadcastMsg(slea.readByte(), slea.readMapleAsciiString());//maybe I should make a check for the slea.readByte()... but I just hope gm's don't fuck things up :)
+        byte[] packet = CWvsContext.broadcastMsg(slea.readByte(), slea.readMapleAsciiString());//maybe I should make a check for the slea.readByte()... but I just hope gm's don't fuck things up :)
         switch (mode) {
             case 0:// /alertall, /noticeall, /slideall
                 c.getWorldServer().broadcastPacket(packet);

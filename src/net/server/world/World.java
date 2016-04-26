@@ -60,7 +60,7 @@ import constants.ServerConstants;
  */
 public class World {
 
-    private int id, flag, exprate, droprate, mesorate, bossdroprate;
+    private int id, flag, exprate, droprate, mesorate, bossdroprate,NPCexprate,NPCmesorate;
     private String name;
     private String eventmsg;
     private List<Channel> channels = new ArrayList<>();
@@ -73,7 +73,7 @@ public class World {
     private PlayerStorage players = new PlayerStorage();
     
 
-    public World(int world, int flag, String eventmsg, int exprate, int droprate, int mesorate, int bossdroprate) {
+    public World(int world, int flag, String eventmsg, int exprate, int droprate, int mesorate, int bossdroprate,int NPCexprate,int NPCmesorate) {
         this.id = world;
         this.flag = flag;
         this.eventmsg = eventmsg;
@@ -81,6 +81,8 @@ public class World {
         this.droprate = droprate;
         this.mesorate = mesorate;
         this.bossdroprate = bossdroprate;
+        this.NPCexprate = NPCexprate;
+        this.NPCmesorate = NPCmesorate;
         runningPartyId.set(1);
         runningMessengerId.set(1);
         name=ServerConstants.WORLD_NAMES[world];
@@ -117,7 +119,15 @@ public class World {
     public String getEventMessage() {
         return eventmsg;
     }
+    
+    public int getNPCExpRate(){
+        return this.NPCexprate;
+    }
 
+    public int getNPCMesoRate(){
+        return this.NPCmesorate;
+    }
+    
     public int getExpRate() {
         return exprate;
     }

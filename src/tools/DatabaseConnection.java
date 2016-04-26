@@ -85,15 +85,6 @@ public class DatabaseConnection {
     }
 
     private static Connection connectToDB() {
-        Properties p = new Properties();
-        try {
-            p.load(new FileInputStream("SyncMaple.ini"));
-        } catch (Exception e) {
-            System.out.println("Setting not found");
-            System.exit(0);
-        }
-        //p.getProperty("Sync.EventMessage")
-        //Integer.parseInt(p.getProperty("Sync.ExpRate"))
         try {
             Class.forName("com.mysql.jdbc.Driver");    // touch the MySQL driver
         } catch (ClassNotFoundException e) {

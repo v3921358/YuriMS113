@@ -3,6 +3,7 @@ package server;
 import client.MapleCharacter;
 import java.util.LinkedList;
 import java.util.List;
+import tools.packets.CWvsContext;
 import tools.packets.MaplePacketCreator;
 
 public class MapleSquad {
@@ -55,7 +56,7 @@ public class MapleSquad {
             return false;
         } else {
             members.add(member);
-            getLeader().getClient().announce(MaplePacketCreator.broadcastMsg(5, member.getName() + " 已經加入的遠征隊！"));
+            getLeader().getClient().announce(CWvsContext.broadcastMsg(5, member.getName() + " 已經加入的遠征隊！"));
             return true;
         }
     }

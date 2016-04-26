@@ -29,7 +29,8 @@ import tools.DatabaseConnection;
 import tools.data.input.SeekableLittleEndianAccessor;
 import net.AbstractMaplePacketHandler;
 import tools.FilePrinter;
-import tools.packets.MTSCSPacket;
+import tools.packets.CWvsContext;
+import tools.packets.CashShopPacket;
 import tools.packets.MaplePacketCreator;
 
 public final class NoteActionHandler extends AbstractMaplePacketHandler {
@@ -42,8 +43,8 @@ public final class NoteActionHandler extends AbstractMaplePacketHandler {
             String message = slea.readMapleAsciiString();
             try {
                 if (c.getPlayer().getCashShop().isOpened()) {
-                    c.announce(MTSCSPacket.showCashInventory(c));
-                    c.getSession().write(MaplePacketCreator.enableActions());
+                    c.announce(CashShopPacket.showCashInventory(c));
+                    c.getSession().write(CWvsContext.enableActions());
                 }
 
                 c.getPlayer().sendNote(charname, message, (byte) 1);

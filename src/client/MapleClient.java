@@ -51,6 +51,9 @@ import tools.HexTool;
 import tools.MapleAESOFB;
 import tools.packets.LoginPacket;
 import tools.packets.MaplePacketCreator;
+import server.quest.MapleQuest;
+import tools.encrypt;
+
 
 public class MapleClient {
 
@@ -82,6 +85,7 @@ public class MapleClient {
     private byte gender = -1;
     private boolean disconnecting = false;
     private final Lock mutex = new ReentrantLock(true);
+    private long lastNpcClick;
 
     public MapleClient(MapleAESOFB send, MapleAESOFB receive, IoSession session) {
         this.send = send;
@@ -261,6 +265,32 @@ public class MapleClient {
         }
         return 0;
     }
+    
+public boolean sigup(String name, String pwd) {
+        boolean success = false;
+        Connection con;
+        try {
+            con = DatabaseConnection.getConnection();
+        } catch (Exception ex) {
+            //log.error("ERROR", ex);
+            return false;
+        }
+
+        try {
+            PreparedStatement ps = con.prepareStatement("INSERT INTO accounts (name, password, birthday, macs) VALUES (?, ?, ?, ?)");
+            ps.setString(1, name);
+            ps.setString(2, encrypt.sha1(pwd));//lol, no encryption. in fags we are <3
+            ps.setString(3, "0000-00-00");
+            ps.setString(4, "00-00-00-00-00-00");
+            ps.executeUpdate();
+            ps.close();
+            success = true;
+        } catch (SQLException ex) {
+            System.err.println(ex);
+            //log.error("ERROR", ex);
+        }
+        return success;
+    }
 
     public int login(String login, String pwd) {
         loginattempt++;
@@ -272,7 +302,7 @@ public class MapleClient {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            ps = con.prepareStatement("SELECT id, password, salt, gender, banned, gm, 2ndpassword, characterslots, tos FROM accounts WHERE name = ?");
+            ps = con.prepareStatement("SELECT id, password, gender, banned, gm, 2ndpassword, characterslots, tos FROM accounts WHERE name = ?");
             ps.setString(1, login);
             rs = ps.executeQuery();
             if (rs.next()) {
@@ -285,7 +315,6 @@ public class MapleClient {
                 gender = rs.getByte("gender");
                 characterSlots = rs.getByte("characterslots");
                 String passhash = rs.getString("password");
-                String salt = rs.getString("salt");
 
                 //we do not unban
                 byte tos = rs.getByte("tos");
@@ -294,7 +323,7 @@ public class MapleClient {
                 if (getLoginState() > LOGIN_NOTLOGGEDIN) { // already loggedin
                     loggedIn = false;
                     loginok = 7;
-                } else if (pwd.equals(passhash) || checkHash(passhash, "SHA-1", pwd) || checkHash(passhash, "SHA-512", pwd + salt)) {
+                } else if (pwd.equals(passhash) || encrypt.checkSHA1(pwd, passhash) || encrypt.checkSHA512(pwd, passhash)) {
                     if (tos == 0) {
                         loginok = 0;
                     } else {
@@ -309,6 +338,8 @@ public class MapleClient {
                 ps.setInt(1, accId);
                 ps.setString(2, session.getRemoteAddress().toString());
                 ps.executeUpdate();
+            }else{
+                return 1;
             }
         } catch (SQLException e) {
             FilePrinter.printError("MapleClient.txt", e);
@@ -569,6 +600,16 @@ public class MapleClient {
                     if (worlda != null && messengerid > 0) {
                         worlda.leaveMessenger(messengerid, chrm);
                     }
+                    
+                        for (MapleQuestStatus status : player.getStartedQuests()) { //This is for those quests that you have to stay logged in for a certain amount of time
+                            MapleQuest quest = status.getQuest();
+                            if (quest.getTimeLimit() > 0) {
+                                MapleQuestStatus newStatus = new MapleQuestStatus(quest, MapleQuestStatus.Status.NOT_STARTED);
+                                newStatus.setForfeited(player.getQuest(quest).getForfeited() + 1);
+                                player.updateQuest(newStatus);
+                            }
+                        }
+                    
                     if (guild != null) {
                         guild.setOnline(player.getId(), false, channel);
                     }
@@ -721,7 +762,7 @@ public class MapleClient {
 
     public void sendPing() {
         final long then = System.currentTimeMillis();
-        announce(MaplePacketCreator.getPing());
+        announce(LoginPacket.getPing());
         TimerManager.getInstance().schedule(new Runnable() {
 
             @Override
@@ -850,7 +891,7 @@ public class MapleClient {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            ps = con.prepareStatement("SELECT id,name, password, salt, gender, banned, gm, 2ndpassword, characterslots, tos FROM accounts WHERE id = ?");
+            ps = con.prepareStatement("SELECT id,name, password, gender, banned, gm, 2ndpassword, characterslots, tos FROM accounts WHERE id = ?");
             ps.setInt(1, accountID);
             rs = ps.executeQuery();
             if (rs.next()) {
@@ -861,7 +902,6 @@ public class MapleClient {
                 gender = rs.getByte("gender");
                 characterSlots = rs.getByte("characterslots");
                 String passhash = rs.getString("password");
-                String salt = rs.getString("salt");
 
                 ps.close();
                 rs.close();
@@ -976,4 +1016,17 @@ public class MapleClient {
     public boolean isDisconnection() {
         return disconnecting;
     }
+    
+    public boolean canClickNPC() {
+        return lastNpcClick + 500 < System.currentTimeMillis();
+    }
+
+    public void setClickedNPC() {
+        lastNpcClick = System.currentTimeMillis();
+    }
+
+    public void removeClickedNPC() {
+        lastNpcClick = 0;
+    }
+    
 }

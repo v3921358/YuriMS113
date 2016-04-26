@@ -45,7 +45,7 @@ public class SetGenderHandler extends AbstractMaplePacketHandler {
             c.getSession().write(LoginPacket.getGenderChanged(c));
             c.updateLoginState(MapleClient.LOGIN_NOTLOGGEDIN);
         } else {
-            c.getSession().close();
+            c.getSession().close(true); // close修改
             return;
         }
     }

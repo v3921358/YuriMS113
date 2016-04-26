@@ -22,6 +22,7 @@ import server.TimerManager;
 import tools.DatabaseConnection;
 import tools.packets.MaplePacketCreator;
 import tools.Pair;
+import tools.packets.CWvsContext;
 
 public class HiredMerchant extends AbstractMapleMapObject {
 
@@ -117,13 +118,13 @@ public class HiredMerchant extends AbstractMapleMapObject {
                 newItem.setFlag((byte) (newItem.getFlag() ^ ItemConstants.SPIKES));
             }
             if (quantity < 1 || pItem.getBundles() < 1 || !pItem.isExist() || pItem.getBundles() < quantity) {
-                c.announce(MaplePacketCreator.enableActions());
+                c.announce(CWvsContext.enableActions());
                 return;
             } else if (newItem.getType() == 1 && newItem.getQuantity() > 1) {
-                c.announce(MaplePacketCreator.enableActions());
+                c.announce(CWvsContext.enableActions());
                 return;
             } else if (!pItem.isExist()) {
-                c.announce(MaplePacketCreator.enableActions());
+                c.announce(CWvsContext.enableActions());
                 return;
             }
             int price = pItem.getPrice() * quantity;

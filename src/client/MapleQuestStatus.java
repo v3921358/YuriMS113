@@ -1,3 +1,24 @@
+/*
+	This file is part of the OdinMS Maple Story Server
+    Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc>
+		       Matthias Butz <matze@odinms.de>
+		       Jan Christian Meyer <vimes@odinms.de>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation version 3 as published by
+    the Free Software Foundation. You may not use, modify or distribute
+    this program under any other version of the GNU Affero General Public
+    License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 package client;
 
 import java.util.Collections;
@@ -8,10 +29,12 @@ import java.util.Map;
 import server.quest.MapleQuest;
 import tools.StringUtil;
 
+/**
+ *
+ * @author Matze
+ */
 public class MapleQuestStatus {
-
     public enum Status {
-
         UNDEFINED(-1),
         NOT_STARTED(0),
         STARTED(1),
@@ -35,7 +58,7 @@ public class MapleQuestStatus {
             return null;
         }
     }
-    private MapleQuest quest;
+    private short questID;
     private Status status;
     private Map<Integer, String> progress = new LinkedHashMap<Integer, String>();
     private List<Integer> medalProgress = new LinkedList<Integer>();
@@ -44,16 +67,15 @@ public class MapleQuestStatus {
     private int forfeited = 0;
 
     public MapleQuestStatus(MapleQuest quest, Status status) {
-        this.quest = quest;
+        this.questID = quest.getId();
         this.setStatus(status);
         this.completionTime = System.currentTimeMillis();
-        if (status == Status.STARTED) {
-            registerMobs();
-        }
+        if (status == Status.STARTED) 
+            registerMobs();      
     }
 
     public MapleQuestStatus(MapleQuest quest, Status status, int npc) {
-        this.quest = quest;
+        this.questID = quest.getId();
         this.setStatus(status);
         this.setNpc(npc);
         this.completionTime = System.currentTimeMillis();
@@ -63,8 +85,12 @@ public class MapleQuestStatus {
     }
 
     public MapleQuest getQuest() {
-        return quest;
+        return MapleQuest.getInstance(questID);
     }
+	
+	public short getQuestID() {
+		return questID;
+	}
 
     public Status getStatus() {
         return status;
@@ -83,15 +109,13 @@ public class MapleQuestStatus {
     }
 
     private void registerMobs() {
-        for (int i : quest.getRelevantMobs()) {
+        for (int i : MapleQuest.getInstance(questID).getRelevantMobs()) {
             progress.put(i, "000");
         }
     }
 
     public boolean addMedalMap(int mapid) {
-        if (medalProgress.contains(mapid)) {
-            return false;
-        }
+        if (medalProgress.contains(mapid)) return false;
         medalProgress.add(mapid);
         return true;
     }
@@ -115,7 +139,7 @@ public class MapleQuestStatus {
     }
 
     public void setProgress(int id, String pr) {
-        progress.put(id, pr);
+        	progress.put(id, pr);
     }
 
     public boolean madeProgress() {
@@ -123,9 +147,7 @@ public class MapleQuestStatus {
     }
 
     public String getProgress(int id) {
-        if (progress.get(id) == null) {
-            return "";
-        }
+        if (progress.get(id) == null) return "";
         return progress.get(id);
     }
 
@@ -143,6 +165,17 @@ public class MapleQuestStatus {
 
     public int getForfeited() {
         return forfeited;
+    }
+    
+    public String getInfo() {
+        if(!progress.containsKey(0) && !getMedalMaps().isEmpty()) {
+            return Integer.toString(getMedalProgress());
+        }
+        return getProgress(0);
+    }
+    
+    public void setInfo(String newInfo) {
+        progress.put(0, newInfo);
     }
 
     public void setForfeited(int forfeited) {

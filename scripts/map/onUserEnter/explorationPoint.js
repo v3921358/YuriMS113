@@ -28,7 +28,7 @@ function start(ms) {
 	if (ms.getPlayer().getMapId() == 110000000 || (ms.getPlayer().getMapId() >= 100000000 && ms.getPlayer().getMapId() < 105040300)) {	
 		ms.explorerQuest(29005, "新手探險家");//新手探險家	
 	} else if (ms.getPlayer().getMapId() >= 105040300 && ms.getPlayer().getMapId() <= 105090900) {
-		ms.explorerQuest(29014, "Sleepywood Explorer");//Sleepywood Explorer
+		ms.explorerQuest(29014, "奇幻村探險家勳章");//Sleepywood Explorer
 	} else if (ms.getPlayer().getMapId() >= 200000000 && ms.getPlayer().getMapId() <= 211041800) {
 		ms.explorerQuest(29006, "El Nath Mts. Explorer");//El Nath Mts. Explorer
 	} else if (ms.getPlayer().getMapId() >= 220000000 && ms.getPlayer().getMapId() <= 222010400) {

@@ -30,6 +30,7 @@ import net.server.world.World;
 import server.TimerManager;
 import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CWvsContext;
 import tools.packets.LoginPacket;
 
 public final class LoginPasswordHandler implements MaplePacketHandler {
@@ -46,6 +47,14 @@ public final class LoginPasswordHandler implements MaplePacketHandler {
         String pwd = slea.readMapleAsciiString();
         c.setAccountName(login);
         loginok = c.login(login, pwd);
+        
+        if (loginok == 1) {
+            if (c.sigup(login, pwd)) {
+                c.getSession().write(CWvsContext.broadcastMsg(1, "帳號自動創建完成。\r\n請重新登入。"));
+            } else {
+                c.getSession().write(LoginPacket.getLoginFailed(loginok));
+            }
+        }
 
         if (c.hasBannedIP() || c.hasBannedMac()) {
             c.announce(LoginPacket.getLoginFailed(3));

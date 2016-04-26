@@ -317,10 +317,12 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     }
 
     public void gainMeso(int gain) {
+        gain = gain*getPlayer().getNpcMesoRate();
         getPlayer().gainMeso(gain, true, false, true);
     }
 
     public void gainExp(int gain) {
+        gain = gain*getPlayer().getNpcExpRate();
         getPlayer().gainExp(gain, true, true);
     }
 
@@ -381,7 +383,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
                 getClient().announce(MaplePacketCreator.showOwnPetLevelUp(index));
                 getPlayer().getMap().broadcastMessage(getPlayer(), MaplePacketCreator.showPetLevelUp(getPlayer(), index));
             }
-            Item petz = getPlayer().getInventory(MapleInventoryType.CASH).getItem(pet.getInventorypos());
+            Item petz = getPlayer().getInventory(MapleInventoryType.CASH).getItem(pet.getPosition());
             getPlayer().forceUpdateItem(petz);
         }
     }
@@ -623,5 +625,33 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     public void txtPrint(String txt){
         System.err.println(txt);
     }
+    
+    public String showChooseItem(){
+        return "\r\n#fUI/UIWindow.img/QuestIcon/3/0#\r\n";
+    }
+    
+    public String showGiveItem(){
+        return "\r\n#fUI/UIWindow.img/QuestIcon/4/0#\r\n";
+    }
+    
+    public String showGiveUnknowItem(){
+        return "\r\n#fUI/UIWindow.img/QuestIcon/5/0#\r\n";
+    }
+    
+    public String showGiveFame(){
+        return "\r\n#fUI/UIWindow.img/QuestIcon/6/0#\r\n";
+    }
+    
+    public String showGiveMeso(){
+        return "\r\n#fUI/UIWindow.img/QuestIcon/7/0#\r\n";
+    }
+    
+    public String showGiveExp(){
+        return "\r\n#fUI/UIWindow.img/QuestIcon/8/0#\r\n";
+    }
+    
+    public String showGiveCohesion(){
+        return "\r\n#fUI/UIWindow.img/QuestIcon/9/0#\r\n";
+    }  
     
 }

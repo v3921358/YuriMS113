@@ -49,6 +49,7 @@ import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packets.AlliancePacket;
 import tools.packets.BuddyPacket;
+import tools.packets.CFieldPacket;
 import tools.packets.FamilyPacket;
 import tools.packets.GuildPacket;
 import tools.packets.LoginPacket;
@@ -62,16 +63,14 @@ public final class PlayerLoggedinHandler extends AbstractMaplePacketHandler {
 
     @Override
     public final void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
-
         final int cid = slea.readInt();
-
         final Server server = Server.getInstance();
-
         MapleCharacter player = c.getWorldServer().getPlayerStorage().getCharacterById(cid);
-
+        boolean newcomer = false;
         if (player == null) {
             try {
                 player = MapleCharacter.loadCharFromDB(cid, c, true);
+                newcomer = true;
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -148,7 +147,7 @@ public final class PlayerLoggedinHandler extends AbstractMaplePacketHandler {
             }
         }
 
-        c.announce(MaplePacketCreator.getCharInfo(player));
+        c.announce(CFieldPacket.getCharInfo(player));
         if (!player.isHidden()) {
             player.toggleHide(true);
         }
@@ -233,5 +232,11 @@ public final class PlayerLoggedinHandler extends AbstractMaplePacketHandler {
         player.expirationTask();
         player.setRates();
         player.getMap().sendPlayerData(player);
+        
+        if (newcomer) {
+            if (player.isGM()) {
+                Server.getInstance().broadcastGMMessage(MaplePacketCreator.earnTitleMessage("管理員 " + player.getName() + " 己經登入"));
+            }
+        }
     }
 }

@@ -697,19 +697,15 @@ public class MapleItemInformationProvider {
 
     public MapleStatEffect getItemEffect(int itemId) {
         MapleStatEffect ret = itemEffects.get(Integer.valueOf(itemId));
-        System.err.println("getItemEffect 1");
         if (ret == null) {
-            System.err.println("getItemEffect 2");
             MapleData item = getItemData(itemId);
             if (item == null) {
-                System.err.println("getItemEffect 3");
                 return null;
             }
             MapleData spec = item.getChildByPath("spec");
             ret = MapleStatEffect.loadItemEffectFromData(spec, itemId);
             itemEffects.put(Integer.valueOf(itemId), ret);
         }
-        System.err.println("getItemEffect 4");
         return ret;
     }
 
@@ -850,7 +846,6 @@ public class MapleItemInformationProvider {
         return questItem;
     }
 
-    
     private void loadCardIdData() {
         PreparedStatement ps = null;
         ResultSet rs = null;

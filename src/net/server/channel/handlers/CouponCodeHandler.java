@@ -24,18 +24,22 @@ package net.server.channel.handlers;
 import java.sql.SQLException;
 import client.MapleClient;
 import client.inventory.Item;
+import client.inventory.MapleInventoryType;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import net.AbstractMaplePacketHandler;
+import provider.MapleData;
+import provider.MapleDataProvider;
+import provider.MapleDataProviderFactory;
 import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
 import tools.DatabaseConnection;
-import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
-import tools.packets.MTSCSPacket;
+import tools.packets.CashShopPacket;
 
 /**
  *
@@ -49,49 +53,63 @@ public final class CouponCodeHandler extends AbstractMaplePacketHandler {
         boolean validcode = false;
         int type = -1;
         int item = -1;
+        int amount = 0;
+        boolean pass = false;
         validcode = getNXCodeValid(code.toUpperCase(), validcode);
         if (validcode) {
             type = getNXCode(code, "type");
             item = getNXCode(code, "item");
-            if (type != 5) {
-                try {
-                    Connection con = DatabaseConnection.getConnection();
-                    PreparedStatement ps = con.prepareStatement("UPDATE nxcode SET `valid` = 0 WHERE code = " + code);
-                    ps.executeUpdate();
-                    ps.close();
-                    ps = con.prepareStatement("UPDATE nxcode SET `user` = ? WHERE code = ?");
-                    ps.setString(1, c.getPlayer().getName());
-                    ps.setString(2, code);
-                    ps.executeUpdate();
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            }
+            amount = getNXCode(code, "amount");
             switch (type) {
-                case 0:
-                case 1:
-                case 2:
+                case 0: //nxCredit
                     c.getPlayer().getCashShop().gainCash(type, item);
+                    c.getPlayer().dropMessage(1, String.format("你兌換到了 %d 點數。", item));
+                    pass = true;
+                    break;
+                case 1: //maplePoint
+                    c.getPlayer().getCashShop().gainCash(type, item);
+                    c.getPlayer().dropMessage(1, String.format("你兌換到了 %d 楓葉點數。", item));
+                    pass = true;
+                    break;
+                case 2:
+                    if (MapleInventoryManipulator.addById(c, item, (short) amount, null, -1, -1)) {
+                        //c.announce(CashShopPacket.showCouponRedeemedItem(null, null, type, item, item));
+                        c.getPlayer().dropMessage(1, String.format("己經兌換到 道具 請去確認。", item));
+                        pass = true;
+                    }else{
+                        c.getPlayer().dropMessage(1, String.format("請你確認物品欄是否己滿。", item));
+                    }
                     break;
                 case 3:
-                    c.getPlayer().getCashShop().gainCash(0, item);
-                    c.getPlayer().getCashShop().gainCash(2, (item / 5000));
-                    break;
-                case 4:
-                    MapleInventoryManipulator.addById(c, item, (short) 1, null, -1, -1);
-                    List<Item> cashPackage = new ArrayList<>();
-
-                    //c.announce(MTSCSPacket.showCouponRedeemedItem(null, null, type, item, item));
-                    break;
-                case 5:
-                    c.getPlayer().getCashShop().gainCash(0, item);
+                    c.getPlayer().gainMeso(item, false);
+                    c.getPlayer().dropMessage(1, String.format("你兌換到了 %d 楓幣。", item));
+                    pass = true;
                     break;
             }
-            c.announce(MTSCSPacket.showCash(c.getPlayer()));
+            if (pass) {
+                updateTODB(c, code);
+            }
+
+            c.announce(CashShopPacket.showCash(c.getPlayer()));
         } else {
-            //c.announce(MaplePacketCreator.wrongCouponCode());
+            c.getPlayer().dropMessage(1, "這個序號無法使用，請重新確認期限、英文大小寫。");
+            c.announce(CashShopPacket.showCash(c.getPlayer()));
+            //c.announce(CashShopPacket.wrongCouponCode());
         }
-        c.announce(MTSCSPacket.enableCSUse());
+        c.announce(CashShopPacket.enableCSUse());
+    }
+
+    private void updateTODB(MapleClient c, String code) {
+        try {
+            Connection con = DatabaseConnection.getConnection();
+            PreparedStatement ps = con.prepareStatement("UPDATE nxcode SET valid=0, user=?  WHERE code = ?");
+            ps.setString(1, c.getPlayer().getName());
+            ps.setString(2, code);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
     }
 
     private int getNXCode(String code, String type) {

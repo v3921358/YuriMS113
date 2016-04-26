@@ -36,6 +36,7 @@ import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import tools.FilePrinter;
+import tools.packets.CWvsContext;
 import tools.packets.MaplePacketCreator;
 
 public class ItemScriptManager {
@@ -69,7 +70,7 @@ public class ItemScriptManager {
         }
         File scriptFile = new File("scripts/item/" + scriptName + ".js");
         if (!scriptFile.exists()) {
-            c.announce(MaplePacketCreator.enableActions());
+            c.announce(CWvsContext.enableActions());
             return;
         }
         FileReader fr = null;

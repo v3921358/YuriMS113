@@ -29,16 +29,19 @@ import client.inventory.MapleInventoryType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import net.AbstractMaplePacketHandler;
 import server.MapleInventoryManipulator;
 import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CWvsContext;
 
 /**
  *
  * @author BubblesDev
  */
-public final class ItemIdSortHandler extends AbstractMaplePacketHandler {
+public final class ItemGatherHandler extends AbstractMaplePacketHandler {
 
     @Override
     public final void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
@@ -50,19 +53,49 @@ public final class ItemIdSortHandler extends AbstractMaplePacketHandler {
             c.disconnect(false, false);
             return;
         }
-        MapleInventory Inv = chr.getInventory(MapleInventoryType.getByType(inv));
-        ArrayList<Item> itemarray = new ArrayList<>();
-        for (Iterator<Item> it = Inv.iterator(); it.hasNext();) {
-            Item item = (Item) it.next();
-            itemarray.add((Item) item.copy());
+        
+        final MapleInventoryType invType = MapleInventoryType.getByType(inv);
+        MapleInventory Inv = c.getPlayer().getInventory(invType);
+        ArrayList<Item> itemMap = new ArrayList<>();
+        for (Item item : Inv.list()) {
+            itemMap.add(item.copy()); // clone all  items T___T.
         }
-        Collections.sort(itemarray);
-        for (Item item : itemarray) {
-            MapleInventoryManipulator.removeById(c, MapleInventoryType.getByType(inv), item.getItemId(), item.getQuantity(), false, false);
+        
+        for (Item itemStats : itemMap) {
+            MapleInventoryManipulator.removeFromSlot(c, invType, itemStats.getPosition(), itemStats.getQuantity(), true, false);
         }
-        for (Item i : itemarray) {
-            MapleInventoryManipulator.addFromDrop(c, i, false);
+        
+        final List<Item> sortedItems = sortItems(itemMap);
+        for (Item item : sortedItems) {
+            MapleInventoryManipulator.addFromDrop(c, item, false);
         }
-        c.announce(MaplePacketCreator.finishedSort2(inv));
+        
+        c.announce(CWvsContext.finishedGather(inv));
+        c.announce(CWvsContext.enableActions());
+        itemMap.clear();
+        sortedItems.clear();
     }
+    
+
+    private static List<Item> sortItems(final List<Item> passedMap) {
+        final List<Integer> itemIds = new ArrayList<>(); // empty list.
+        for (Item item : passedMap) {
+            itemIds.add(item.getItemId()); // adds all item ids to the empty list to be sorted.
+        }
+        Collections.sort(itemIds); // sorts item ids
+
+        final List<Item> sortedList = new LinkedList<>(); // ordered list pl0x <3.
+
+        for (Integer val : itemIds) {
+            for (Item item : passedMap) {
+                if (val == item.getItemId()) { // Goes through every index and finds the first value that matches
+                    sortedList.add(item);
+                    passedMap.remove(item);
+                    break;
+                }
+            }
+        }
+        return sortedList;
+    }
+    
 }

@@ -22,6 +22,7 @@ import client.MapleCharacter;
 import java.util.LinkedList;
 import java.util.List;
 import server.Timer.EventTimer;
+import tools.packets.CWvsContext;
 import tools.packets.MaplePacketCreator;
 
 public class MapleCoconut extends MapleEvent {
@@ -136,7 +137,7 @@ public class MapleCoconut extends MapleEvent {
     public void startEvent() {
         reset();
         setHittable(true);
-        getMap(0).broadcastMessage(MaplePacketCreator.broadcastMsg(5, "The event has started!!"));
+        getMap(0).broadcastMessage(CWvsContext.broadcastMsg(5, "The event has started!!"));
         getMap(0).broadcastMessage(MaplePacketCreator.hitCoconut(true, 0, 0));
         getMap(0).broadcastMessage(MaplePacketCreator.getClock(300));
 

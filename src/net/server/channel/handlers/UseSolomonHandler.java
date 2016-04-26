@@ -29,6 +29,7 @@ import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
 import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CWvsContext;
 
 /**
  *
@@ -52,6 +53,6 @@ public final class UseSolomonHandler extends AbstractMaplePacketHandler {
         }
         c.getPlayer().gainGachaExp(gachaexp);
         MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.USE, slot, (short) 1, false);
-        c.announce(MaplePacketCreator.enableActions());
+        c.announce(CWvsContext.enableActions());
     }
 }

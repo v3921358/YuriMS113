@@ -46,6 +46,8 @@ import server.TimerManager;
 import server.life.MapleMonster;
 import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CFieldPacket;
+import tools.packets.CWvsContext;
 
 public final class SpecialMoveHandler extends AbstractMaplePacketHandler {
 
@@ -72,7 +74,7 @@ public final class SpecialMoveHandler extends AbstractMaplePacketHandler {
             if (chr.skillisCooling(skillid)) {
                 return;
             } else if (skillid != Corsair.BATTLE_SHIP) {
-                c.announce(MaplePacketCreator.skillCooldown(skillid, effect.getCooldown()));
+                c.announce(CFieldPacket.skillCooldown(skillid, effect.getCooldown()));
                 ScheduledFuture<?> timer = TimerManager.getInstance().schedule(new CancelCooldownAction(c.getPlayer(), skillid), effect.getCooldown() * 1000);
                 chr.addCooldown(skillid, System.currentTimeMillis(), effect.getCooldown() * 1000, timer);
             }
@@ -92,7 +94,7 @@ public final class SpecialMoveHandler extends AbstractMaplePacketHandler {
             }
             byte direction = slea.readByte();
             chr.getMap().broadcastMessage(c.getPlayer(), MaplePacketCreator.showBuffeffect(chr.getId(), skillid, chr.getSkillLevel(skillid), direction), false);
-            c.announce(MaplePacketCreator.enableActions());
+            c.announce(CWvsContext.enableActions());
             return;
         } else if (skillid == Buccaneer.TIME_LEAP) { // Timeleap
             MapleParty p = chr.getParty();
@@ -126,10 +128,10 @@ public final class SpecialMoveHandler extends AbstractMaplePacketHandler {
                 skill.getEffect(skillLevel).applyTo(c.getPlayer(), pos);
             } else {
                 chr.message("Please wait 5 seconds before casting Mystic Door again");
-                c.announce(MaplePacketCreator.enableActions());
+                c.announce(CWvsContext.enableActions());
             }
         } else {
-            c.announce(MaplePacketCreator.enableActions());
+            c.announce(CWvsContext.enableActions());
         }
     }
 }

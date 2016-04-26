@@ -58,6 +58,7 @@ import tools.FilePrinter;
 import tools.packets.MaplePacketCreator;
 import tools.Pair;
 import tools.Randomizer;
+import tools.packets.CWvsContext;
 import tools.packets.MonsterPacket;
 
 public class MapleMap {
@@ -326,7 +327,7 @@ public class MapleMap {
     }
 
     public Point calcDropPos(Point initial, Point fallback) {
-        Point ret = calcPointBelow(new Point(initial.x, initial.y - 50));
+        Point ret = calcPointBelow(new Point(initial.x, initial.y - 55));
         if (ret == null) {
             return fallback;
         }
@@ -365,7 +366,7 @@ public class MapleMap {
         final List<MonsterDropEntry> dropEntry = new ArrayList<>(mi.retrieveDrop(mob.getId()));
 
         Collections.shuffle(dropEntry);
-        for (final MonsterDropEntry de : dropEntry) {
+        for (final MonsterDropEntry de : dropEntry) {      
             if (Randomizer.nextInt(999999) < de.chance * chServerrate * cardRate) {
                 if (droptype == 3) {
                     pos.x = (int) (mobpos + (d % 2 == 0 ? (40 * (d + 1) / 2) : -(40 * (d / 2))));
@@ -373,13 +374,16 @@ public class MapleMap {
                     pos.x = (int) (mobpos + ((d % 2 == 0) ? (25 * (d + 1) / 2) : -(25 * (d / 2))));
                 }
                 if (de.itemId == 0) { // meso
-                    int mesos = Randomizer.nextInt(de.Maximum - de.Minimum) + de.Minimum;
-
+                    int max=de.Maximum*chr.getMesoRate();
+                    int min=de.Minimum*chr.getMesoRate();
+                    //int mesos = Randomizer.nextInt(de.Maximum - de.Minimum) + de.Minimum;
+                    int mesos = Randomizer.nextInt(max - min) + min;
+                    
                     if (mesos > 0) {
                         if (chr.getBuffedValue(MapleBuffStat.MESOUP) != null) {
                             mesos = (int) (mesos * chr.getBuffedValue(MapleBuffStat.MESOUP).doubleValue() / 100.0);
                         }
-                        spawnMesoDrop(mesos * chr.getMesoRate(), calcDropPos(pos, mob.getPosition()), mob, chr, false, droptype);
+                        spawnMesoDrop(mesos, calcDropPos(pos, mob.getPosition()), mob, chr, false, droptype);
                     }
                 } else {
                     if (ItemConstants.getInventoryType(de.itemId) == MapleInventoryType.EQUIP) {
@@ -885,7 +889,7 @@ public class MapleMap {
             public void run() {
                 if (MapleMap.this.getMonsterById(m.getId()) != null) {
                     if (item.getItemId() == 4001101) {
-                        MapleMap.this.broadcastMessage(MaplePacketCreator.broadcastMsg(6, "月妙搗年糕數量 " + (MapleMap.this.riceCakeNum + 1)));
+                        MapleMap.this.broadcastMessage(CWvsContext.broadcastMsg(6, "月妙搗年糕數量 " + (MapleMap.this.riceCakeNum + 1)));
 
                     }
                     spawnItemDrop(m, null, item, m.getPosition(), true, true);
@@ -1042,7 +1046,7 @@ public class MapleMap {
                     c.announce(MaplePacketCreator.partyPortal(door.getTown().getId(), door.getTarget().getId(), door.getTargetPosition()));
                 }
                 c.announce(MaplePacketCreator.spawnPortal(door.getTown().getId(), door.getTarget().getId(), door.getTargetPosition()));
-                c.announce(MaplePacketCreator.enableActions());
+                c.announce(CWvsContext.enableActions());
             }
         }, new SpawnCondition() {
             @Override

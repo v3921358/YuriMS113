@@ -26,11 +26,13 @@ import scripting.npc.NPCScriptManager;
 import server.MapleInventoryManipulator;
 import server.MapleShopFactory;
 import server.life.MapleMonster;
+import server.life.MapleNPC;
 import server.maps.MapleMapObject;
 import server.maps.MapleMapObjectType;
 import tools.packets.MaplePacketCreator;
 import tools.DatabaseConnection;
 import tools.StringUtil;
+import tools.packets.CWvsContext;
 
 public class PlayerCommand {
 
@@ -59,7 +61,7 @@ public class PlayerCommand {
 
         } else if (splitted[0].equalsIgnoreCase("ea") || splitted[0].equalsIgnoreCase("解卡")) {
             NPCScriptManager.getInstance().dispose(c);
-            c.getSession().write(MaplePacketCreator.enableActions());
+            c.getSession().write(CWvsContext.enableActions());
             c.getPlayer().dropMessage(5, "解卡完成");
 
         } else if (splitted[0].equalsIgnoreCase("save") || splitted[0].equalsIgnoreCase("存檔")) {
@@ -94,6 +96,19 @@ public class PlayerCommand {
 
         } else if (splitted[0].equalsIgnoreCase("mapid") || splitted[0].equalsIgnoreCase("地圖編號")) {
                     c.getPlayer().dropMessage(6, "地圖編號 " + Integer.toString(c.getPlayer().getMapId()));
+        }else if (splitted[0].equalsIgnoreCase("allnpc")){
+                for(final MapleMapObject npcobject : c.getPlayer().getMap().getMapObjects()){
+                    MapleNPC npc = (MapleNPC) npcobject;
+                    System.err.println(npc.getId());
+                    
+                }
+        }else if (splitted[0].equalsIgnoreCase("gms")){
+        for (Channel w : Server.getInstance().getAllChannels()) {
+            for(MapleCharacter chr:w.getPlayerStorage().getAllCharacters()){
+                if(chr.isGM())
+                    c.getPlayer().dropMessage(6, "己上線的GM "+chr.getName());
+            }
+        }
         } else if (splitted[0].equalsIgnoreCase("幫助") || splitted[0].equalsIgnoreCase("help")) {
             c.getPlayer().dropMessage(5, "SyncMs 玩家指令");
             c.getPlayer().dropMessage(5, "@解卡/@ea <解除異常>");

@@ -35,6 +35,7 @@ import net.server.world.MaplePartyCharacter;
 import scripting.item.ItemScriptManager;
 import server.MapleItemInformationProvider;
 import server.MapleItemInformationProvider.scriptedItem;
+import tools.packets.CWvsContext;
 
 /**
  * @author TheRamon
@@ -60,7 +61,7 @@ public final class PetLootHandler extends AbstractMaplePacketHandler {
             synchronized (mapitem) {
                 if (!chr.needQuestItem(mapitem.getQuest(), mapitem.getItemId())) {
                     c.announce(MaplePacketCreator.showItemUnavailable());
-                    c.announce(MaplePacketCreator.enableActions());
+                    c.announce(CWvsContext.enableActions());
                     return;
                 }
                 if (mapitem.isPickedUp()) {
@@ -98,7 +99,7 @@ public final class PetLootHandler extends AbstractMaplePacketHandler {
                         chr.getMap().removeMapObject(ob);
                     } else {
                         mapitem.setPickedUp(false);
-                        c.announce(MaplePacketCreator.enableActions());
+                        c.announce(CWvsContext.enableActions());
                         return;
                     }
                 } else if (ItemPickupHandler.useItem(c, mapitem.getItem().getItemId())) {
@@ -145,6 +146,6 @@ public final class PetLootHandler extends AbstractMaplePacketHandler {
                 mapitem.setPickedUp(true);
             }
         }
-        //c.announce(MaplePacketCreator.enableActions());
+        //c.announce(CWvsContext.enableActions());
     }
 }

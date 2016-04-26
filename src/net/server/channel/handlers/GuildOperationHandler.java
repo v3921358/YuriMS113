@@ -30,6 +30,7 @@ import java.util.Iterator;
 import tools.packets.MaplePacketCreator;
 import client.MapleCharacter;
 import net.server.Server;
+import tools.packets.CWvsContext;
 import tools.packets.GuildPacket;
 
 public final class GuildOperationHandler extends AbstractMaplePacketHandler {
@@ -243,7 +244,7 @@ public final class GuildOperationHandler extends AbstractMaplePacketHandler {
                     return;
                 }
                 if (mc.getMeso() < MapleGuild.CHANGE_EMBLEM_COST) {
-                    c.announce(MaplePacketCreator.broadcastMsg(1, "你沒有足夠的楓幣創建公會。"));
+                    c.announce(CWvsContext.broadcastMsg(1, "你沒有足夠的楓幣創建公會。"));
                     return;
                 }
                 short bg = slea.readShort();

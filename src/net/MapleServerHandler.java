@@ -34,10 +34,10 @@ import org.apache.mina.core.session.IoSession;
 import tools.FilePrinter;
 import tools.HexTool;
 import tools.MapleAESOFB;
-import tools.packets.MaplePacketCreator;
 import tools.data.input.ByteArrayByteStream;
 import tools.data.input.GenericSeekableLittleEndianAccessor;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.LoginPacket;
 
 public class MapleServerHandler extends IoHandlerAdapter {
 
@@ -92,7 +92,7 @@ public class MapleServerHandler extends IoHandlerAdapter {
         MapleClient client = new MapleClient(sendCypher, recvCypher, session);
         client.setWorld(world);
         client.setChannel(channel);
-        session.write(MaplePacketCreator.getHello(ServerConstants.VERSION, ivSend, ivRecv));
+        session.write(LoginPacket.getHello(ServerConstants.VERSION, ivSend, ivRecv));
         session.setAttribute(MapleClient.CLIENT_KEY, client);
     }
 
@@ -143,7 +143,7 @@ public class MapleServerHandler extends IoHandlerAdapter {
                 packetHandler.handlePacket(slea, client);
             } catch (final Throwable t) {
                 FilePrinter.printError(FilePrinter.PACKET_HANDLER + packetHandler.getClass().getName() + ".txt", t, "Error for " + (client.getPlayer() == null ? "" : "player ; " + client.getPlayer() + " on map ; " + client.getPlayer().getMapId() + " - ") + "account ; " + client.getAccountName() + "\r\n" + slea.toString());
-                //client.announce(MaplePacketCreator.enableActions());//bugs sometimes
+                //client.announce(CWvsContext.enableActions());//bugs sometimes
             }
         }
         if (!check && packetId != 23) {
@@ -171,7 +171,7 @@ public class MapleServerHandler extends IoHandlerAdapter {
             }
         } catch (final Throwable t) {
             //FilePrinter.printError(FilePrinter.PACKET_HANDLER + packetHandler.getClass().getName() + ".txt", t, "Error for " + (client.getPlayer() == null ? "" : "player ; " + client.getPlayer() + " on map ; " + client.getPlayer().getMapId() + " - ") + "account ; " + client.getAccountName() + "\r\n" + slea.toString());
-            //client.announce(MaplePacketCreator.enableActions());//bugs sometimes
+            //client.announce(CWvsContext.enableActions());//bugs sometimes
         }
     }
 

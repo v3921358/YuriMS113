@@ -37,6 +37,7 @@ import tools.ArrayMap;
 import tools.packets.MaplePacketCreator;
 import tools.Pair;
 import tools.Randomizer;
+import tools.packets.CWvsContext;
 import tools.packets.MonsterPacket;
 
 public class MapleMonster extends AbstractLoadedMapleLife {
@@ -310,7 +311,7 @@ public class MapleMonster extends AbstractLoadedMapleLife {
             Pair<Integer, String> timeMob = reviveMap.getTimeMob();
             if (timeMob != null) {
                 if (toSpawn.contains(timeMob.getLeft())) {
-                    reviveMap.broadcastMessage(MaplePacketCreator.broadcastMsg(6, timeMob.getRight()));
+                    reviveMap.broadcastMessage(CWvsContext.broadcastMsg(6, timeMob.getRight()));
                 }
 
                 if (timeMob.getLeft() == 9300338 && (reviveMap.getId() >= 922240100 && reviveMap.getId() <= 922240119)) {

@@ -27,6 +27,7 @@ import server.events.MapleSnowball;
 import server.events.MapleSnowball.MapleSnowballs;
 import server.maps.MapleMap;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CWvsContext;
 import tools.packets.MaplePacketCreator;
 
 /**
@@ -37,7 +38,7 @@ public final class SnowballHandler extends AbstractMaplePacketHandler {
 
     public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
         
-        c.announce(MaplePacketCreator.enableActions());
+        c.announce(CWvsContext.enableActions());
         //D3 00 02 00 00 A5 01
        /* MapleCharacter chr = c.getPlayer();
         MapleMap map = chr.getMap();

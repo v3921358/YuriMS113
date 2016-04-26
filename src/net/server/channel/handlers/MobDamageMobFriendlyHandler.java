@@ -26,6 +26,7 @@ import tools.Randomizer;
 import net.AbstractMaplePacketHandler;
 import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CWvsContext;
 
 /**
  *
@@ -42,6 +43,6 @@ public final class MobDamageMobFriendlyHandler extends AbstractMaplePacketHandle
             return;
         }
         c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.MobDamageMobFriendly(c.getPlayer().getMap().getMonsterByOid(damaged), damage), c.getPlayer().getMap().getMonsterByOid(damaged).getPosition());
-        c.announce(MaplePacketCreator.enableActions());
+        c.announce(CWvsContext.enableActions());
     }
 }

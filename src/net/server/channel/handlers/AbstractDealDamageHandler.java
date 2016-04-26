@@ -85,6 +85,7 @@ import tools.packets.MaplePacketCreator;
 import tools.Pair;
 import tools.Randomizer;
 import tools.data.input.LittleEndianAccessor;
+import tools.packets.CWvsContext;
 
 public abstract class AbstractDealDamageHandler extends AbstractMaplePacketHandler {
 
@@ -157,7 +158,7 @@ public abstract class AbstractDealDamageHandler extends AbstractMaplePacketHandl
                 theSkill = SkillFactory.getSkill(attack.skill);
                 attackEffect = attack.getAttackEffect(player, theSkill);
                 if (attackEffect == null) {
-                    player.getClient().announce(MaplePacketCreator.enableActions());
+                    player.getClient().announce(CWvsContext.enableActions());
                     return;
                 }
 
@@ -169,7 +170,7 @@ public abstract class AbstractDealDamageHandler extends AbstractMaplePacketHandl
                     if (player.isAlive()) {
                         attackEffect.applyTo(player);
                     } else {
-                        player.getClient().announce(MaplePacketCreator.enableActions());
+                        player.getClient().announce(CWvsContext.enableActions());
                     }
                 }
                 int mobCount = attackEffect.getMobCount();

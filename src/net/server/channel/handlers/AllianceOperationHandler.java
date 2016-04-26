@@ -31,6 +31,7 @@ import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.data.output.MaplePacketLittleEndianWriter;
 import tools.packets.AlliancePacket;
+import tools.packets.CWvsContext;
 
 /**
  *
@@ -46,10 +47,10 @@ public final class AllianceOperationHandler extends AbstractMaplePacketHandler {
         }
         if (alliance == null) {
             c.getPlayer().dropMessage("You are not in an alliance.");
-            c.announce(MaplePacketCreator.enableActions());
+            c.announce(CWvsContext.enableActions());
             return;
         } else if (c.getPlayer().getMGC().getAllianceRank() > 2 || !alliance.getGuilds().contains(c.getPlayer().getGuildId())) {
-            c.announce(MaplePacketCreator.enableActions());
+            c.announce(CWvsContext.enableActions());
             return;
         }
         switch (slea.readByte()) {

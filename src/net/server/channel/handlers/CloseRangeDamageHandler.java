@@ -47,6 +47,7 @@ import server.TimerManager;
 import tools.packets.MaplePacketCreator;
 import tools.Pair;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CFieldPacket;
 
 public final class CloseRangeDamageHandler extends AbstractDealDamageHandler {
 
@@ -139,7 +140,7 @@ public final class CloseRangeDamageHandler extends AbstractDealDamageHandler {
                 if (player.skillisCooling(attack.skill)) {
                     return;
                 } else {
-                    c.announce(MaplePacketCreator.skillCooldown(attack.skill, effect_.getCooldown()));
+                    c.announce(CFieldPacket.skillCooldown(attack.skill, effect_.getCooldown()));
                     player.addCooldown(attack.skill, System.currentTimeMillis(), effect_.getCooldown() * 1000, TimerManager.getInstance().schedule(new CancelCooldownAction(player, attack.skill), effect_.getCooldown() * 1000));
                 }
             }

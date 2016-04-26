@@ -34,6 +34,8 @@ import server.maps.FieldLimit;
 import server.maps.HiredMerchant;
 import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CFieldPacket;
+import tools.packets.CWvsContext;
 
 /**
  *
@@ -53,7 +55,7 @@ public final class ChangeChannelHandler extends AbstractMaplePacketHandler {
             return;
         }
         if (!chr.isAlive() || FieldLimit.ChannelSwitch.check(chr.getMap().getFieldLimit())) {
-            c.announce(MaplePacketCreator.enableActions());
+            c.announce(CWvsContext.enableActions());
             return;
         }
         String[] socket = Server.getInstance().getIP(c.getWorld(), channel).split(":");
@@ -87,7 +89,7 @@ public final class ChangeChannelHandler extends AbstractMaplePacketHandler {
         chr.getClient().updateLoginState(MapleClient.LOGIN_SERVER_TRANSITION);
         chr.getAutobanManager().clearAllPoints();
         try {
-            c.announce(MaplePacketCreator.getChannelChange(InetAddress.getByName(socket[0]), Integer.parseInt(socket[1])));
+            c.announce(CFieldPacket.getChannelChange(InetAddress.getByName(socket[0]), Integer.parseInt(socket[1])));
         } catch (IOException e) {
         }
     }

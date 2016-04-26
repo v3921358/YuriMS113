@@ -27,6 +27,7 @@ import java.awt.Point;
 import net.AbstractMaplePacketHandler;
 import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CWvsContext;
 
 /**
  *
@@ -37,7 +38,7 @@ public final class MesoDropHandler extends AbstractMaplePacketHandler {//FIX
     public final void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
         MapleCharacter chr = c.getPlayer();
         if (!chr.isAlive()) {
-            c.announce(MaplePacketCreator.enableActions());
+            c.announce(CWvsContext.enableActions());
             return;
         }
         slea.skip(4);

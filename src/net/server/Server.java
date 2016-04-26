@@ -72,6 +72,8 @@ import tools.DatabaseConnection;
 import tools.FilePrinter;
 import tools.packets.MaplePacketCreator;
 import tools.Pair;
+import server.quest.MapleQuest;
+import tools.packets.CWvsContext;
 
 public class Server implements Runnable {
 
@@ -84,6 +86,7 @@ public class Server implements Runnable {
     private Map<Integer, MapleGuild> guilds = new LinkedHashMap<>();
     private PlayerBuffStorage buffStorage = new PlayerBuffStorage();
     private Map<Integer, MapleAlliance> alliances = new LinkedHashMap<>();
+    private ArrayList<Channel> ch = new ArrayList();
     private boolean online = false;
     private static boolean ranking = true;
     public static int channelMaxPlayer = 100;
@@ -91,8 +94,8 @@ public class Server implements Runnable {
     private static int mesoRate = 1;
     private static int dropRate = 1;
     private static int bossRate = 1;
-    private static int qExpRate = 1;
-    private static int qMesoRate = 1;
+    private static int npcExpRate = 1;
+    private static int npcMesoRate = 1;
     private static boolean cashShopEnabled = false;
     private static TimerManager tMan;
     private boolean isShutdownWork = false;
@@ -133,12 +136,12 @@ public class Server implements Runnable {
         return dropRate;
     }
 
-    public static int getQMesoRate() {
-        return qMesoRate;
+    public static int getNPCMesoRate() {
+        return npcMesoRate;
     }
 
-    public static int getQExpRate() {
-        return qExpRate;
+    public static int getNPCExpRate() {
+        return npcExpRate;
     }
 
     public static Server getInstance() {
@@ -146,6 +149,12 @@ public class Server implements Runnable {
             instance = new Server();
         }
         return instance;
+    }
+
+    public void broadcastGMMessage(final byte[] packet) {
+        for (Channel ch : getChannelsFromWorld(0)) {
+            ch.broadcastGMPacket(packet);
+        }
     }
 
     public boolean isOnline() {
@@ -214,7 +223,7 @@ public class Server implements Runnable {
 
         Properties p = new Properties();
         try {
-            p.load(new InputStreamReader(new FileInputStream("SyncMaple.ini"), "UTF-8"));
+            p.load(new InputStreamReader(new FileInputStream("Maple.ini"), "UTF-8"));
         } catch (Exception e) {
             System.out.println("Setting not found");
             System.exit(0);
@@ -239,18 +248,18 @@ public class Server implements Runnable {
         tMan = TimerManager.getInstance();
         tMan.start();
         tMan.register(tMan.purge(), 300000);//Purging ftw...
-        tMan.register(new RankingWorker(), Integer.parseInt(p.getProperty("Sync.RankingInterval", "3600000")));
-        tMan.register(new RateWorker(), Integer.parseInt(p.getProperty("Sync.TimeWorkerInterval", "300000")));
+        tMan.register(new RankingWorker(), Integer.parseInt(p.getProperty("RankingInterval", "3600000")));
+        tMan.register(new RateWorker(), Integer.parseInt(p.getProperty("TimeWorkerInterval", "300000")));
 
-        ranking = Boolean.parseBoolean(p.getProperty("Sync.EnableRanking", "true"));
-        channelMaxPlayer = Integer.parseInt(p.getProperty("Sync.CMaxPlayer", "100"));
-        expRate = Integer.parseInt(p.getProperty("Sync.ExpRate", "1"));
-        mesoRate = Integer.parseInt(p.getProperty("Sync.MesoRate", "1"));
-        dropRate = Integer.parseInt(p.getProperty("Sync.DropRate", "1"));
-        bossRate = Integer.parseInt(p.getProperty("Sync.BossRate", "1"));
-        qExpRate = Integer.parseInt(p.getProperty("Sync.QExpRate", "1"));
-        qMesoRate = Integer.parseInt(p.getProperty("Sync.QMesoRate", "1"));
-        cashShopEnabled = Boolean.parseBoolean(p.getProperty("Sync.EnableCashShop", "false"));
+        ranking = Boolean.parseBoolean(p.getProperty("EnableRanking", "true"));
+        channelMaxPlayer = Integer.parseInt(p.getProperty("CMaxPlayer", "100"));
+        expRate = Integer.parseInt(p.getProperty("ExpRate", "1"));
+        mesoRate = Integer.parseInt(p.getProperty("MesoRate", "1"));
+        dropRate = Integer.parseInt(p.getProperty("DropRate", "1"));
+        bossRate = Integer.parseInt(p.getProperty("BossRate", "1"));
+        npcExpRate = Integer.parseInt(p.getProperty("NPCExpRate", "1"));
+        npcMesoRate = Integer.parseInt(p.getProperty("NPCMesoRate", "1"));
+        cashShopEnabled = Boolean.parseBoolean(p.getProperty("EnableCashShop", "false"));
 
         long timeToTake = System.currentTimeMillis();
         System.out.println("讀取\t技能資料中...");
@@ -258,10 +267,15 @@ public class Server implements Runnable {
         System.out.println("\t技能資料於 " + ((System.currentTimeMillis() - timeToTake) / 1000.0) + " 秒 讀取完畢");
 
         timeToTake = System.currentTimeMillis();
+        System.out.println("讀取\t任務資料中...");
+        MapleQuest.loadAllQuest();
+        System.out.println("\t任務資料於 " + ((System.currentTimeMillis() - timeToTake) / 1000.0) + " 秒 讀取完畢");
+
+        timeToTake = System.currentTimeMillis();
         System.out.println("讀取\t物品資料");
         MapleItemInformationProvider.getInstance().getAllItems();
-        CashItemFactory.getInstance().initialize();
 
+        CashItemFactory.getInstance().initialize();
         System.out.println("\t物品資料於 " + ((System.currentTimeMillis() - timeToTake) / 1000.0) + " 秒 讀取完畢");
 
         try {
@@ -269,26 +283,30 @@ public class Server implements Runnable {
                 //int i = 1;
                 System.out.println("建立\t世界伺服器");
                 World world = new World(i,
-                        Integer.parseInt(p.getProperty("Sync.Flag")),
-                        p.getProperty("Sync.EventMessage"),
+                        Integer.parseInt(p.getProperty("Flag")),
+                        p.getProperty("EventMessage"),
                         getExpRate(),
                         getDropRate(),
                         getMesoRate(),
-                        getBossRate());//ohlol
+                        getBossRate(),
+                        getNPCExpRate(),
+                        getNPCMesoRate()
+                );//ohlol
 
-                worldRecommendedList.add(new Pair<>(i, p.getProperty("Sync.Whyamirecommended", "")));
+                worldRecommendedList.add(new Pair<>(i, p.getProperty("Whyamirecommended", "")));
                 worlds.add(world);
                 channels.add(new LinkedHashMap<Integer, String>());
-                int channelCount = Integer.parseInt(p.getProperty("Sync.Channels", "1"));
+                int channelCount = Integer.parseInt(p.getProperty("Channels", "1"));
                 for (int j = 0; j < channelCount; j++) {
                     int channelid = j + 1;
                     Channel channel = new Channel(i, channelid);
                     world.addChannel(channel);
+                    ch.add(channel);
                     channels.get(i).put(channelid, channel.getIP());
                 }
 
-                world.setServerMessage(p.getProperty("Sync.ServerMessage", ""));
-                System.out.println("世界伺服器讀取完畢\n");
+                world.setServerMessage(p.getProperty("ServerMessage", ""));
+                System.out.println("世界伺服器讀取完畢");
             }
             Collections.reverse(worlds);
             System.out.println("");
@@ -308,7 +326,7 @@ public class Server implements Runnable {
             System.exit(0);
         }
 
-        System.out.println("登入伺服器端口: 8484 \n\n");
+        System.out.println("登入伺服器端口: 8484 \n");
         System.out.println("伺服器已啟動完畢上線.");
         online = true;
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -322,7 +340,7 @@ public class Server implements Runnable {
                 if (command.equalsIgnoreCase("shutdown")) {
                     this.shutdownThread(false).run();
                 } else if (command.equalsIgnoreCase("saveAll")) {
-                    int channelCount = Integer.parseInt(p.getProperty("Sync.Channels", "1"));
+                    int channelCount = Integer.parseInt(p.getProperty("Channels", "1"));
                     for (int j = 0; j < channelCount; j++) {
                         worlds.get(0).getChannel(j + 1).saveAll();
                     }
@@ -331,7 +349,7 @@ public class Server implements Runnable {
                     MapleMonsterInformationProvider.getInstance().clearDrops(); // 怪物掉落
                     ReactorScriptManager.getInstance().clearDrops(); // 反應堆腳本
                     MapleShopFactory.getInstance().reloadShops(); // 商店腳本
-                    for (Channel instance : Channel.getAllInstances()) {
+                    for (Channel instance : ch) {
                         instance.reloadEvents(); // 事件腳本
                     }
                 }
@@ -633,7 +651,7 @@ public class Server implements Runnable {
     }
 
     public void gmChat(String message, String exclude) {
-        GMServer.broadcastInGame(MaplePacketCreator.broadcastMsg(6, message));
+        GMServer.broadcastInGame(CWvsContext.broadcastMsg(6, message));
         GMServer.broadcastOutGame(GMPacketCreator.chat(message), exclude);
     }
 

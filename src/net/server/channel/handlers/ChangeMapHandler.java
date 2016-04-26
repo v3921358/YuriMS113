@@ -33,6 +33,8 @@ import server.maps.MapleMap;
 import tools.FilePrinter;
 import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CFieldPacket;
+import tools.packets.CWvsContext;
 import tools.packets.UIPacket;
 
 public final class ChangeMapHandler extends AbstractMaplePacketHandler {
@@ -52,7 +54,7 @@ public final class ChangeMapHandler extends AbstractMaplePacketHandler {
             c.getChannelServer().removePlayer(chr);
             c.updateLoginState(MapleClient.LOGIN_SERVER_TRANSITION);
             try {
-                c.announce(MaplePacketCreator.getChannelChange(InetAddress.getByName(socket[0]), Integer.parseInt(socket[1])));
+                c.announce(CFieldPacket.getChannelChange(InetAddress.getByName(socket[0]), Integer.parseInt(socket[1])));
             } catch (UnknownHostException ex) {
             }
         } else {
@@ -117,7 +119,7 @@ public final class ChangeMapHandler extends AbstractMaplePacketHandler {
                 }
                 if (portal != null && !portal.getPortalStatus()) {
                     c.announce(MaplePacketCreator.blockedMessage(1));
-                    c.announce(MaplePacketCreator.enableActions());
+                    c.announce(CWvsContext.enableActions());
                     return;
                 }
                 if (chr.getMapId() == 109040004) {
@@ -129,7 +131,7 @@ public final class ChangeMapHandler extends AbstractMaplePacketHandler {
                 if (portal != null) {
                     portal.enterPortal(c);
                 } else {
-                    c.announce(MaplePacketCreator.enableActions());
+                    c.announce(CWvsContext.enableActions());
                 }
                 chr.setRates();
             } catch (Exception e) {

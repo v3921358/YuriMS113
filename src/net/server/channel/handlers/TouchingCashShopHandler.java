@@ -25,7 +25,7 @@ import client.MapleClient;
 import net.AbstractMaplePacketHandler;
 import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
-import tools.packets.MTSCSPacket;
+import tools.packets.CashShopPacket;
 
 /**
  *
@@ -34,6 +34,6 @@ import tools.packets.MTSCSPacket;
 public final class TouchingCashShopHandler extends AbstractMaplePacketHandler {
 
     public final void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
-        c.announce(MTSCSPacket.showCash(c.getPlayer()));
+        c.announce(CashShopPacket.showCash(c.getPlayer()));
     }
 }

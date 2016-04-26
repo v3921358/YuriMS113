@@ -156,6 +156,10 @@ public class MapleTrade {
         return new LinkedList<>(items);
     }
 
+    public int getExchangeMesos(){
+    	return exchangeMeso;
+    }
+    
     private boolean fitsInInventory() {
         MapleItemInformationProvider mii = MapleItemInformationProvider.getInstance();
         Map<MapleInventoryType, Integer> neededSlots = new LinkedHashMap<>();

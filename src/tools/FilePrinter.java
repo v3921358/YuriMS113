@@ -31,7 +31,10 @@ public class FilePrinter {
             SAVE_CHAR = "saveToDB.txt",
             INSERT_CHAR = "insertCharacter.txt",
             LOAD_CHAR = "loadCharFromDB.txt",
-            SESSION = "sessions.txt";//more to come (maps)
+            SESSION = "sessions.txt",//more to come (maps)
+            NPC_UNCODED = "uncodedNPCs.txt",
+            EXPLOITS = "exploits/",
+            QUEST_UNCODED = "uncodedQuests.txt";
     private static final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
     private static final String FILE_PATH = "logs/" + sdf.format(Calendar.getInstance().getTime()) + "/";// + sdf.format(Calendar.getInstance().getTime()) + "/"
     private static final String ERROR = "error/";

@@ -51,6 +51,9 @@ public class QuestScriptManager extends AbstractScriptManager {
             dispose(c);
             return;
         }
+        if (c.getPlayer().isGM()) {
+            c.getPlayer().dropMessage("任務對話:" + questid);
+        }
         try {
             QuestActionManager qm = new QuestActionManager(c, questid, npc, true);
             if (qms.containsKey(c)) {
@@ -63,11 +66,11 @@ public class QuestScriptManager extends AbstractScriptManager {
                 qm.dispose();
                 return;
             }
-            
+
             engine.put("qm", qm);
             scripts.put(c, iv);
             c.getPlayer().setConversation(1);
-            
+
             iv.invokeFunction("start", (byte) 1, (byte) 0, 0);
         } catch (final UndeclaredThrowableException ute) {
             FilePrinter.printError(FilePrinter.QUEST + questid + ".txt", ute);
@@ -98,6 +101,9 @@ public class QuestScriptManager extends AbstractScriptManager {
         if (!c.getPlayer().getQuest(quest).getStatus().equals(MapleQuestStatus.Status.STARTED) || !c.getPlayer().getMap().containsNPC(npc)) {
             dispose(c);
             return;
+        }
+        if (c.getPlayer().isGM()) {
+            c.getPlayer().dropMessage("任務對話:" + questid);
         }
         try {
             QuestActionManager qm = new QuestActionManager(c, questid, npc, false);

@@ -53,6 +53,7 @@ import server.maps.MapleMapObject;
 import server.maps.MapleMapObjectType;
 import server.partyquest.Pyramid;
 import server.quest.MapleQuest;
+import tools.packets.CWvsContext;
 import tools.packets.MaplePacketCreator;
 import tools.packets.UIPacket;
 
@@ -87,7 +88,7 @@ public class AbstractPlayerInteraction {
     public void warpMap(int map) {
         List<MapleCharacter> list = getPlayer().getMap().getCharacters();
         MapleMap target = getWarpMap(map);
-        for (MapleCharacter mc : list ) {
+        for (MapleCharacter mc : list) {
             mc.changeMap(target, target.getPortal(0));
         }
     }
@@ -159,7 +160,7 @@ public class AbstractPlayerInteraction {
     }
 
     public void gainItem(int id, short quantity) {
-        gainItem(id, quantity, false, false);
+        gainItem(id, quantity, false, true);  //我記得都會顯示
     }
 
     public void gainItem(int id, short quantity, boolean show) {//this will fk randomStats equip :P
@@ -182,7 +183,7 @@ public class AbstractPlayerInteraction {
             MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
             Item item = ii.getEquipById(id);
             if (!MapleInventoryManipulator.checkSpace(c, id, quantity, "")) {
-                c.getPlayer().dropMessage(1, "Your inventory is full. Please remove an item from your " + ii.getInventoryType(id).name() + " inventory.");
+                c.getPlayer().dropMessage(1, "你的物品己經滿了. 請從" + ii.getInventoryType(id).getName() + "欄移除一個物品.");
                 return;
             }
             if (ii.getInventoryType(id).equals(MapleInventoryType.EQUIP) && !ItemConstants.isRechargable(item.getItemId())) {
@@ -205,13 +206,13 @@ public class AbstractPlayerInteraction {
     public void changeMusic(String songName) {
         getPlayer().getMap().broadcastMessage(MaplePacketCreator.musicChange(songName));
     }
-    
+
     public void playerMessage(String message) {
         playerMessage(0, message);
     }
 
     public void playerMessage(int type, String message) {
-        c.announce(MaplePacketCreator.broadcastMsg(type, message));
+        c.announce(CWvsContext.broadcastMsg(type, message));
     }
 
     public void message(String message) {
@@ -219,7 +220,7 @@ public class AbstractPlayerInteraction {
     }
 
     public void mapMessage(int type, String message) {
-        getPlayer().getMap().broadcastMessage(MaplePacketCreator.broadcastMsg(type, message));
+        getPlayer().getMap().broadcastMessage(CWvsContext.broadcastMsg(type, message));
     }
 
     public void mapEffect(String path) {
@@ -236,12 +237,12 @@ public class AbstractPlayerInteraction {
 
     public void showInfo(String path) {
         c.announce(MaplePacketCreator.showInfo(path));
-        c.announce(MaplePacketCreator.enableActions());
+        c.announce(CWvsContext.enableActions());
     }
 
     public void guildMessage(int type, String message) {
         if (getGuild() != null) {
-            getGuild().guildMessage(MaplePacketCreator.broadcastMsg(type, message));
+            getGuild().guildMessage(CWvsContext.broadcastMsg(type, message));
         }
     }
 
@@ -311,18 +312,18 @@ public class AbstractPlayerInteraction {
     public int getPlayerCount(int mapid) {
         return c.getChannelServer().getMapFactory().getMap(mapid).getCharacters().size();
     }
-    
+
     public final void playPortalSE() {
         c.getSession().write(MaplePacketCreator.showOwnBuffEffect(0, 7));
     }
-    
+
     public final void cancelItem(final int id) {
-    c.getPlayer().cancelEffect(MapleItemInformationProvider.getInstance().getItemEffect(id), false, -1);
+        c.getPlayer().cancelEffect(MapleItemInformationProvider.getInstance().getItemEffect(id), false, -1);
     }
-    
+
     public void showInstruction(String msg, int width, int height) {
         c.announce(MaplePacketCreator.sendHint(msg, width, height));
-        c.announce(MaplePacketCreator.enableActions());
+        c.announce(CWvsContext.enableActions());
     }
 
     public void disableMinimap() {
@@ -372,7 +373,8 @@ public class AbstractPlayerInteraction {
         monster.setPosition(new Point(x, y));
         getPlayer().getMap().spawnMonster(monster);
     }
-        public final void spawnMobOnMap(final int id, final int qty, final int x, final int y, final int map) {
+
+    public final void spawnMobOnMap(final int id, final int qty, final int x, final int y, final int map) {
         for (int i = 0; i < qty; i++) {
             getMap(map).spawnMonsterOnGroundBelow(MapleLifeFactory.getMonster(id), new Point(x, y));
         }
@@ -400,7 +402,7 @@ public class AbstractPlayerInteraction {
 
     public void updateAreaInfo(Short area, String info) {
         c.getPlayer().updateAreaInfo(area, info);
-        c.announce(MaplePacketCreator.enableActions());//idk, nexon does the same :P
+        c.announce(CWvsContext.enableActions());//idk, nexon does the same :P
     }
 
     public boolean containsAreaInfo(short area, String info) {

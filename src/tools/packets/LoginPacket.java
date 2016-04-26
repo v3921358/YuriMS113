@@ -16,6 +16,26 @@ import tools.data.output.MaplePacketLittleEndianWriter;
 
 public class LoginPacket {
 
+    public static byte[] getHello(short mapleVersion, byte[] sendIv, byte[] recvIv) {
+        final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(8);
+        mplew.writeShort(0x0E); // MSEA=13  GMS=14 EMS=15
+        mplew.writeShort(mapleVersion);
+        mplew.writeShort(1);
+        mplew.write(49);
+        mplew.write(recvIv);
+        mplew.write(sendIv);
+        mplew.write(6); // KMS=  KMS測試機=2 日本=3 中國=4 台版測試機=5 台港澳=6 新加坡=7 國際版=8 巴西=9
+        return mplew.getPacket();
+    }
+
+    public static byte[] getPing() {
+        final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(2);
+        mplew.writeShort(SendOpcode.PING.getValue());
+        return mplew.getPacket();
+    }
+    
+    
+    
     /**
      * 角色列表的封包
      *
@@ -31,7 +51,7 @@ public class LoginPacket {
         List<MapleCharacter> chars = c.loadCharacters(serverId);
         mplew.write((byte) chars.size());
         for (MapleCharacter chr : chars) {
-            MaplePacketCreator.addCharEntry(mplew, chr, false);
+            PacketHelper.addCharEntry(mplew, chr, false);
         }
         mplew.writeShort(3);
         mplew.writeInt(c.getCharacterSlots());

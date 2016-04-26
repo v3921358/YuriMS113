@@ -35,6 +35,7 @@ import tools.packets.MaplePacketCreator;
 import tools.Pair;
 import tools.Randomizer;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CWvsContext;
 
 /**
  * @author Jay Estrella/ Modified by kevintjuh93
@@ -70,11 +71,11 @@ public final class ItemRewardHandler extends AbstractMaplePacketHandler {
                     String msg = reward.worldmsg;
                     msg.replaceAll("/name", c.getPlayer().getName());
                     msg.replaceAll("/item", ii.getName(reward.itemid));
-                    Server.getInstance().broadcastMessage(c.getWorld(), MaplePacketCreator.broadcastMsg(6, msg));
+                    Server.getInstance().broadcastMessage(c.getWorld(), CWvsContext.broadcastMsg(6, msg));
                 }
                 break;
             }
         }
-        c.announce(MaplePacketCreator.enableActions());
+        c.announce(CWvsContext.enableActions());
     }
 }

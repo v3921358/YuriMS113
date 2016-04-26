@@ -43,6 +43,7 @@ import tools.FilePrinter;
 import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packets.BuddyPacket;
+import tools.packets.CWvsContext;
 
 public class BuddylistModifyHandler extends AbstractMaplePacketHandler {
 
@@ -147,9 +148,9 @@ public class BuddylistModifyHandler extends AbstractMaplePacketHandler {
                 BuddylistEntry buddyEntry = chrBuddylist.get(playerAddName);
 
                 if (buddyEntry != null && buddyEntry.isVisible() == false && playerAddGroup.equals(buddyEntry.getGroup())) {
-                    c.announce(MaplePacketCreator.broadcastMsg(1, "玩家 \"" + buddyEntry.getName() + "\" 已是你的好友"));
+                    c.announce(CWvsContext.broadcastMsg(1, "玩家 \"" + buddyEntry.getName() + "\" 已是你的好友"));
                 } else if (chrBuddylist.isFull()) {
-                    c.announce(MaplePacketCreator.broadcastMsg(1, "好友名單已滿"));
+                    c.announce(CWvsContext.broadcastMsg(1, "好友名單已滿"));
                 } else if (buddyEntry == null) {
 
                     World worldServ = c.getWorldServer();
@@ -193,7 +194,7 @@ public class BuddylistModifyHandler extends AbstractMaplePacketHandler {
                             }
                         }
                         if (buddyAddResult == BuddyAddResult.BUDDYLIST_FULL) {
-                            c.announce(MaplePacketCreator.broadcastMsg(1, "\"" + playerAddName + "\"的好友已滿"));
+                            c.announce(CWvsContext.broadcastMsg(1, "\"" + playerAddName + "\"的好友已滿"));
                         } else {
                             int displayChannel;
                             displayChannel = -1;
@@ -212,7 +213,7 @@ public class BuddylistModifyHandler extends AbstractMaplePacketHandler {
 
                         }
                     } else {
-                        c.announce(MaplePacketCreator.broadcastMsg(1, "玩家 \"" + playerAddName + "\" 不存在"));
+                        c.announce(CWvsContext.broadcastMsg(1, "玩家 \"" + playerAddName + "\" 不存在"));
                     }
                 } else {
                     buddyEntry.changeGroup(playerAddGroup);

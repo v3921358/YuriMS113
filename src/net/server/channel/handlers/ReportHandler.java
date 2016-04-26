@@ -30,6 +30,7 @@ import net.AbstractMaplePacketHandler;
 import tools.DatabaseConnection;
 import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CWvsContext;
 
 /*
  * 
@@ -55,7 +56,7 @@ public final class ReportHandler extends AbstractMaplePacketHandler {
                 c.announce(MaplePacketCreator.reportResponse((byte) 2));
                 return;
             }
-            c.getChannelServer().broadcastGMPacket(MaplePacketCreator.broadcastMsg(6, victim + " was reported for: " + description));
+            c.getChannelServer().broadcastGMPacket(CWvsContext.broadcastMsg(6, victim + " was reported for: " + description));
             addReport(c.getPlayer().getId(), MapleCharacter.getIdByName(victim), 0, description, null);
         } else if (type == 1) {
             String chatlog = slea.readMapleAsciiString();
@@ -71,10 +72,10 @@ public final class ReportHandler extends AbstractMaplePacketHandler {
                     return;
                 }
             }
-            c.getChannelServer().broadcastGMPacket(MaplePacketCreator.broadcastMsg(6, victim + " was reported for: " + description));
+            c.getChannelServer().broadcastGMPacket(CWvsContext.broadcastMsg(6, victim + " was reported for: " + description));
             addReport(c.getPlayer().getId(), MapleCharacter.getIdByName(victim), reason, description, chatlog);
         } else {
-            c.getChannelServer().broadcastGMPacket(MaplePacketCreator.broadcastMsg(6, c.getPlayer().getName() + " is probably packet editing. Got unknown report type, which is impossible."));
+            c.getChannelServer().broadcastGMPacket(CWvsContext.broadcastMsg(6, c.getPlayer().getName() + " is probably packet editing. Got unknown report type, which is impossible."));
         }
     }
 

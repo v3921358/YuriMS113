@@ -41,6 +41,7 @@ import server.maps.MapleMapObjectType;
 import tools.packets.MaplePacketCreator;
 import tools.Pair;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CWvsContext;
 
 /**
  *
@@ -420,7 +421,7 @@ public final class PlayerInteractionHandler extends AbstractMaplePacketHandler {
                 if ((quantity <= item.getQuantity() && quantity >= 0) || ItemConstants.isRechargable(item.getItemId())) {
                     if (ii.isDropRestricted(item.getItemId())) { // ensure that undroppable items do not make it to the trade window
                         if (!((item.getFlag() & ItemConstants.KARMA) == ItemConstants.KARMA || (item.getFlag() & ItemConstants.SPIKES) == ItemConstants.SPIKES)) {
-                            c.announce(MaplePacketCreator.enableActions());
+                            c.announce(CWvsContext.enableActions());
                             return;
                         }
                     }
@@ -576,7 +577,7 @@ public final class PlayerInteractionHandler extends AbstractMaplePacketHandler {
                 merchant.setOpen(true);
             }
             chr.setHiredMerchant(null);
-            c.announce(MaplePacketCreator.enableActions());
+            c.announce(CWvsContext.enableActions());
         } else if (mode == Action.BAN_PLAYER.getCode()) {
             if (chr.getPlayerShop() != null && chr.getPlayerShop().isOwner(c.getPlayer())) {
                 chr.getPlayerShop().banPlayer(slea.readMapleAsciiString());

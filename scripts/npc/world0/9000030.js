@@ -21,7 +21,7 @@ function action(mode, type, selection) {
     if (status == 0) {
         
         if(!cm.haveItem(5072000, 1)) {
-            cm.sendNext("嗨我是SyncMS的GM，領廣播找我就對了!");
+            cm.sendNext("嗨我是YuriMS的GM，領廣播找我就對了!");
             cm.gainItem(5072000, 5, true);
         }
         else

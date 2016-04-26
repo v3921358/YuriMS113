@@ -29,6 +29,7 @@ import net.server.Server;
 import server.maps.HiredMerchant;
 import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CWvsContext;
 
 /**
  *
@@ -52,7 +53,7 @@ public class RemoteStoreHandler extends AbstractMaplePacketHandler {
         } else {
             chr.dropMessage(1, "You don't have a Merchant open");
         }
-        c.announce(MaplePacketCreator.enableActions());
+        c.announce(CWvsContext.enableActions());
     }
 
     public HiredMerchant getMerchant(MapleClient c) {

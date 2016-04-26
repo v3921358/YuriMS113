@@ -21,6 +21,7 @@ package server.events;
 import java.util.concurrent.ScheduledFuture;
 import client.MapleCharacter;
 import server.Timer.EventTimer;
+import tools.packets.CWvsContext;
 import tools.packets.MaplePacketCreator;
 
 
@@ -67,8 +68,8 @@ public class MapleSurvival extends MapleEvent {
             }
         }, this.time);
 
-        broadcast(MaplePacketCreator.broadcastMsg(0, "The portal has now opened. Press the up arrow key at the portal to enter."));
-        broadcast(MaplePacketCreator.broadcastMsg(0, "Fall down once, and never get back up again! Get to the top without falling down!"));
+        broadcast(CWvsContext.broadcastMsg(0, "The portal has now opened. Press the up arrow key at the portal to enter."));
+        broadcast(CWvsContext.broadcastMsg(0, "Fall down once, and never get back up again! Get to the top without falling down!"));
     }
 
     public boolean isTimerStarted() {

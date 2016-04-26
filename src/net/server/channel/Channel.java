@@ -72,6 +72,7 @@ import server.maps.HiredMerchant;
 import server.maps.MapleMap;
 import server.maps.MapleMapFactory;
 import tools.FilePrinter;
+import tools.packets.CWvsContext;
 import tools.packets.MaplePacketCreator;
 
 
@@ -105,16 +106,14 @@ public final class Channel {
 
         Properties p = new Properties();
         try {
-            p.load(new InputStreamReader(new FileInputStream("SyncMaple.ini"), "UTF-8"));
+            p.load(new InputStreamReader(new FileInputStream("Maple.ini"), "UTF-8"));
         } catch (Exception e) {
             System.out.println("Setting not found");
             System.exit(0);
         }
-        //p.getProperty("Sync.EventMessage")
-        //Integer.parseInt(p.getProperty("Sync.ExpRate"))
 
         try {
-            eventSM = new EventScriptManager(this, p.getProperty("Sync.Events").split(","));
+            eventSM = new EventScriptManager(this, p.getProperty("Events").split(","));
             port = ServerConstants.CHANNEL_PORT + this.channel - 1;
             port += (world * 10);
             ip = ServerConstants.CHANNEL_IP + ":" + port;
@@ -180,7 +179,7 @@ public final class Channel {
 
     public void addPlayer(MapleCharacter chr) {
         players.addPlayer(chr);
-        chr.announce(MaplePacketCreator.broadcastMsg(serverMessage));
+        chr.announce(CWvsContext.broadcastMsg(serverMessage));
     }
 
     public PlayerStorage getPlayerStorage() {
@@ -227,9 +226,16 @@ public final class Channel {
 
     public final void reloadEvents() {
         Properties p = new Properties();
-        eventSM.cancel();
-        eventSM = new EventScriptManager(this, p.getProperty("Sync.Events").split(","));
-        eventSM.init();
+        try {
+            p.load(new FileInputStream("Maple.ini"));
+            eventSM.cancel();
+            eventSM = new EventScriptManager(this, p.getProperty("Events").split(","));
+            eventSM.init();
+        } catch (IOException e) {
+            System.out.println("Failed to load Maple.ini");
+            System.err.println(e);
+            System.exit(0);
+        }
     }
 
     public void loadEvents() {
@@ -366,7 +372,7 @@ public final class Channel {
 
     public void setServerMessage(String message) {
         this.serverMessage = message;
-        broadcastPacket(MaplePacketCreator.broadcastMsg(message));
+        broadcastPacket(CWvsContext.broadcastMsg(message));
     }
 
     public void saveAll() {
@@ -382,7 +388,7 @@ public final class Channel {
     public int showPlayers() {
         int c = 0;
         for (Channel w : Server.getInstance().getAllChannels()) {
-            c+=w.getPlayerStorage().getAllCharacters().size();
+            c += w.getPlayerStorage().getAllCharacters().size();
         }
 
         return c;

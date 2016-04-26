@@ -34,13 +34,14 @@ import server.MapleItemInformationProvider;
 import tools.packets.MaplePacketCreator;
 import tools.Randomizer;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CWvsContext;
 
 public final class SkillBookHandler extends AbstractMaplePacketHandler {
 
     @Override
     public final void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
         if (!c.getPlayer().isAlive()) {
-            c.announce(MaplePacketCreator.enableActions());
+            c.announce(CWvsContext.enableActions());
             return;
         }
         slea.readInt();

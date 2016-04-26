@@ -51,6 +51,7 @@ import server.TimerManager;
 import tools.packets.MaplePacketCreator;
 import tools.Randomizer;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CFieldPacket;
 
 public final class RangedAttackHandler extends AbstractDealDamageHandler {
 
@@ -95,7 +96,7 @@ public final class RangedAttackHandler extends AbstractDealDamageHandler {
 
                 bulletCount = effect.getBulletCount();
                 if (effect.getCooldown() > 0) {
-                    c.announce(MaplePacketCreator.skillCooldown(attack.skill, effect.getCooldown()));
+                    c.announce(CFieldPacket.skillCooldown(attack.skill, effect.getCooldown()));
                 }
             }
 
@@ -244,7 +245,7 @@ public final class RangedAttackHandler extends AbstractDealDamageHandler {
                         if (player.skillisCooling(attack.skill)) {
                             return;
                         } else {
-                            c.announce(MaplePacketCreator.skillCooldown(attack.skill, effect_.getCooldown()));
+                            c.announce(CFieldPacket.skillCooldown(attack.skill, effect_.getCooldown()));
                             player.addCooldown(attack.skill, System.currentTimeMillis(), effect_.getCooldown() * 1000, TimerManager.getInstance().schedule(new CancelCooldownAction(player, attack.skill), effect_.getCooldown() * 1000));
                         }
                     }

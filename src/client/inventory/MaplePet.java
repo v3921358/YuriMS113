@@ -265,7 +265,7 @@ public class MaplePet {
         return this.itemid;
     }
 
-    public byte getInventorypos() {
+    public byte getPosition() {
         return inventorypos;
     }
 

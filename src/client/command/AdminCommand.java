@@ -59,6 +59,8 @@ import server.life.MapleMonsterInformationProvider;
 import scripting.reactor.ReactorScriptManager;
 import java.sql.PreparedStatement;
 import tools.DatabaseConnection;
+import server.quest.MapleQuest;
+import tools.packets.CWvsContext;
 
 public class AdminCommand {
 
@@ -111,6 +113,11 @@ public class AdminCommand {
                 player.setLevel(Integer.parseInt(splitted[1]));
                 player.gainExp(-player.getExp(), false, false);
                 player.updateSingleStat(MapleStat.LEVEL, player.getLevel());
+            }else if (splitted[0].equalsIgnoreCase("levelup")) {
+                int level = Integer.parseInt(splitted[1]);
+                for(int i=1;i<=level;i++){
+                    player.levelUp(false);
+                }
             } else if (splitted[0].equalsIgnoreCase("mesos")) {
                 player.gainMeso(Integer.parseInt(splitted[1]), true);
             } else if (splitted[0].equalsIgnoreCase("warp")) {
@@ -183,7 +190,7 @@ public class AdminCommand {
                 } else {
                     victim = cserv.getPlayerStorage().getCharacterByName(splitted[1]);
                 }
-                victim.getClient().getSession().close();
+                victim.getClient().getSession().close(true); // close修改
                 if (level >= 1) {
                     victim.getClient().disconnect(true, false);
                 }
@@ -291,9 +298,19 @@ public class AdminCommand {
                     player.dropMessage(5, "怪物不存在");
                 }
 
+            } else if (splitted[0].equalsIgnoreCase("clearquestcache")) {
+                MapleQuest.clearCache();
+                player.dropMessage(5, "Quest Cache Cleared.");
+            } else if (splitted[0].equalsIgnoreCase("clearquest")) {
+                if (splitted.length < 1) {
+                    player.dropMessage(5, "Plese include a quest ID.");
+                } else {
+                    MapleQuest.clearCache(Integer.parseInt(splitted[1]));
+                    player.dropMessage(5, "Quest Cache for quest " + splitted[1] + " cleared.");
+                }
             } else if (splitted[0].equalsIgnoreCase("notice")) {
                 String text = StringUtil.joinStringFrom(splitted, 1);
-                c.getWorldServer().broadcastPacket(MaplePacketCreator.broadcastMsg(0, text));
+                c.getWorldServer().broadcastPacket(CWvsContext.broadcastMsg(0, text));
             } else if (splitted[0].equalsIgnoreCase("管理員幫助") || splitted[0].equalsIgnoreCase("adminhelp")) {
                 player.dropMessage(5, "SyncMs GM 指令");
                 player.dropMessage(5, "!online - 上線人數");

@@ -1,90 +1,94 @@
 /*/*
-	This file is part of the OdinMS Maple Story Server
-    Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc>
-		       Matthias Butz <matze@odinms.de>
-		       Jan Christian Meyer <vimes@odinms.de>
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation version 3 as published by
-    the Free Software Foundation. You may not use, modify or distribute
-    this program under any other version of the GNU Affero General Public
-    License.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ This file is part of the OdinMS Maple Story Server
+ Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc>
+ Matthias Butz <matze@odinms.de>
+ Jan Christian Meyer <vimes@odinms.de>
+ 
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as
+ published by the Free Software Foundation version 3 as published by
+ the Free Software Foundation. You may not use, modify or distribute
+ this program under any other version of the GNU Affero General Public
+ License.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+ 
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
--- Odin JavaScript --------------------------------------------------------------------------------
-	Cloto - Hidden Street : 1st Accompaniment
--- By ---------------------------------------------------------------------------------------------
-	Stereo
--- Version Info -----------------------------------------------------------------------------------
-        1.1 - Second Version by Moogra
-	1.0 - First Version by Stereo
----------------------------------------------------------------------------------------------------
-**/
+ -- Odin JavaScript --------------------------------------------------------------------------------
+ Cloto - Hidden Street : 1st Accompaniment
+ -- By ---------------------------------------------------------------------------------------------
+ Stereo
+ -- Version Info -----------------------------------------------------------------------------------
+ 1.1 - Second Version by Moogra
+ 1.0 - First Version by Stereo
+ ---------------------------------------------------------------------------------------------------
+ **/
 importPackage(Packages.tools.packets);
 importPackage(Packages.tools);
 importPackage(java.awt);
 
 var status;
 var curMap;
-var questions = Array("請問初心者轉職成#b戰士#k最低需要幾等？請收集跟答案一樣數量的優惠卷。",
-    "請問#b殘暴炎磨頭盔#k需要幾等才能裝備？請收集跟答案除以10一樣數量的優惠卷。",
-    "請問法師的技能#b魔心防禦#k最高等級為多少？請收集跟答案一樣數量的優惠卷。",
-    "請問冒險家最低幾等才能二次轉職呢？請收集跟答案一樣數量的優惠卷。",
-    "請問要幾等才能開始挑戰#b超級綠水靈#k任務？請收集跟答案一樣數量的優惠卷。",
-    "請問 10 + 2 % 2 + 1 = ? 請收集跟答案一樣數量的優惠卷。");
-var qanswers = Array(10, 5, 20, 30, 21, 11);
+var questions = Array(
+        "請問初心者轉職成#b戰士#k最低需要幾等？請收集跟答案一樣數量的優惠卷。",
+        "請問初心者轉職成#b弓箭手#k最低需要幾等？請收集跟答案一樣數量的優惠卷。",
+        "請問初心者轉職成#b盜賊#k最低需要幾等？請收集跟答案一樣數量的優惠卷。",
+        "請問初心者轉職成#b法師#k最低需要幾等？請收集跟答案一樣數量的優惠卷。",
+        "請問初心者轉職成#b戰士#k最低需要多少力量？請收集跟答案一樣數量的優惠卷。",
+        "請問初心者轉職成#b弓箭手#k最低需要要多少敏捷？請收集跟答案一樣數量的優惠卷。",
+        "請問初心者轉職成#b盜賊#k最低需要要多少敏捷？請收集跟答案一樣數量的優惠卷。",
+        "請問初心者轉職成#b法師#k最低需要要多少智力？請收集跟答案一樣數量的優惠卷。",
+        "請問初心者從等級一到等級二所需經驗值是多少？請收集跟答案一樣數量的優惠卷。");
+var qanswers = Array(10, 10, 10, 10, 35, 25, 25, 20, 15);
 var party;
 var preamble; // we dont even need this mother fucker ! --
-var stage2Rects = Array(Rectangle(-755,-132,4,218),Rectangle(-721,-340,4,166),Rectangle(-586,-326,4,150),Rectangle(-483,-181,4,222));
-var stage3Rects = Array(Rectangle(608,-180,140,50),Rectangle(791,-117,140,45),
-    Rectangle(958,-180,140,50),Rectangle(876,-238,140,45),
-    Rectangle(702,-238,140,45));
-var stage4Rects = Array(Rectangle(910,-236,35,5),Rectangle(877,-184,35,5),
-    Rectangle(946,-184,35,5),Rectangle(845,-132,35,5),
-    Rectangle(910,-132,35,5),Rectangle(981,-132,35,5));
-var stage2combos = Array(Array(0,1,1,1),Array(1,0,1,1),Array(1,1,0,1),Array(1,1,1,0));
-var stage3combos = Array(Array(0,0,1,1,1),Array(0,1,0,1,1),Array(0,1,1,0,1),
-    Array(0,1,1,1,0),Array(1,0,0,1,1),Array(1,0,1,0,1),
-    Array(1,0,1,1,0),Array(1,1,0,0,1),Array(1,1,0,1,0),
-    Array(1,1,1,0,0));
-var stage4combos = Array(Array(0,0,0,1,1,1),Array(0,0,1,0,1,1),Array(0,0,1,1,0,1),
-    Array(0,0,1,1,1,0),Array(0,1,0,0,1,1),Array(0,1,0,1,0,1),
-    Array(0,1,0,1,1,0),Array(0,1,1,0,0,1),Array(0,1,1,0,1,0),
-    Array(0,1,1,1,0,0),Array(1,0,0,0,1,1),Array(1,0,0,1,0,1),
-    Array(1,0,0,1,1,0),Array(1,0,1,0,0,1),Array(1,0,1,0,1,0),
-    Array(1,0,1,1,0,0),Array(1,1,0,0,0,1),Array(1,1,0,0,1,0),
-    Array(1,1,0,1,0,0),Array(1,1,1,0,0,0));	
+var stage2Rects = Array(Rectangle(-755, -132, 4, 218), Rectangle(-721, -340, 4, 166), Rectangle(-586, -326, 4, 150), Rectangle(-483, -181, 4, 222));
+var stage3Rects = Array(Rectangle(608, -180, 140, 50), Rectangle(791, -117, 140, 45),
+        Rectangle(958, -180, 140, 50), Rectangle(876, -238, 140, 45),
+        Rectangle(702, -238, 140, 45));
+var stage4Rects = Array(Rectangle(910, -236, 35, 5), Rectangle(877, -184, 35, 5),
+        Rectangle(946, -184, 35, 5), Rectangle(845, -132, 35, 5),
+        Rectangle(910, -132, 35, 5), Rectangle(981, -132, 35, 5));
+var stage2combos = Array(Array(0, 1, 1, 1), Array(1, 0, 1, 1), Array(1, 1, 0, 1), Array(1, 1, 1, 0));
+var stage3combos = Array(Array(0, 0, 1, 1, 1), Array(0, 1, 0, 1, 1), Array(0, 1, 1, 0, 1),
+        Array(0, 1, 1, 1, 0), Array(1, 0, 0, 1, 1), Array(1, 0, 1, 0, 1),
+        Array(1, 0, 1, 1, 0), Array(1, 1, 0, 0, 1), Array(1, 1, 0, 1, 0),
+        Array(1, 1, 1, 0, 0));
+var stage4combos = Array(Array(0, 0, 0, 1, 1, 1), Array(0, 0, 1, 0, 1, 1), Array(0, 0, 1, 1, 0, 1),
+        Array(0, 0, 1, 1, 1, 0), Array(0, 1, 0, 0, 1, 1), Array(0, 1, 0, 1, 0, 1),
+        Array(0, 1, 0, 1, 1, 0), Array(0, 1, 1, 0, 0, 1), Array(0, 1, 1, 0, 1, 0),
+        Array(0, 1, 1, 1, 0, 0), Array(1, 0, 0, 0, 1, 1), Array(1, 0, 0, 1, 0, 1),
+        Array(1, 0, 0, 1, 1, 0), Array(1, 0, 1, 0, 0, 1), Array(1, 0, 1, 0, 1, 0),
+        Array(1, 0, 1, 1, 0, 0), Array(1, 1, 0, 0, 0, 1), Array(1, 1, 0, 0, 1, 0),
+        Array(1, 1, 0, 1, 0, 0), Array(1, 1, 1, 0, 0, 0));
 var eye = 9300002;
 var necki = 9300000;
 var slime = 9300003;
 var monsterIds = Array(eye, eye, eye, necki, necki, necki, necki, necki, necki, slime);
-var prizeIdScroll = Array(2040502, 2040505,// Overall DEX and DEF
-    2040802,// Gloves for DEX
-    2040002, 2040402, 2040602);// Helmet, Topwear and Bottomwear for DEF
-var prizeIdUse = Array(2000001, 2000002, 2000003, 2000006,// Orange, White and Blue Potions and Mana Elixir
-    2000004, 2022000, 2022003);// Elixir, Pure Water and Unagi
+var prizeIdScroll = Array(2040502, 2040505, // Overall DEX and DEF
+        2040802, // Gloves for DEX
+        2040002, 2040402, 2040602);// Helmet, Topwear and Bottomwear for DEF
+var prizeIdUse = Array(2000001, 2000002, 2000003, 2000006, // Orange, White and Blue Potions and Mana Elixir
+        2000004, 2022000, 2022003);// Elixir, Pure Water and Unagi
 var prizeQtyUse = Array(80, 80, 80, 50, 5, 15, 15);
-var prizeIdEquip = Array(1032004, 1032005, 1032009,// Level 20-25 Earrings
-    1032006, 1032007, 1032010,// Level 30 Earrings
-    1032002,// Level 35 Earring
-    1002026, 1002089, 1002090);// Bamboo Hats
-var prizeIdEtc = Array(4010000, 4010001, 4010002, 4010003,// Mineral Ores
-    4010004, 4010005, 4010006,// Mineral Ores
-    4020000, 4020001, 4020002, 4020003,// Jewel Ores
-    4020004, 4020005, 4020006,// Jewel Ores
-    4020007, 4020008, 4003000);	// Diamond and Black Crystal Ores and Screws
+var prizeIdEquip = Array(1032004, 1032005, 1032009, // Level 20-25 Earrings
+        1032006, 1032007, 1032010, // Level 30 Earrings
+        1032002, // Level 35 Earring
+        1002026, 1002089, 1002090);// Bamboo Hats
+var prizeIdEtc = Array(4010000, 4010001, 4010002, 4010003, // Mineral Ores
+        4010004, 4010005, 4010006, // Mineral Ores
+        4020000, 4020001, 4020002, 4020003, // Jewel Ores
+        4020004, 4020005, 4020006, // Jewel Ores
+        4020007, 4020008, 4003000);	// Diamond and Black Crystal Ores and Screws
 var prizeQtyEtc = Array(15, 15, 15, 15, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 3, 3, 30);
-			
+
 function start() {
     status = -1;
     curMap = cm.getPlayer().getMapId() - 103000799;
@@ -107,7 +111,7 @@ function action(mode, type, selection) {
             preamble = eim.getProperty("leader1stpreamble");
             if (preamble == null) {
                 cm.sendNext("您好。歡迎來到第一階段。環顧四周，你會看到很多鱷魚。當你擊退他們，會掉落#b優惠卷#k中。隊伍的每個人都要來跟我問說需要多少張，並開始收集特定的#b優惠卷#k數量。\r\n如果玩家收集到了，我會給給予你#b通行證#k給玩家。 當隊伍所有人都完成了，請將#b通行證#k給予隊長，隊長會將#b通行證#k轉交給我，並完成這個階段的挑戰。 越快完成這個階段，越容易完成接下來的挑戰，所以我建議你盡快的將優惠卷收集過來吧。最後，祝你好運。");
-                eim.setProperty("leader1stpreamble","done");
+                eim.setProperty("leader1stpreamble", "done");
                 cm.dispose();
             } else {
                 var complete = eim.getProperty(curMap + "stageclear");
@@ -126,7 +130,7 @@ function action(mode, type, selection) {
                         cm.givePartyExp(100, party);
                         cm.gainItem(4001007, -numpasses);
                         cm.dispose();
-                    // TODO: Make the shiny thing flash
+                        // TODO: Make the shiny thing flash
                     }
                 }
             }
@@ -172,7 +176,7 @@ function action(mode, type, selection) {
                     cm.dispose();
                 }
             } else if (status == 2) { // Preamble completed
-                eim.setProperty(pstring,"done");
+                eim.setProperty(pstring, "done");
                 cm.dispose();
             }
         } // End first map scripts
@@ -203,7 +207,7 @@ function action(mode, type, selection) {
             if (status == 0) {
                 cm.sendNext("太棒了！你們居然通過了所有挑戰，這是給你的獎勵。在拿到禮物之前，請確認物品欄是不是有足夠的空間。\r\n#b如果物品欄沒有空間，你會拿不到獎勵的喔！#k");
             } else if (status == 1) {
-                getPrize(eim,cm);
+                getPrize(eim, cm);
                 cm.dispose();
             }
         }
@@ -234,7 +238,7 @@ function failstage(eim, cm) {
     map.broadcastMessage(MaplePacketCreator.showEffect("quest/party/wrong_kor"));
 }
 
-function rectanglestages (cm) {
+function rectanglestages(cm) {
     var eim = cm.getPlayer().getEventInstance();
     var nthtext;
     var nthobj;
@@ -250,7 +254,7 @@ function rectanglestages (cm) {
         nthpos = "站太靠近邊緣了";
         curArray = stage2Rects;
         curCombo = stage2combos;
-        objset = [0,0,0,0];
+        objset = [0, 0, 0, 0];
     } else if (curMap == 3) {
         nthtext = "三";
         nthobj = "platforms";
@@ -258,7 +262,7 @@ function rectanglestages (cm) {
         nthpos = "站太靠近邊緣了";
         curArray = stage3Rects;
         curCombo = stage3combos;
-        objset = [0,0,0,0,0];
+        objset = [0, 0, 0, 0, 0];
     } else if (curMap == 4) {
         nthtext = "四";
         nthobj = "barrels";
@@ -266,7 +270,7 @@ function rectanglestages (cm) {
         nthpos = "站太靠近邊緣了";
         curArray = stage4Rects;
         curCombo = stage4combos;
-        objset = [0,0,0,0,0,0];
+        objset = [0, 0, 0, 0, 0, 0];
     }
     if (cm.isLeader()) { // Check if player is leader
         if (status == 0) {
@@ -274,7 +278,7 @@ function rectanglestages (cm) {
             preamble = eim.getProperty("leader" + nthtext + "preamble");
             if (preamble == null) { // first time talking.
                 cm.sendNext("嗨，歡迎來到第" + nthtext + " 階段。 在我旁邊你可以看到幾個 " + nthobj + "。 Out of these " + nthobj + ", #b3 are connected to the portal that sends you to the next stage#k. All you need to do is have #b3 party members find the correct " + nthobj + " and " + nthverb + " on them.#k\r\nBUT, it doesn't count as an answer if you " + nthpos + "; please be near the middle of the " + nthobj + " to be counted as a correct answer. Also, only 3 members of your party are allowed on the " + nthobj + ". Once they are " + nthverb + "ing on them, the leader of the party must #bdouble-click me to check and see if the answer's correct or not#k. Now, find the right " + nthobj + " to " + nthverb + " on!");
-                eim.setProperty("leader" + nthtext + "preamble","done");
+                eim.setProperty("leader" + nthtext + "preamble", "done");
                 var sequenceNum = Math.floor(Math.random() * curCombo.length);
                 eim.setProperty("stage" + nthtext + "combo", sequenceNum.toString());
                 cm.dispose();
@@ -337,7 +341,7 @@ function rectanglestages (cm) {
 
 
 
-function getPrize(eim,cm) {
+function getPrize(eim, cm) {
     var itemSetSel = Math.random();
     var itemSet;
     var itemSetQty;
@@ -355,11 +359,11 @@ function getPrize(eim,cm) {
         itemSetQty = prizeQtyEtc;
         hasQty = true;
     }
-    var sel = Math.floor(Math.random()*itemSet.length);
+    var sel = Math.floor(Math.random() * itemSet.length);
     var qty = 1;
     if (hasQty)
         qty = itemSetQty[sel];
 
-    cm.gainItem(itemSet[sel], qty, true );
+    cm.gainItem(itemSet[sel], qty, true);
     cm.getPlayer().changeMap(eim.getMapInstance(103000805));
 }

@@ -43,7 +43,7 @@ public enum SendOpcode {
     SERVERSTATUS(0x16, false),//CHECK_USER_LIMIT_RESULT
 
     /*CWvsContext::OnPacket*/
-    INVENTORY_OPERATION(0x1B),//(0x1D),
+    INVENTORY_OPERATION(0x1B, false),//(0x1D),
     INVENTORY_GROW(0x1C),//(0x1E),
     UPDATE_STATS(0x1D, false),//(0x1F),
     TEMPORY_STAT_SET(0x1E),
@@ -67,10 +67,10 @@ public enum SendOpcode {
     SET_TAMING_MOB_INFO(0x2F),
     ENTRUSTED_SHOP_CHECK_RESULT(0x2F),
     SKILL_LEARN_ITEM_RESULT(0x31),
-    GATHER_ITEM_RESULT(0x32),
+    SORT_ITEM_RESULT(0x32),
     
     
-    SORT_ITEM_RESULT(0x33),
+    GATHER_ITEM_RESULT(0x33),
     SUE_CHARACTER_RESULT(0x37),
     TRADE_MONEY_LIMIT(0x39),
     SET_GENDER(0x3A),
@@ -245,7 +245,7 @@ public enum SendOpcode {
     SPAWN_MONSTER_CONTROL(0xE7, false),
     MOB_CRC_KEY_CHANGED(0xF2),
     /* CMobPool::OnMobPacket */
-    MOVE_MONSTER(0xE8),
+    MOVE_MONSTER(0xE8, false),
     MOVE_MONSTER_RESPONSE(0xE9, false),
     APPLY_MONSTER_STATUS(0xEB),
     CANCEL_MONSTER_STATUS(0xEC),
@@ -266,7 +266,7 @@ public enum SendOpcode {
     DESTROY_HIRED_MERCHANT(0x104),
     SPAWN_MINI_ROOM_BALLOON(0x106),
     /* CDropPool__OnPacket */
-    DROP_ITEM_FROM_MAPOBJECT(0x107),
+    DROP_ITEM_FROM_MAPOBJECT(0x107, false),
     REMOVE_ITEM_FROM_MAP(0x108, false),
     /* CMessageBoxPool__OnPacket */
     KITE_MESSAGE(0x109),

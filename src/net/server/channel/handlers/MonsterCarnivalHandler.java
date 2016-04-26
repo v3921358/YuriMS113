@@ -31,6 +31,7 @@ import server.maps.MapleReactor;
 import server.maps.MapleReactorFactory;
 import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CWvsContext;
 
 /**
  *
@@ -100,7 +101,7 @@ public final class MonsterCarnivalHandler extends AbstractMaplePacketHandler {
         } else {
             chr.announce(MaplePacketCreator.CPQMessage((byte) 5));
         }
-        chr.announce(MaplePacketCreator.enableActions());
+        chr.announce(CWvsContext.enableActions());
     }
 
     public int getMonster(int num) {

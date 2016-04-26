@@ -33,6 +33,7 @@ import net.AbstractMaplePacketHandler;
 import server.MapleInventoryManipulator;
 import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CWvsContext;
 
 public final class PetFoodHandler extends AbstractMaplePacketHandler {
 
@@ -41,14 +42,14 @@ public final class PetFoodHandler extends AbstractMaplePacketHandler {
         MapleCharacter chr = c.getPlayer();
         AutobanManager autoBanManager = chr.getAutobanManager();
         /*if (autoBanManager.getLastSpam(2) + 500 > System.currentTimeMillis()) {
-            c.announce(MaplePacketCreator.enableActions());
+            c.announce(CWvsContext.enableActions());
             return;
         }
         autoBanManager.spam(2);*/
         int timestamp = slea.readInt();
 
         if (chr.getNoPets() == 0) {
-            c.announce(MaplePacketCreator.enableActions());
+            c.announce(CWvsContext.enableActions());
             return;
         }
         int previousFullness = 100;
@@ -106,7 +107,7 @@ public final class PetFoodHandler extends AbstractMaplePacketHandler {
             chr.getMap().broadcastMessage(MaplePacketCreator.commandResponse(chr.getId(), slot, 0, false));
         }
         MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.USE, pos, (short) 1, false);
-        Item petz = chr.getInventory(MapleInventoryType.CASH).getItem(pet.getInventorypos());
+        Item petz = chr.getInventory(MapleInventoryType.CASH).getItem(pet.getPosition());
         chr.forceUpdateItem(petz);
     }
 }

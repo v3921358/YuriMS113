@@ -17,6 +17,7 @@ import server.maps.MapleMapItem;
 import server.maps.MapleMapObject;
 import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CWvsContext;
 
 /**
  *
@@ -67,7 +68,7 @@ public final class ItemPickupHandler extends AbstractMaplePacketHandler {
                     chr.getMap().broadcastMessage(MaplePacketCreator.removeItemFromMap(mapitem.getObjectId(), 2, chr.getId()), mapitem.getPosition());
                     chr.getMap().removeMapObject(ob);
                 } else {
-                    c.announce(MaplePacketCreator.enableActions());
+                    c.announce(CWvsContext.enableActions());
                     return;
                 }
                 mapitem.setPickedUp(true);
@@ -76,7 +77,7 @@ public final class ItemPickupHandler extends AbstractMaplePacketHandler {
                 c.announce(MaplePacketCreator.getShowInventoryFull());
                 return;
             }
-            c.announce(MaplePacketCreator.enableActions());
+            c.announce(CWvsContext.enableActions());
             return;
         }
 
@@ -86,7 +87,7 @@ public final class ItemPickupHandler extends AbstractMaplePacketHandler {
 
                 if (mapitem.getQuest() > 0 && !chr.needQuestItem(mapitem.getQuest(), mapitem.getItemId())) {
                     c.announce(MaplePacketCreator.showItemUnavailable());
-                    c.announce(MaplePacketCreator.enableActions());
+                    c.announce(CWvsContext.enableActions());
                     return;
                 }
                 if (mapitem.isPickedUp()) {
@@ -96,7 +97,7 @@ public final class ItemPickupHandler extends AbstractMaplePacketHandler {
                 }
 
                 if (mapitem.getOwner() != chr.getId() && ((!mapitem.isPlayerDrop() && mapitem.getDropType() == 0) || (mapitem.isPlayerDrop() && chr.getMap().getEverlast()))) {
-                    c.getSession().write(MaplePacketCreator.enableActions());
+                    c.getSession().write(CWvsContext.enableActions());
                     return;
                 }
 
@@ -146,7 +147,7 @@ public final class ItemPickupHandler extends AbstractMaplePacketHandler {
 
                     } else {
                         if (!MapleInventoryManipulator.addFromDrop(c, mapitem.getItem(), true)) {
-                            c.announce(MaplePacketCreator.enableActions());
+                            c.announce(CWvsContext.enableActions());
                             return;
                         }
                     }
@@ -159,7 +160,7 @@ public final class ItemPickupHandler extends AbstractMaplePacketHandler {
                 } else if (mapitem.getItem().getItemId() == 4031868) {
                     chr.getMap().broadcastMessage(MaplePacketCreator.updateAriantPQRanking(chr.getName(), chr.getItemQuantity(4031868, false), false));
                 } else {
-                    c.announce(MaplePacketCreator.enableActions());
+                    c.announce(CWvsContext.enableActions());
                     return;
                 }
                 mapitem.setPickedUp(true);
@@ -168,7 +169,7 @@ public final class ItemPickupHandler extends AbstractMaplePacketHandler {
             }
         }
 
-        c.announce(MaplePacketCreator.enableActions());
+        c.announce(CWvsContext.enableActions());
     }
 
     static boolean useItem(final MapleClient c, final int id) {

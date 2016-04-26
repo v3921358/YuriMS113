@@ -30,13 +30,14 @@ import server.MapleItemInformationProvider;
 import server.MapleStatEffect;
 import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CWvsContext;
 
 public final class PetAutoPotHandler extends AbstractMaplePacketHandler {
 
     @Override
     public final void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
         if (!c.getPlayer().isAlive()) {
-            c.announce(MaplePacketCreator.enableActions());
+            c.announce(CWvsContext.enableActions());
             return;
         }
         slea.readByte();
@@ -47,7 +48,7 @@ public final class PetAutoPotHandler extends AbstractMaplePacketHandler {
         Item toUse = c.getPlayer().getInventory(MapleInventoryType.USE).getItem(slot);
         if (toUse != null && toUse.getQuantity() > 0) {
             if (toUse.getItemId() != itemId) {
-                c.announce(MaplePacketCreator.enableActions());
+                c.announce(CWvsContext.enableActions());
                 return;
             }
             MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.USE, slot, (short) 1, false);

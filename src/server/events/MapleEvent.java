@@ -31,6 +31,7 @@ import server.maps.MapleMap;
 import server.maps.SavedLocationType;
 import tools.StringUtil;
 import tools.RandomRewards;
+import tools.packets.CWvsContext;
 import tools.packets.MaplePacketCreator;
 
 public abstract class MapleEvent {
@@ -155,8 +156,8 @@ public abstract class MapleEvent {
                 if (e.isRunning) {
                     for (int i : e.type.mapids) {
                         if (cserv.getEvent() == i) {
-                            e.broadcast(MaplePacketCreator.broadcastMsg(0, "Entries for the event are now closed!"));
-                            e.broadcast(MaplePacketCreator.broadcastMsg(0, "The event will start in 30 seconds!"));
+                            e.broadcast(CWvsContext.broadcastMsg(0, "Entries for the event are now closed!"));
+                            e.broadcast(CWvsContext.broadcastMsg(0, "The event will start in 30 seconds!"));
                             e.broadcast(MaplePacketCreator.getClock(30));
                             EventTimer.getInstance().schedule(new Runnable() {
 
@@ -223,7 +224,7 @@ public abstract class MapleEvent {
         
         cserv.setEvent(cserv.getEvent(event).type.mapids[0]);
         cserv.getEvent(event).reset();
-        World.Broadcast.broadcastMessage(MaplePacketCreator.broadcastMsg(0, "Hello " + ServerConstants.WORLD_NAMES[cserv.getId()] + "! Let's play a " + StringUtil.makeEnumHumanReadable(event.name()) + " event in channel " + cserv.getId() + "! Change to channel " + cserv.getId() + " and use @event command!"));
+        World.Broadcast.broadcastMessage(CWvsContext.broadcastMsg(0, "Hello " + ServerConstants.WORLD_NAMES[cserv.getId()] + "! Let's play a " + StringUtil.makeEnumHumanReadable(event.name()) + " event in channel " + cserv.getId() + "! Change to channel " + cserv.getId() + " and use @event command!"));
         return "";
     }
 

@@ -2,19 +2,29 @@ package client.inventory;
 
 public enum MapleInventoryType {
 
-    UNDEFINED(0),
-    EQUIP(1),
-    USE(2),
-    SETUP(3),
-    ETC(4),
-    CASH(5),
+    UNDEFINED(0,"未知"),
+    EQUIP(1,"裝備"),
+    USE(2,"消秏"),
+    SETUP(3,"裝飾"),
+    ETC(4,"其他"),
+    CASH(5,"特殊"),
     EQUIPPED(-1); //Seems nexon screwed something when removing an item T_T
     final byte type;
+    private String name = "未知";
 
+    private MapleInventoryType(int type, String name) {
+        this.type = (byte) type;
+        this.name = name;
+    }
+    
     private MapleInventoryType(int type) {
         this.type = (byte) type;
     }
 
+    public String getName(){
+        return name;
+    }
+    
     public byte getType() {
         return type;
     }

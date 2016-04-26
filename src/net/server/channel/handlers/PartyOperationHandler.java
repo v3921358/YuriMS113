@@ -30,6 +30,7 @@ import net.server.world.PartyOperation;
 import net.server.world.World;
 import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CWvsContext;
 
 public final class PartyOperationHandler extends AbstractMaplePacketHandler {
 
@@ -49,7 +50,7 @@ public final class PartyOperationHandler extends AbstractMaplePacketHandler {
                     player.setMPC(partyplayer);
                     c.announce(MaplePacketCreator.partyCreated(player.getPartyId()));
                 } else {
-                    c.announce(MaplePacketCreator.broadcastMsg(5, "你已經有組隊了。"));
+                    c.announce(CWvsContext.broadcastMsg(5, "你已經有組隊了。"));
                 }
                 break;
             }
@@ -84,10 +85,10 @@ public final class PartyOperationHandler extends AbstractMaplePacketHandler {
                             c.announce(MaplePacketCreator.partyStatusMessage(17));
                         }
                     } else {
-                        c.announce(MaplePacketCreator.broadcastMsg(5, "你邀請的人已經有一個組對了。"));
+                        c.announce(CWvsContext.broadcastMsg(5, "你邀請的人已經有一個組對了。"));
                     }
                 } else {
-                    c.announce(MaplePacketCreator.broadcastMsg(5, "你不能加入組隊，因為你已經有組隊了。"));
+                    c.announce(CWvsContext.broadcastMsg(5, "你不能加入組隊，因為你已經有組隊了。"));
                 }
                 break;
             }

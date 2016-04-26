@@ -30,6 +30,7 @@ import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
 import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CWvsContext;
 
 /**
  * @author Matze
@@ -39,7 +40,7 @@ public final class UseItemHandler extends AbstractMaplePacketHandler {
     @Override
     public final void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
         if (!c.getPlayer().isAlive()) {
-            c.announce(MaplePacketCreator.enableActions());
+            c.announce(CWvsContext.enableActions());
             return;
         }
         MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
@@ -61,7 +62,7 @@ public final class UseItemHandler extends AbstractMaplePacketHandler {
                 if (ii.getItemEffect(toUse.getItemId()).applyTo(c.getPlayer())) {
                     remove(c, slot);
                 }
-                c.announce(MaplePacketCreator.enableActions());
+                c.announce(CWvsContext.enableActions());
                 return;
             }
             remove(c, slot);
@@ -72,7 +73,7 @@ public final class UseItemHandler extends AbstractMaplePacketHandler {
 
     private void remove(MapleClient c, byte slot) {
         MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.USE, slot, (short) 1, false);
-        c.announce(MaplePacketCreator.enableActions());
+        c.announce(CWvsContext.enableActions());
     }
 
     private boolean isTownScroll(int itemId) {

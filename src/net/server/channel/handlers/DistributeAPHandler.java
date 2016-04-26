@@ -28,6 +28,7 @@ import client.MapleStat;
 import net.AbstractMaplePacketHandler;
 import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CWvsContext;
 import tools.packets.PacketUtil;
 
 public final class DistributeAPHandler extends AbstractMaplePacketHandler {
@@ -43,7 +44,7 @@ public final class DistributeAPHandler extends AbstractMaplePacketHandler {
                 c.getPlayer().updateSingleStat(MapleStat.AVAILABLEAP, c.getPlayer().getRemainingAp());
             }
         }
-        c.announce(MaplePacketCreator.enableActions());
+        c.announce(CWvsContext.enableActions());
     }
 
     static boolean addStat(MapleClient c, int id) {

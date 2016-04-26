@@ -4,6 +4,7 @@ import client.MapleClient;
 import java.awt.Point;
 import scripting.portal.PortalScriptManager;
 import server.MaplePortal;
+import tools.packets.CWvsContext;
 import tools.packets.MaplePacketCreator;
 
 public class MapleGenericPortal implements MaplePortal {
@@ -108,7 +109,7 @@ public class MapleGenericPortal implements MaplePortal {
             changed = true;
         }
         if (!changed) {
-            c.announce(MaplePacketCreator.enableActions());
+            c.announce(CWvsContext.enableActions());
         }
     }
 

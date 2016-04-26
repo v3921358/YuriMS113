@@ -21,12 +21,9 @@
  */
 package net.server.channel.handlers;
 
-import client.MapleCharacter;
-import client.MapleClient;
-import client.inventory.MapleInventory;
-import client.inventory.MapleInventoryType;
 import java.util.Arrays;
 import java.util.List;
+
 import net.AbstractMaplePacketHandler;
 import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
@@ -38,6 +35,11 @@ import server.quest.MapleQuest;
 import tools.packets.MaplePacketCreator;
 import tools.Randomizer;
 import tools.data.input.SeekableLittleEndianAccessor;
+import client.MapleCharacter;
+import client.MapleClient;
+import client.inventory.MapleInventory;
+import client.inventory.MapleInventoryType;
+import tools.packets.CWvsContext;
 
 public final class AdminCommandHandler extends AbstractMaplePacketHandler {
 
@@ -58,14 +60,14 @@ public final class AdminCommandHandler extends AbstractMaplePacketHandler {
                         c.getPlayer().getMap().spawnMonsterOnGroudBelow(MapleLifeFactory.getMonster(toSpawnChild[0]), c.getPlayer().getPosition());
                     }
                 }
-                c.announce(MaplePacketCreator.enableActions());
+                c.announce(CWvsContext.enableActions());
                 break;
             case 0x01: { // /d (inv)
                 byte type = slea.readByte();
                 MapleInventory in = c.getPlayer().getInventory(MapleInventoryType.getByType(type));
-                for (byte i = 0; i < in.getSlotLimit(); i++) {
-                    if (in.getItem(i) != null) {
-                        MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.getByType(type), i, in.getItem(i).getQuantity(), false);
+                for (short i = 1; i <= in.getSlotLimit(); i++) { //TODO What is the point of this loop?
+                    if (in.getItem((byte)i) != null) {
+                        MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.getByType(type), (byte)i, in.getItem((byte)i).getQuantity(), false);
                     }
                     return;
                 }
@@ -75,28 +77,14 @@ public final class AdminCommandHandler extends AbstractMaplePacketHandler {
                 c.getPlayer().setExp(slea.readInt());
                 break;
             case 0x03: // /ban <name>
-                victim = slea.readMapleAsciiString();
-                String reason = victim + " permanent banned by " + c.getPlayer().getName();
-                target = c.getChannelServer().getPlayerStorage().getCharacterByName(victim);
-                if (target != null) {
-                    String readableTargetName = MapleCharacter.makeMapleReadable(target.getName());
-                    String ip = target.getClient().getSession().getRemoteAddress().toString().split(":")[0];
-                    reason += readableTargetName + " (IP: " + ip + ")";
-                    target.ban(reason);
-                    target.sendPolice("You have been blocked by #b" + c.getPlayer().getName() + " #kfor the HACK reason.");
-                    c.announce(MaplePacketCreator.getGMEffect(4, (byte) 0));
-                } else if (MapleCharacter.ban(victim, reason, false)) {
-                    c.announce(MaplePacketCreator.getGMEffect(4, (byte) 0));
-                } else {
-                    c.announce(MaplePacketCreator.getGMEffect(6, (byte) 1));
-                }
+                c.getPlayer().yellowMessage("Please use !ban <IGN> <Reason>");
                 break;
             case 0x04: // /block <name> <duration (in days)> <HACK/BOT/AD/HARASS/CURSE/SCAM/MISCONDUCT/SELL/ICASH/TEMP/GM/IPROGRAM/MEGAPHONE>
                 victim = slea.readMapleAsciiString();
                 int type = slea.readByte(); //reason
                 int duration = slea.readInt();
                 String description = slea.readMapleAsciiString();
-                reason = c.getPlayer().getName() + " used /ban to ban";
+                String reason = c.getPlayer().getName() + " used /ban to ban";
                 target = c.getChannelServer().getPlayerStorage().getCharacterByName(victim);
                 if (target != null) {
                     String readableTargetName = MapleCharacter.makeMapleReadable(target.getName());
@@ -175,7 +163,7 @@ public final class AdminCommandHandler extends AbstractMaplePacketHandler {
                 String message = slea.readMapleAsciiString();
                 target = c.getChannelServer().getPlayerStorage().getCharacterByName(victim);
                 if (target != null) {
-                    target.getClient().announce(MaplePacketCreator.broadcastMsg(1, message));
+                    target.getClient().announce(CWvsContext.broadcastMsg(1, message));
                     c.announce(MaplePacketCreator.getGMEffect(0x1E, (byte) 1));
                 } else {
                     c.announce(MaplePacketCreator.getGMEffect(0x1E, (byte) 0));

@@ -9,6 +9,7 @@ import client.MapleCharacter;
 import client.MapleClient;
 import net.server.world.MaplePartyCharacter;
 import server.MaplePortal;
+import tools.packets.CWvsContext;
 import tools.packets.MaplePacketCreator;
 
 /**
@@ -108,7 +109,7 @@ public class MapleDoor extends AbstractMapleMapObject {
                 chr.changeMap(town, townPortal);
             }
         } else {
-            chr.getClient().announce(MaplePacketCreator.enableActions());
+            chr.getClient().announce(CWvsContext.enableActions());
         }
     }
 

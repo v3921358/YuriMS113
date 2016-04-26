@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import tools.packets.CWvsContext;
 import tools.packets.MaplePacketCreator;
 
 /**
@@ -82,7 +83,7 @@ public class MapleInventoryManipulator {
                             break;
                         }
                     } else {
-                        c.announce(MaplePacketCreator.enableActions());
+                        c.announce(CWvsContext.enableActions());
                         return false;
                     }
                 }
@@ -175,7 +176,7 @@ public class MapleInventoryManipulator {
                     return false;
                 }
                 c.announce(MaplePacketCreator.modifyInventory(true, Collections.singletonList(new ModifyInventory(0, nItem))));
-                c.announce(MaplePacketCreator.enableActions());
+                c.announce(CWvsContext.enableActions());
             }
         } else if (quantity == 1) {
             byte newSlot = c.getPlayer().getInventory(type).addItem(item);
@@ -298,7 +299,7 @@ public class MapleInventoryManipulator {
     public static void equip(MapleClient c, byte src, byte dst) {
         Equip source = (Equip) c.getPlayer().getInventory(MapleInventoryType.EQUIP).getItem(src);
         if (source == null || !MapleItemInformationProvider.getInstance().canWearEquipment(c.getPlayer(), source)) {
-            c.announce(MaplePacketCreator.enableActions());
+            c.announce(CWvsContext.enableActions());
             return;
         } else if ((((source.getItemId() >= 1902000 && source.getItemId() <= 1902002) || source.getItemId() == 1912000) && c.getPlayer().isCygnus()) || ((source.getItemId() >= 1902005 && source.getItemId() <= 1902007) || source.getItemId() == 1912005) && !c.getPlayer().isCygnus()) {// Adventurer taming equipment
             return;

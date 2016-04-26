@@ -32,6 +32,8 @@ import net.AbstractMaplePacketHandler;
 import server.MapleItemInformationProvider;
 import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CFieldPacket;
+import tools.packets.CWvsContext;
 
 public final class CreateCharHandler extends AbstractMaplePacketHandler {
 
@@ -50,7 +52,7 @@ public final class CreateCharHandler extends AbstractMaplePacketHandler {
         newchar.setWorld(c.getWorld());
         int job = slea.readInt();
         if (job != 1) {
-            c.getSession().write(MaplePacketCreator.broadcastMsg(1, "只能創冒險家喔"));
+            c.getSession().write(CWvsContext.broadcastMsg(1, "只能創冒險家喔"));
             return;
         }
         int face = slea.readInt();
@@ -106,6 +108,6 @@ public final class CreateCharHandler extends AbstractMaplePacketHandler {
             c.announce(MaplePacketCreator.deleteCharResponse(0, 9));
             return;
         }
-        c.announce(MaplePacketCreator.addNewCharEntry(newchar));
+        c.announce(CFieldPacket.addNewCharEntry(newchar));
     }
 }

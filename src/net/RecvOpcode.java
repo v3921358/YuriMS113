@@ -28,7 +28,7 @@ public enum RecvOpcode {
     RANGED_ATTACK(0x26),
     MAGIC_ATTACK(0x27, false),
     TOUCH_MONSTER_ATTACK(0x28),
-    TAKE_DAMAGE(0x29),
+    TAKE_DAMAGE(0x29, false),
     GENERAL_CHAT(0x2A),
     CLOSE_CHALKBOARD(0x2B),
     FACE_EXPRESSION(0x2C),
@@ -41,7 +41,7 @@ public enum RecvOpcode {
     NPC_SHOP(0x36),
     STORAGE(0x37),
     HIRED_MERCHANT_REQUEST(0x38),
-    FREDRICK_ACTION(0x40),
+    FREDRICK_ACTION(0x999),
     DUEY_ACTION(0x3B),
     OWL(0x3C), //不知道是啥
     OWL_WARP(0x3D), //不知道是啥
@@ -123,7 +123,7 @@ public enum RecvOpcode {
     MOVE_PET(0xA4, false),
     PET_CHAT(0xA5),
     PET_COMMAND(0xA6),
-    PET_LOOT(0xA7),
+    PET_LOOT(0xA7, false),
     PET_AUTO_POT(0xA8),
     PET_EXCLUDE_ITEMS(0xA9),
     MOVE_SUMMON(0xAC),
