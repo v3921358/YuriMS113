@@ -591,7 +591,7 @@ public class MapleGuild {
     public void gainGP(int amount) {
         this.gp += amount;
         this.writeToDB(false);
-        this.guildMessage(MaplePacketCreator.updateGP(this.id, this.gp));
+        this.guildMessage(GuildPacket.updateGP(this.id, this.gp));
     }
 
     public static MapleGuildResponse sendInvite(MapleClient c, String targetName) {
@@ -611,7 +611,7 @@ public class MapleGuild {
             ResultSet rs;
             try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT `name`, `GP`, `logoBG`, `logoBGColor`, " + "`logo`, `logoColor` FROM guilds ORDER BY `GP` DESC LIMIT 50")) {
                 rs = ps.executeQuery();
-                c.announce(MaplePacketCreator.showGuildRanks(npcid, rs));
+                c.announce(GuildPacket.showGuildRanks(npcid, rs));
             }
             rs.close();
         } catch (SQLException e) {

@@ -13,6 +13,7 @@ public class MapleMapItem extends AbstractMapleMapObject {
     protected MapleMapObject dropper;
     protected int character_ownerid, meso, questid = -1;
     protected byte type;
+    protected long dropTime;
     protected boolean pickedUp = false, playerDrop;
     public ReentrantLock itemLock = new ReentrantLock();
 
@@ -42,8 +43,6 @@ public class MapleMapItem extends AbstractMapleMapObject {
         this.item = null;
         this.dropper = dropper;
         this.character_ownerid = owner == null? 0 :owner.getId();//owner.getParty() == null ? owner.getId() : owner.getPartyId();
-        if(owner == null)
-            System.err.println("MapleMapItem err happen");
         this.meso = meso;
         this.type = type;
         this.playerDrop = playerDrop;
@@ -88,6 +87,14 @@ public class MapleMapItem extends AbstractMapleMapObject {
         this.pickedUp = pickedUp;
     }
 
+	public long getDropTime() {
+		return dropTime;
+	}
+	
+	public void setDropTime(long time) {
+		this.dropTime  = time;
+	}
+    
     public byte getDropType() {
         return type;
     }

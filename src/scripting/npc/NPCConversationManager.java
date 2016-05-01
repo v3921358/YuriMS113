@@ -250,19 +250,19 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     public void sendGetNumber(String text, int def, int min, int max) {
         getClient().announce(MaplePacketCreator.getNPCTalkNum(npc, text, def, min, max));
     }
-    
-     public void openDuey() {
+
+    public void openDuey() {
         c.getPlayer().setConversation(2);
         c.getSession().write(MaplePacketCreator.sendDuey((byte) 9, null));
     }
-     
+
     public void openShop(int id) {
         MapleShopFactory.getInstance().getShop(id).sendShop(c);
     }
-    
+
     public void openMerchantItemStore() {
         c.getPlayer().setConversation(3);
-         c.announce(MaplePacketCreator.getFredrick((byte) 0x24));
+        c.announce(MaplePacketCreator.getFredrick((byte) 0x24));
     }
 
     public void sendGetText(String text) {
@@ -317,12 +317,12 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     }
 
     public void gainMeso(int gain) {
-        gain = gain*getPlayer().getNpcMesoRate();
+        gain = gain * getPlayer().getNpcMesoRate();
         getPlayer().gainMeso(gain, true, false, true);
     }
 
     public void gainExp(int gain) {
-        gain = gain*getPlayer().getNpcExpRate();
+        gain = gain * getPlayer().getNpcExpRate();
         getPlayer().gainExp(gain, true, true);
     }
 
@@ -439,7 +439,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             gainItem(5220000, (short) -1);
         }
         sendNext("You have obtained a #b#t" + itemid + "##k.");
-       // getClient().getChannelServer().broadcastPacket(MaplePacketCreator.getItemMessage(getPlayer().getInventory(MapleInventoryType.getByType((byte) (itemid / 1000000))).findById(itemid), c.getChannelServer().getMapFactory().getMap(gacMap[(getNpc() != 9100117 && getNpc() != 9100109) ? (getNpc() - 9100100) : getNpc() == 9100109 ? 8 : 9]).getMapName(), getPlayer()));
+        // getClient().getChannelServer().broadcastPacket(MaplePacketCreator.getItemMessage(getPlayer().getInventory(MapleInventoryType.getByType((byte) (itemid / 1000000))).findById(itemid), c.getChannelServer().getMapFactory().getMap(gacMap[(getNpc() != 9100117 && getNpc() != 9100109) ? (getNpc() - 9100100) : getNpc() == 9100109 ? 8 : 9]).getMapName(), getPlayer()));
     }
 
     public void disbandAlliance(MapleClient c, int allianceId) {
@@ -622,36 +622,39 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         return true;
     }
 
-    public void txtPrint(String txt){
+    public void txtPrint(String txt) {
         System.err.println(txt);
     }
-    
-    public String showChooseItem(){
-        return "\r\n#fUI/UIWindow.img/QuestIcon/3/0#\r\n";
+
+    public String showItemIcon(int item) {
+        return "#v" + item + ":# #t" + item + "#";
     }
-    
-    public String showGiveItem(){
-        return "\r\n#fUI/UIWindow.img/QuestIcon/4/0#\r\n";
+
+    public String showChooseItem() {
+        return "\r\n#fUI/UIWindow.img/QuestIcon/3/0#";
     }
-    
-    public String showGiveUnknowItem(){
-        return "\r\n#fUI/UIWindow.img/QuestIcon/5/0#\r\n";
+
+    public String showGiveItem() {
+        return "\r\n#fUI/UIWindow.img/QuestIcon/4/0#";
     }
-    
-    public String showGiveFame(){
-        return "\r\n#fUI/UIWindow.img/QuestIcon/6/0#\r\n";
+
+    public String showGiveUnknowItem() {
+        return "\r\n#fUI/UIWindow.img/QuestIcon/5/0#";
     }
-    
-    public String showGiveMeso(){
-        return "\r\n#fUI/UIWindow.img/QuestIcon/7/0#\r\n";
+
+    public String showGiveFame() {
+        return "\r\n#fUI/UIWindow.img/QuestIcon/6/0#";
     }
-    
-    public String showGiveExp(){
-        return "\r\n#fUI/UIWindow.img/QuestIcon/8/0#\r\n";
+
+    public String showGiveMeso() {
+        return "\r\n#fUI/UIWindow.img/QuestIcon/7/0#";
     }
-    
-    public String showGiveCohesion(){
-        return "\r\n#fUI/UIWindow.img/QuestIcon/9/0#\r\n";
-    }  
-    
+
+    public String showGiveExp() {
+        return "\r\n#fUI/UIWindow.img/QuestIcon/8/0#";
+    }
+
+    public String showGiveCohesion() {
+        return "\r\n#fUI/UIWindow.img/QuestIcon/9/0#";
+    }
 }

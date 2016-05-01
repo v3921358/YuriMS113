@@ -6,6 +6,8 @@
 package tools.packets;
 
 import client.MapleCharacter;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 import net.SendOpcode;
@@ -298,4 +300,35 @@ public class GuildPacket {
         mplew.writeInt(rs.getReplyCount());
     }
 
+    public static byte[] showGuildRanks(int npcid, ResultSet rs) throws SQLException {
+        final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+        mplew.writeShort(SendOpcode.GUILD_OPERATION.getValue());
+        mplew.write(0x49);
+        mplew.writeInt(npcid);
+        if (!rs.last()) { //no guilds o.o
+            mplew.writeInt(0);
+            return mplew.getPacket();
+        }
+        mplew.writeInt(rs.getRow()); //number of entries
+        rs.beforeFirst();
+        while (rs.next()) {
+            mplew.writeMapleAsciiString(rs.getString("name"));
+            mplew.writeInt(rs.getInt("GP"));
+            mplew.writeInt(rs.getInt("logo"));
+            mplew.writeInt(rs.getInt("logoColor"));
+            mplew.writeInt(rs.getInt("logoBG"));
+            mplew.writeInt(rs.getInt("logoBGColor"));
+        }
+        return mplew.getPacket();
+    }
+
+    public static byte[] updateGP(int gid, int GP) {
+        final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+        mplew.writeShort(SendOpcode.GUILD_OPERATION.getValue());
+        mplew.write(0x48);
+        mplew.writeInt(gid);
+        mplew.writeInt(GP);
+        return mplew.getPacket();
+    }
+    
 }

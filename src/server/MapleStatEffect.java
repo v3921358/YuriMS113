@@ -111,6 +111,7 @@ import tools.ArrayMap;
 import tools.packets.MaplePacketCreator;
 import tools.Pair;
 import tools.packets.CFieldPacket;
+import tools.packets.CWvsContext;
 
 /**
  * @author Matze
@@ -659,7 +660,7 @@ public class MapleStatEffect {
             applyto.setMp(newMp);
             hpmpupdate.add(new Pair<>(MapleStat.MP, Integer.valueOf(applyto.getMp())));
         }
-        applyto.getClient().announce(MaplePacketCreator.updatePlayerStats(hpmpupdate, true));
+        applyto.getClient().announce(CWvsContext.updatePlayerStats(hpmpupdate, true));
         if (moveTo != -1) {
             if (applyto.getMap().getReturnMapId() != applyto.getMapId()) {
                 MapleMap target;

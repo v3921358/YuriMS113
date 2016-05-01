@@ -24,17 +24,21 @@ function start() {
     if (cm.haveItem(4031013,30)) {
         cm.sendNext("wow 果然是個大俠恭喜通過這次個考驗 你已經是個強大的法師了所以我將頒贈給你神秘的小禮物.");
     } else {
-        cm.sendOk("你還沒有 #b30 #t4031013##k. 請收集完畢再來找我,祝你好運.");
+        cm.sendSimple("你沒有給我 #b30個#t4031013##k. 祝你好運. \r\n#b#L1#我想離開#l");
         cm.dispose();
     }
 }
 
 function action(mode, type, selection) {
     if (mode == 1) {
-        cm.warp(101000003, 0);
-		cm.removeAll(4031013);
-		cm.gainItem(4031009, -1);
-		cm.gainItem(4031012);
-	}
-	cm.dispose();
+        if (selection == 1) {
+            cm.warp(101020000, 0);
+        } else {
+            cm.warp(101020000, 0);
+            cm.removeAll(4031013);
+            cm.gainItem(4031009, -1);
+            cm.gainItem(4031012);
+        }
+    }
+    cm.dispose();
 }

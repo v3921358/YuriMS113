@@ -23,6 +23,7 @@ public class ServerConstants {
     public static int HOST_PORT;
     public static String CHANNEL_IP;
     public static int CHANNEL_PORT;
+    public static boolean ENABLE_RANKING = true;
 
     public static boolean JAVA_8;
 

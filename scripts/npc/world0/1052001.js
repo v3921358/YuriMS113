@@ -73,7 +73,6 @@ function action(mode, type, selection) {
 	if (cm.getJobId() == 0) {
 		cm.changeJobById(400); // 盜賊
 		cm.resetStats();
-		cm.getPlayer().setRemainingAp(31);
 	}
 	cm.gainItem(1332063,1);
 	cm.gainItem(1472000,1);

@@ -73,7 +73,6 @@ function action(mode, type, selection) {
 	if (cm.getJobId() == 0) {
 		cm.changeJobById(300); // 弓箭手
 		cm.resetStats();
-		cm.getPlayer().setRemainingAp(31);
 	}
 	cm.gainItem(1452002, 1);
 	cm.gainItem(2060000, 1000);

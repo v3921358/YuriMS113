@@ -21,6 +21,7 @@
  */
 package scripting.event;
 
+import java.awt.Point;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,11 +30,16 @@ import java.util.Properties;
 import java.util.concurrent.ScheduledFuture;
 import javax.script.Invocable;
 import javax.script.ScriptException;
+import net.server.Server;
 import net.server.channel.Channel;
 import net.server.world.MapleParty;
 import server.TimerManager;
+import server.life.MapleLifeFactory;
+import server.life.MapleMonster;
 import server.maps.MapleMap;
+import server.maps.MapleMapObject;
 import tools.FilePrinter;
+import tools.packets.CWvsContext;
 
 /**
  *

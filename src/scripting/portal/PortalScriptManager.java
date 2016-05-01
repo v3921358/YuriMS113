@@ -86,7 +86,6 @@ public class PortalScriptManager {
         try {
             PortalScript script = getPortalScript(portal.getScriptName());
             if (script != null) {
-                            System.err.println("executePortalScript pass");
                 return script.enter(new PortalPlayerInteraction(c, portal));
             }
         } catch (UndeclaredThrowableException ute) {

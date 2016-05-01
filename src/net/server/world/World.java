@@ -53,6 +53,7 @@ import tools.packets.GuildPacket;
 import tools.packets.MaplePacketCreator;
 
 import constants.ServerConstants;
+import tools.packets.CWvsContext;
 
 /**
  *
@@ -312,7 +313,7 @@ public class World {
                     chr.setParty(party);
                     chr.setMPC(partychar);
                 }
-                chr.getClient().announce(MaplePacketCreator.updateParty(chr.getClient().getChannel(), party, operation, target));
+                chr.getClient().announce(CWvsContext.updateParty(chr.getClient().getChannel(), party, operation, target));
             }
         }
         switch (operation) {
@@ -320,7 +321,7 @@ public class World {
             case EXPEL:
                 MapleCharacter chr = getPlayerStorage().getCharacterByName(target.getName());
                 if (chr != null) {
-                    chr.getClient().announce(MaplePacketCreator.updateParty(chr.getClient().getChannel(), party, operation, target));
+                    chr.getClient().announce(CWvsContext.updateParty(chr.getClient().getChannel(), party, operation, target));
                     chr.setParty(null);
                     chr.setMPC(null);
                 }

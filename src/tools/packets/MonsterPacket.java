@@ -11,7 +11,7 @@ import tools.data.output.MaplePacketLittleEndianWriter;
 
 /**
  *
- * @author user
+ * @author Yuri
  */
 public class MonsterPacket {
 

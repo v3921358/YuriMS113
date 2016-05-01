@@ -108,7 +108,7 @@ public class AbstractPlayerInteraction {
     }
 
     public EventManager getEventManager(String event) {
-        return getClient().getChannelServer().getEventSM().getEventManager(event);
+        return getClient().getChannelServer().getEventSM().getEventScriptMethods(event);
     }
 
     public boolean haveItem(int itemid) {
@@ -172,7 +172,7 @@ public class AbstractPlayerInteraction {
     }
 
     public void gainItem(int id) {
-        gainItem(id, (short) 1, false, false);
+        gainItem(id, (short) 1, false, true);
     }
 
     public void gainItem(int id, short quantity, boolean randomStats, boolean showMessage) {
@@ -199,7 +199,7 @@ public class AbstractPlayerInteraction {
             MapleInventoryManipulator.removeById(c, MapleItemInformationProvider.getInstance().getInventoryType(id), id, -quantity, true, false);
         }
         if (showMessage) {
-            c.announce(MaplePacketCreator.getShowItemGain(id, quantity, true));
+            c.announce(CWvsContext.getShowItemGain(id, quantity, true));
         }
     }
 
@@ -270,7 +270,7 @@ public class AbstractPlayerInteraction {
             } else {
                 MapleInventoryManipulator.removeById(cl, MapleItemInformationProvider.getInstance().getInventoryType(id), id, -quantity, true, false);
             }
-            cl.announce(MaplePacketCreator.getShowItemGain(id, quantity, true));
+            cl.announce(CWvsContext.getShowItemGain(id, quantity, true));
         }
     }
 
@@ -288,7 +288,7 @@ public class AbstractPlayerInteraction {
             int possesed = iv.countById(id);
             if (possesed > 0) {
                 MapleInventoryManipulator.removeById(c, MapleItemInformationProvider.getInstance().getInventoryType(id), id, possesed, true, false);
-                cl.announce(MaplePacketCreator.getShowItemGain(id, (short) -possesed, true));
+                cl.announce(CWvsContext.getShowItemGain(id, (short) -possesed, true));
             }
         }
     }
@@ -301,7 +301,7 @@ public class AbstractPlayerInteraction {
         int possessed = cl.getPlayer().getInventory(MapleItemInformationProvider.getInstance().getInventoryType(id)).countById(id);
         if (possessed > 0) {
             MapleInventoryManipulator.removeById(cl, MapleItemInformationProvider.getInstance().getInventoryType(id), id, possessed, true, false);
-            cl.announce(MaplePacketCreator.getShowItemGain(id, (short) -possessed, true));
+            cl.announce(CWvsContext.getShowItemGain(id, (short) -possessed, true));
         }
     }
 
@@ -365,7 +365,7 @@ public class AbstractPlayerInteraction {
         final Item newItem = MapleItemInformationProvider.getInstance().getEquipById(itemid);
         newItem.setPosition(slot);
         c.getPlayer().getInventory(MapleInventoryType.EQUIPPED).addFromDB(newItem);
-        c.announce(MaplePacketCreator.modifyInventory(false, Collections.singletonList(new ModifyInventory(0, newItem))));
+        c.announce(CWvsContext.modifyInventory(false, Collections.singletonList(new ModifyInventory(0, newItem))));
     }
 
     public void spawnMonster(int id, int x, int y) {

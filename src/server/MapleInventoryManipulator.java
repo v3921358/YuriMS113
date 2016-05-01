@@ -55,7 +55,7 @@ public class MapleInventoryManipulator {
                                 quantity -= (newQ - oldQ);
                                 eItem.setQuantity(newQ);
                                 eItem.setExpiration(expiration);
-                                c.announce(MaplePacketCreator.modifyInventory(true, Collections.singletonList(new ModifyInventory(1, eItem))));
+                                c.announce(CWvsContext.modifyInventory(true, Collections.singletonList(new ModifyInventory(1, eItem))));
                             }
                         } else {
                             break;
@@ -71,14 +71,14 @@ public class MapleInventoryManipulator {
                         nItem.setExpiration(expiration);
                         byte newSlot = c.getPlayer().getInventory(type).addItem(nItem);
                         if (newSlot == -1) {
-                            c.announce(MaplePacketCreator.getInventoryFull());
-                            c.announce(MaplePacketCreator.getShowInventoryFull());
+                            c.announce(CWvsContext.getInventoryFull());
+                            c.announce(CWvsContext.getShowInventoryFull());
                             return false;
                         }
                         if (owner != null) {
                             nItem.setOwner(owner);
                         }
-                        c.announce(MaplePacketCreator.modifyInventory(true, Collections.singletonList(new ModifyInventory(0, nItem))));
+                        c.announce(CWvsContext.modifyInventory(true, Collections.singletonList(new ModifyInventory(0, nItem))));
                         if ((ItemConstants.isRechargable(itemId)) && quantity == 0) {
                             break;
                         }
@@ -93,11 +93,11 @@ public class MapleInventoryManipulator {
                 nItem.setExpiration(expiration);
                 byte newSlot = c.getPlayer().getInventory(type).addItem(nItem);
                 if (newSlot == -1) {
-                    c.announce(MaplePacketCreator.getInventoryFull());
-                    c.announce(MaplePacketCreator.getShowInventoryFull());
+                    c.announce(CWvsContext.getInventoryFull());
+                    c.announce(CWvsContext.getShowInventoryFull());
                     return false;
                 }
-                c.announce(MaplePacketCreator.modifyInventory(true, Collections.singletonList(new ModifyInventory(0, nItem))));
+                c.announce(CWvsContext.modifyInventory(true, Collections.singletonList(new ModifyInventory(0, nItem))));
             }
         } else if (quantity == 1) {
             Item nEquip = ii.getEquipById(itemId);
@@ -108,11 +108,11 @@ public class MapleInventoryManipulator {
             }
             byte newSlot = c.getPlayer().getInventory(type).addItem(nEquip);
             if (newSlot == -1) {
-                c.announce(MaplePacketCreator.getInventoryFull());
-                c.announce(MaplePacketCreator.getShowInventoryFull());
+                c.announce(CWvsContext.getInventoryFull());
+                c.announce(CWvsContext.getShowInventoryFull());
                 return false;
             }
-            c.announce(MaplePacketCreator.modifyInventory(true, Collections.singletonList(new ModifyInventory(0, nEquip))));
+            c.announce(CWvsContext.modifyInventory(true, Collections.singletonList(new ModifyInventory(0, nEquip))));
         } else {
             throw new RuntimeException("Trying to create equip with non-one quantity");
         }
@@ -123,8 +123,8 @@ public class MapleInventoryManipulator {
         MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
         MapleInventoryType type = ii.getInventoryType(item.getItemId());
         if (ii.isPickupRestricted(item.getItemId()) && c.getPlayer().getItemQuantity(item.getItemId(), true) > 0) {
-            c.announce(MaplePacketCreator.getInventoryFull());
-            c.announce(MaplePacketCreator.showItemUnavailable());
+            c.announce(CWvsContext.getInventoryFull());
+            c.announce(CWvsContext.showItemUnavailable());
             return false;
         }
         short quantity = item.getQuantity();
@@ -142,7 +142,7 @@ public class MapleInventoryManipulator {
                                 short newQ = (short) Math.min(oldQ + quantity, slotMax);
                                 quantity -= (newQ - oldQ);
                                 eItem.setQuantity(newQ);
-                                c.announce(MaplePacketCreator.modifyInventory(true, Collections.singletonList(new ModifyInventory(1, eItem))));
+                                c.announce(CWvsContext.modifyInventory(true, Collections.singletonList(new ModifyInventory(1, eItem))));
                             }
                         } else {
                             break;
@@ -157,12 +157,12 @@ public class MapleInventoryManipulator {
                     nItem.setOwner(item.getOwner());
                     byte newSlot = c.getPlayer().getInventory(type).addItem(nItem);
                     if (newSlot == -1) {
-                        c.announce(MaplePacketCreator.getInventoryFull());
-                        c.announce(MaplePacketCreator.getShowInventoryFull());
+                        c.announce(CWvsContext.getInventoryFull());
+                        c.announce(CWvsContext.getShowInventoryFull());
                         item.setQuantity((short) (quantity + newQ));
                         return false;
                     }
-                    c.announce(MaplePacketCreator.modifyInventory(true, Collections.singletonList(new ModifyInventory(0, nItem))));
+                    c.announce(CWvsContext.modifyInventory(true, Collections.singletonList(new ModifyInventory(0, nItem))));
                     if ((ItemConstants.isRechargable(item.getItemId())) && quantity == 0) {
                         break;
                     }
@@ -171,26 +171,26 @@ public class MapleInventoryManipulator {
                 Item nItem = new Item(item.getItemId(), (byte) 0, quantity);
                 byte newSlot = c.getPlayer().getInventory(type).addItem(nItem);
                 if (newSlot == -1) {
-                    c.announce(MaplePacketCreator.getInventoryFull());
-                    c.announce(MaplePacketCreator.getShowInventoryFull());
+                    c.announce(CWvsContext.getInventoryFull());
+                    c.announce(CWvsContext.getShowInventoryFull());
                     return false;
                 }
-                c.announce(MaplePacketCreator.modifyInventory(true, Collections.singletonList(new ModifyInventory(0, nItem))));
+                c.announce(CWvsContext.modifyInventory(true, Collections.singletonList(new ModifyInventory(0, nItem))));
                 c.announce(CWvsContext.enableActions());
             }
         } else if (quantity == 1) {
             byte newSlot = c.getPlayer().getInventory(type).addItem(item);
             if (newSlot == -1) {
-                c.announce(MaplePacketCreator.getInventoryFull());
-                c.announce(MaplePacketCreator.getShowInventoryFull());
+                c.announce(CWvsContext.getInventoryFull());
+                c.announce(CWvsContext.getShowInventoryFull());
                 return false;
             }
-            c.announce(MaplePacketCreator.modifyInventory(true, Collections.singletonList(new ModifyInventory(0, item))));
+            c.announce(CWvsContext.modifyInventory(true, Collections.singletonList(new ModifyInventory(0, item))));
         } else {
             return false;
         }
         if (show) {
-            c.announce(MaplePacketCreator.getShowItemGain(item.getItemId(), item.getQuantity()));
+            c.announce(CWvsContext.getShowItemGain(item.getItemId(), item.getQuantity()));
         }
         return true;
     }
@@ -240,9 +240,9 @@ public class MapleInventoryManipulator {
         boolean allowZero = consume && ItemConstants.isRechargable(item.getItemId());
         c.getPlayer().getInventory(type).removeItem(slot, quantity, allowZero);
         if (item.getQuantity() == 0 && !allowZero) {
-            c.announce(MaplePacketCreator.modifyInventory(fromDrop, Collections.singletonList(new ModifyInventory(3, item))));
+            c.announce(CWvsContext.modifyInventory(fromDrop, Collections.singletonList(new ModifyInventory(3, item))));
         } else {
-            c.announce(MaplePacketCreator.modifyInventory(fromDrop, Collections.singletonList(new ModifyInventory(1, item))));
+            c.announce(CWvsContext.modifyInventory(fromDrop, Collections.singletonList(new ModifyInventory(1, item))));
         }
     }
 
@@ -293,7 +293,7 @@ public class MapleInventoryManipulator {
         } else {
             mods.add(new ModifyInventory(2, source, src));
         }
-        c.announce(MaplePacketCreator.modifyInventory(true, mods));
+        c.announce(CWvsContext.modifyInventory(true, mods));
     }
 
     public static void equip(MapleClient c, byte src, byte dst) {
@@ -316,8 +316,8 @@ public class MapleInventoryManipulator {
             Item top = c.getPlayer().getInventory(MapleInventoryType.EQUIPPED).getItem((byte) -5);
             if (top != null && isOverall(top.getItemId())) {
                 if (c.getPlayer().getInventory(MapleInventoryType.EQUIP).isFull()) {
-                    c.announce(MaplePacketCreator.getInventoryFull());
-                    c.announce(MaplePacketCreator.getShowInventoryFull());
+                    c.announce(CWvsContext.getInventoryFull());
+                    c.announce(CWvsContext.getShowInventoryFull());
                     return;
                 }
                 unequip(c, (byte) -5, c.getPlayer().getInventory(MapleInventoryType.EQUIP).getNextFreeSlot());
@@ -326,8 +326,8 @@ public class MapleInventoryManipulator {
             final Item bottom = c.getPlayer().getInventory(MapleInventoryType.EQUIPPED).getItem((byte) -6);
             if (bottom != null && isOverall(source.getItemId())) {
                 if (c.getPlayer().getInventory(MapleInventoryType.EQUIP).isFull()) {
-                    c.announce(MaplePacketCreator.getInventoryFull());
-                    c.announce(MaplePacketCreator.getShowInventoryFull());
+                    c.announce(CWvsContext.getInventoryFull());
+                    c.announce(CWvsContext.getShowInventoryFull());
                     return;
                 }
                 unequip(c, (byte) -6, c.getPlayer().getInventory(MapleInventoryType.EQUIP).getNextFreeSlot());
@@ -336,8 +336,8 @@ public class MapleInventoryManipulator {
             Item weapon = c.getPlayer().getInventory(MapleInventoryType.EQUIPPED).getItem((byte) -11);
             if (weapon != null && MapleItemInformationProvider.getInstance().isTwoHanded(weapon.getItemId())) {
                 if (c.getPlayer().getInventory(MapleInventoryType.EQUIP).isFull()) {
-                    c.announce(MaplePacketCreator.getInventoryFull());
-                    c.announce(MaplePacketCreator.getShowInventoryFull());
+                    c.announce(CWvsContext.getInventoryFull());
+                    c.announce(CWvsContext.getShowInventoryFull());
                     return;
                 }
                 unequip(c, (byte) -11, c.getPlayer().getInventory(MapleInventoryType.EQUIP).getNextFreeSlot());
@@ -346,8 +346,8 @@ public class MapleInventoryManipulator {
             Item shield = c.getPlayer().getInventory(MapleInventoryType.EQUIPPED).getItem((byte) -10);
             if (shield != null && MapleItemInformationProvider.getInstance().isTwoHanded(source.getItemId())) {
                 if (c.getPlayer().getInventory(MapleInventoryType.EQUIP).isFull()) {
-                    c.announce(MaplePacketCreator.getInventoryFull());
-                    c.announce(MaplePacketCreator.getShowInventoryFull());
+                    c.announce(CWvsContext.getInventoryFull());
+                    c.announce(CWvsContext.getShowInventoryFull());
                     return;
                 }
                 unequip(c, (byte) -10, c.getPlayer().getInventory(MapleInventoryType.EQUIP).getNextFreeSlot());
@@ -386,7 +386,7 @@ public class MapleInventoryManipulator {
         }
 
         mods.add(new ModifyInventory(2, source, src));
-        c.announce(MaplePacketCreator.modifyInventory(true, mods));
+        c.announce(CWvsContext.modifyInventory(true, mods));
         c.getPlayer().equipChanged();
     }
 
@@ -400,7 +400,7 @@ public class MapleInventoryManipulator {
             return;
         }
         if (target != null && src <= 0) {
-            c.announce(MaplePacketCreator.getInventoryFull());
+            c.announce(CWvsContext.getInventoryFull());
             return;
         }
         if (source.getItemId() == 1122017) {
@@ -419,7 +419,7 @@ public class MapleInventoryManipulator {
             target.setPosition(src);
             c.getPlayer().getInventory(MapleInventoryType.EQUIPPED).addFromDB(target);
         }
-        c.announce(MaplePacketCreator.modifyInventory(true, Collections.singletonList(new ModifyInventory(2, source, src))));
+        c.announce(CWvsContext.modifyInventory(true, Collections.singletonList(new ModifyInventory(2, source, src))));
         c.getPlayer().equipChanged();
     }
 
@@ -452,7 +452,7 @@ public class MapleInventoryManipulator {
             Item target = source.copy();
             target.setQuantity(quantity);
             source.setQuantity((short) (source.getQuantity() - quantity));
-            c.announce(MaplePacketCreator.modifyInventory(true, Collections.singletonList(new ModifyInventory(1, source))));
+            c.announce(CWvsContext.modifyInventory(true, Collections.singletonList(new ModifyInventory(1, source))));
             boolean weddingRing = source.getItemId() == 1112803 || source.getItemId() == 1112806 || source.getItemId() == 1112807 || source.getItemId() == 1112809;
             if (weddingRing) {
                 c.getPlayer().getMap().disappearingItemDrop(c.getPlayer(), c.getPlayer(), target, dropPos);
@@ -469,7 +469,7 @@ public class MapleInventoryManipulator {
             }
         } else {
             c.getPlayer().getInventory(type).removeSlot(src);
-            c.announce(MaplePacketCreator.modifyInventory(true, Collections.singletonList(new ModifyInventory(3, source))));
+            c.announce(CWvsContext.modifyInventory(true, Collections.singletonList(new ModifyInventory(3, source))));
             if (src < 0) {
                 c.getPlayer().equipChanged();
             }

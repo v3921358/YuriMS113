@@ -231,7 +231,7 @@ public final class PlayerLoggedinHandler extends AbstractMaplePacketHandler {
         player.checkBerserk();
         player.expirationTask();
         player.setRates();
-        player.getMap().sendPlayerData(player);
+        //player.getMap().sendPlayerData(player);
         
         if (newcomer) {
             if (player.isGM()) {

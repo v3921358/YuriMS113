@@ -12,6 +12,7 @@ import client.Skill;
 import client.inventory.Item;
 import client.inventory.MapleInventory;
 import client.inventory.MapleInventoryType;
+import constants.ServerConstants;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,7 +30,7 @@ import static tools.packets.MaplePacketCreator.addItemInfo;
  * @author yuri
  */
 public class PacketHelper {
-    
+
     public static void addCharLook(final MaplePacketLittleEndianWriter mplew, MapleCharacter chr, boolean mega) {
         mplew.write(chr.getGender());
         mplew.write(chr.getSkinColor().getId()); // skin color
@@ -38,8 +39,8 @@ public class PacketHelper {
         mplew.writeInt(chr.getHair()); // hair
         addCharEquips(mplew, chr);
     }
-    
-private static void addCharEquips(final MaplePacketLittleEndianWriter mplew, MapleCharacter chr) {
+
+    private static void addCharEquips(final MaplePacketLittleEndianWriter mplew, MapleCharacter chr) {
         MapleInventory equip = chr.getInventory(MapleInventoryType.EQUIPPED);
         Collection<Item> ii = MapleItemInformationProvider.getInstance().canWearEquipment(chr, equip.list());
         Map<Byte, Integer> myEquip = new LinkedHashMap<>();
@@ -78,25 +79,32 @@ private static void addCharEquips(final MaplePacketLittleEndianWriter mplew, Map
             }
         }
     }
-    
+
     public static void addCharEntry(final MaplePacketLittleEndianWriter mplew, MapleCharacter chr, boolean viewall) {
         addCharStats(mplew, chr);
         addCharLook(mplew, chr, false);
-        mplew.write(0);
-        mplew.write(0);
+        if (!viewall) {
+            mplew.write(0);
+        }
         if (chr.isGM()) {
+            mplew.write(0);
             return;
         }
 
-        /*    if (ServerConstants.ENABLE_RANKING) {
-         mplew.write(1); // world rank enabled (next 4 ints are not sent if disabled) Short??
-         mplew.writeInt(chr.getRank()); // world rank
-         mplew.writeInt(chr.getRankMove()); // move (negative is downwards)
-         mplew.writeInt(chr.getJobRank()); // job rank
-         mplew.writeInt(chr.getJobRankMove()); // move (negative is downwards)
-         }*/
+        if (ServerConstants.ENABLE_RANKING) {
+            mplew.write(1); // world rank enabled (next 4 ints are not sent if disabled) Short??
+            mplew.writeInt(chr.getRank()); // world rank
+            mplew.writeInt(chr.getRankMove()); // move (negative is downwards)
+            mplew.writeInt(chr.getJobRank()); // job rank
+            mplew.writeInt(chr.getJobRankMove()); // move (negative is downwards)
+            //System.err.println(chr.getRank());
+            //System.err.println(chr.getRankMove());
+            //System.err.println(chr.getJobRank());
+            //System.err.println(chr.getJobRankMove());
+            
+        }
     }
-    
+
     public static void addCharacterInfo(final MaplePacketLittleEndianWriter mplew, MapleCharacter chr) {
         mplew.writeLong(-1);
         mplew.write(0);
@@ -122,15 +130,15 @@ private static void addCharEquips(final MaplePacketLittleEndianWriter mplew, Map
         mplew.writeShort(0);
         mplew.writeShort(0);
     }
-    
-private static void addCharStats(final MaplePacketLittleEndianWriter mplew, MapleCharacter chr) {
+
+    private static void addCharStats(final MaplePacketLittleEndianWriter mplew, MapleCharacter chr) {
         mplew.writeInt(chr.getId()); // character id
         mplew.writeAsciiString(chr.getName(), 15);
         mplew.write(chr.getGender()); // gender (0 = male, 1 = female)
         mplew.write(chr.getSkinColor().getId()); // skin color
         mplew.writeInt(chr.getFace()); // face
         mplew.writeInt(chr.getHair()); // hair
-        
+
         for (int i = 0; i < 3; i++) {
             if (chr.getPet(i) != null) {
                 mplew.writeLong(chr.getPet(i).getExpiration());
@@ -165,7 +173,7 @@ private static void addCharStats(final MaplePacketLittleEndianWriter mplew, Mapl
         mplew.write(1);
 
     }
-    
+
     private static void addMonsterBookInfo(final MaplePacketLittleEndianWriter mplew, MapleCharacter chr) {
         mplew.writeInt(chr.getMonsterBookCover()); // cover
         mplew.write(0);

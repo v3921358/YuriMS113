@@ -8,8 +8,16 @@ function start() {
 }
 
 function action(mode, type, selection) {
+    if (mode == -1) {
+        cm.dispose();
+        return;
+    }
     if (mode == 0 && status == 2) {
-        cm.sendOk("請重試.");
+        cm.txtPrint("mode:" + mode);
+        cm.txtPrint("type:" + type);
+        cm.txtPrint("selection:" + selection);
+        cm.txtPrint("status:" + status);
+        cm.sendOk("沒關系，等你作好了決定在來找我吧.");
         cm.dispose();
         return;
     }
@@ -20,9 +28,10 @@ function action(mode, type, selection) {
     if (status == 0) {
         if (cm.getJobId() == 0) {
             if (cm.getPlayer().getLevel() >= 8) {
-                cm.sendNext("你要轉職成為一位 #r法師#k ?");
+                cm.sendNext("想成為#r法師#k？有一些條件要滿足。因為我們不可能接受每個人成為法師...你的等級至少要8等，還有智力至少要#b25#k以上。\r\n" +
+                        "讓我看看你是不是能成為#r法師#k.");
             } else {
-                cm.sendOk("你還不能轉職成為 #r法師#k 蔡B8.")
+                cm.sendOk("你要多努力一點才能成為#r法師#k.")
                 cm.dispose();
             }
         } else {
@@ -40,7 +49,7 @@ function action(mode, type, selection) {
                     }
                 } else {
                     status = 10;
-                    cm.sendNext("你已經可以轉職了,要轉職請點下一頁.");
+                    cm.sendNext("我看你已經做得很好了。我允許你的漫長法師之路進入下一階段。");
                 }
             } else if (cm.getPlayer().getLevel() >= 70) {
                 if (cm.haveItem(4031059, 1)) {
@@ -58,17 +67,20 @@ function action(mode, type, selection) {
             }
         }
     } else if (status == 1) {
-        cm.sendNextPrev("一旦轉職了就不能反悔,如果不想轉職請點上一頁.");
+        cm.sendNextPrev("哦...！你看起來像某些人，絕對是可以成為我們的一部分... ...所有你需要的是一點點陰險的頭腦，和...是啊...所以，你有什麼感想？想成為#r法師#k？ \r\n 一旦作好絕定就不能改變了喔。");
     } else if (status == 2) {
         cm.sendYesNo("你真的要成為一位 #r法師#k ?");
     } else if (status == 3) {
-        if (cm.getJobId() == 0) {
-            cm.changeJobById(200); // 法師
-            cm.resetStats();
-            cm.getPlayer().setRemainingAp(16);
+        if (cm.canHold(1372043)) {
+            if (cm.getJobId() == 0) {
+                cm.changeJobById(200); // 法師
+                cm.resetStats();
+                cm.gainItem(1372005, 1);
+            }
+            cm.sendOk("好，從這裡出來，你是我們的一部分了！你會過著流浪的生活...但只要保持耐心，你會生活在上流社會的。雖然不是很多，但我會給你一些我的能力......哈哈哈！");
+        } else {
+            cm.sendNext("你的裝備欄滿了，去確認一下吧。");
         }
-        cm.gainItem(1372005, 1);
-        cm.sendOk("轉職成功 ! 請去開創天下吧.");
         cm.dispose();
     } else if (status == 11) {
         cm.sendNextPrev("你可以選擇你要轉職成為一位 #r巫師(火,毒)#k, #r巫師(冰,雷)#k 或 #r僧侶#k.");

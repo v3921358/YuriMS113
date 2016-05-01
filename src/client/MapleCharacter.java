@@ -154,7 +154,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject {
     private int possibleReports = 10;
     private int dojoPoints, vanquisherStage, dojoStage, dojoEnergy, vanquisherKills;
     private int warpToId;
-    private int expRate = 1, mesoRate = 1, dropRate = 1,npcExpRate,npcMesoRate;
+    private int expRate = 1, mesoRate = 1, dropRate = 1, npcExpRate, npcMesoRate;
     private int omokwins, omokties, omoklosses, matchcardwins, matchcardties, matchcardlosses;
     private int married;
     private String profileMessage = "";
@@ -691,7 +691,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject {
             statup.add(new Pair<>(MapleStat.MP, Math.min(mp, maxmp)));
             statup.add(new Pair<>(MapleStat.MAXHP, maxhp));
             statup.add(new Pair<>(MapleStat.MAXMP, maxmp));
-            client.announce(MaplePacketCreator.updatePlayerStats(statup));
+            client.announce(CWvsContext.updatePlayerStats(statup));
         }
         if (effect.isMonsterRiding()) {
             if (effect.getSourceId() != Corsair.BATTLE_SHIP) {
@@ -771,7 +771,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject {
 
     public static boolean canCreateChar(String name) {
         Charset BIG5 = Charset.forName("Big5");
-        
+
         if (name.getBytes(BIG5).length < 4 || name.getBytes(BIG5).length > 15) {
             return false;
         }
@@ -850,7 +850,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject {
         statup.add(new Pair<>(MapleStat.AVAILABLESP, remainingSp));
         statup.add(new Pair<>(MapleStat.JOB, job.getId()));
         recalcLocalStats();
-        client.announce(MaplePacketCreator.updatePlayerStats(statup));
+        client.announce(CWvsContext.updatePlayerStats(statup));
         silentPartyUpdate();
         if (this.guildid > 0) {
             getGuild().broadcast(MaplePacketCreator.jobMessage(0, job.getId(), name), this.getId());
@@ -915,7 +915,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject {
             if (party != null) {
                 mpc.setMapId(to.getId());
                 silentPartyUpdate();
-                client.announce(MaplePacketCreator.updateParty(client.getChannel(), party, PartyOperation.SILENT_UPDATE, null));
+                client.announce(CWvsContext.updateParty(client.getChannel(), party, PartyOperation.SILENT_UPDATE, null));
                 updatePartyMemberHP();
             }
             if (getMap().getHPDec() > 0) {
@@ -1286,7 +1286,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject {
             stats.add(new Pair<>(MapleStat.HP, getHp()));
         }
         if (stats.size() > 0) {
-            client.announce(MaplePacketCreator.updatePlayerStats(stats));
+            client.announce(CWvsContext.updatePlayerStats(stats));
         }
     }
 
@@ -1360,7 +1360,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject {
         final List<ModifyInventory> mods = new LinkedList<>();
         mods.add(new ModifyInventory(3, item));
         mods.add(new ModifyInventory(0, item));
-        client.announce(MaplePacketCreator.modifyInventory(true, mods));
+        client.announce(CWvsContext.modifyInventory(true, mods));
     }
 
     public void gainGachaExp() {
@@ -1401,7 +1401,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject {
             }
             updateSingleStat(MapleStat.EXP, this.exp.addAndGet(total));
             if (show && gain != 0) {
-                client.announce(MaplePacketCreator.getShowExpGain(gain, equip, inChat, white));
+                client.announce(CWvsContext.getShowExpGain(gain, equip, inChat, white));
             }
             if (exp.get() >= ExpTable.getExpNeededForLevel(level)) {
                 levelUp(true);
@@ -1415,8 +1415,18 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject {
     }
 
     public void gainFame(int delta) {
+        this.gainFame(delta, true);
+    }
+
+    public void gainFame(int delta, boolean show) {
         this.addFame(delta);
         this.updateSingleStat(MapleStat.FAME, this.fame);
+        if (show) {
+            if (show) {
+                client.announce(CWvsContext.getShowFameGain(delta));
+            }
+        }
+
     }
 
     public void gainMeso(int gain, boolean show) {
@@ -1430,7 +1440,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject {
         }
         updateSingleStat(MapleStat.MESO, meso.addAndGet(gain), false);
         if (show) {
-            client.announce(MaplePacketCreator.getShowMesoGain(gain, inChat));
+            client.announce(CWvsContext.getShowMesoGain(gain, inChat));
         }
     }
 
@@ -1441,10 +1451,9 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject {
         }
         updateSingleStat(MapleStat.MESO, meso.addAndGet(gain), enableActions);
         if (show) {
-            client.announce(MaplePacketCreator.getShowMesoGain(gain, inChat));
+            client.announce(CWvsContext.getShowMesoGain(gain, inChat));
         }
     }
-
 
     public void genericGuildMessage(int code) {
         this.client.announce(GuildPacket.genericGuildMessage((byte) code));
@@ -1453,7 +1462,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject {
     public int getAccountID() {
         return accountid;
     }
-    
+
     public int getFH() {
         MapleFoothold fh = getMap().getFootholds().findBelow(getPosition());
         if (fh != null) {
@@ -1671,7 +1680,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject {
     public int getExpRate() {
         return expRate;
     }
-    
+
     public int getNpcExpRate() {
         return npcExpRate;
     }
@@ -1851,10 +1860,12 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject {
     }
 
     public int getFh() {
-        if (getMap().getFootholds().findBelow(this.getPosition()) == null) {
+        Point pos = this.getPosition();
+        pos.y -= 6;
+        if (getMap().getFootholds().findBelow(pos) == null) {
             return 0;
         } else {
-            return getMap().getFootholds().findBelow(this.getPosition()).getId();
+            return getMap().getFootholds().findBelow(pos).getY1();
         }
     }
 
@@ -1911,7 +1922,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject {
     public int getMesoRate() {
         return mesoRate;
     }
-    
+
     public int getNpcMesoRate() {
         return npcMesoRate;
     }
@@ -2528,7 +2539,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject {
             remainingSp += 3;
             statup.add(new Pair<>(MapleStat.AVAILABLESP, remainingSp));
         }
-        client.announce(MaplePacketCreator.updatePlayerStats(statup));
+        client.announce(CWvsContext.updatePlayerStats(statup));
         getMap().broadcastMessage(this, MaplePacketCreator.showForeignEffect(getId(), 0), false);
         recalcLocalStats();
         setMPC(new MaplePartyCharacter(this));
@@ -2945,7 +2956,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject {
         announce(MaplePacketCreator.sendYellowTip(m));
     }
 
-public void mobKilled(int id) {
+    public void mobKilled(int id) {
         // It seems nexon uses monsters that don't exist in the WZ (except string) to merge multiple mobs together for these 3 monsters.
         // We also want to run mobKilled for both since there are some quest that don't use the updated ID...
         if (id == 1110100 || id == 1110130) {
@@ -2955,10 +2966,10 @@ public void mobKilled(int id) {
         } else if (id == 1140100 || id == 1140130) {
             mobKilled(9101002);
         }
-		int lastQuestProcessed = 0;
+        int lastQuestProcessed = 0;
         try {
             for (MapleQuestStatus q : quests.values()) {
-				lastQuestProcessed = q.getQuest().getId();
+                lastQuestProcessed = q.getQuest().getId();
                 if (q.getStatus() == MapleQuestStatus.Status.COMPLETED || q.getQuest().canComplete(this, null)) {
                     continue;
                 }
@@ -2967,11 +2978,11 @@ public void mobKilled(int id) {
                     continue;
                 }
                 if (q.progress(id)) {
-                    client.announce(MaplePacketCreator.updateQuest(q, false));
+                    client.announce(CWvsContext.updateQuest(q, false));
                 }
             }
         } catch (Exception e) {
-			FilePrinter.printError(FilePrinter.EXCEPTION_CAUGHT, e, "MapleCharacter.mobKilled. CID: " + this.id + " last Quest Processed: " + lastQuestProcessed);
+            FilePrinter.printError(FilePrinter.EXCEPTION_CAUGHT, e, "MapleCharacter.mobKilled. CID: " + this.id + " last Quest Processed: " + lastQuestProcessed);
         }
     }
 
@@ -3312,13 +3323,13 @@ public void mobKilled(int id) {
             case 1100:
             case 2100://?
                 tstr = 35;
-                tap = ((getLevel() - 10) * levelap) + 14;
+                tap = ((getLevel() - 10) * levelap) + 23;
                 tsp += ((getLevel() - 10) * 3);
                 break;
             case 200:
             case 1200:
                 tint = 20;
-                tap = ((getLevel() - 8) * levelap) + 29;
+                tap = ((getLevel() - 8) * levelap) + 28;
                 tsp += ((getLevel() - 8) * 3);
                 break;
             case 300:
@@ -3326,13 +3337,13 @@ public void mobKilled(int id) {
             case 400:
             case 1400:
                 tdex = 25;
-                tap = ((getLevel() - 10) * levelap) + 24;
+                tap = ((getLevel() - 10) * levelap) + 33;
                 tsp += ((getLevel() - 10) * 3);
                 break;
             case 500:
             case 1500:
                 tdex = 20;
-                tap = ((getLevel() - 10) * levelap) + 29;
+                tap = ((getLevel() - 10) * levelap) + 38;
                 tsp += ((getLevel() - 10) * 3);
                 break;
         }
@@ -3348,7 +3359,7 @@ public void mobKilled(int id) {
         statup.add(new Pair<>(MapleStat.DEX, tdex));
         statup.add(new Pair<>(MapleStat.INT, tint));
         statup.add(new Pair<>(MapleStat.LUK, tluk));
-        announce(MaplePacketCreator.updatePlayerStats(statup));
+        announce(CWvsContext.updatePlayerStats(statup));
     }
 
     public void resetBattleshipHp() {
@@ -3570,12 +3581,10 @@ public void mobKilled(int id) {
             ps.setInt(20, face);
             if (map == null || (cashshop != null && cashshop.isOpened())) {
                 ps.setInt(21, mapid);
+            } else if (map.getForcedReturnId() != 999999999) {
+                ps.setInt(21, map.getForcedReturnId());
             } else {
-                if (map.getForcedReturnId() != 999999999) {
-                    ps.setInt(21, map.getForcedReturnId());
-                } else {
-                    ps.setInt(21, getHp() < 1 ? map.getReturnMapId() : map.getId());
-                }
+                ps.setInt(21, getHp() < 1 ? map.getReturnMapId() : map.getId());
             }
             ps.setInt(22, meso.get());
             ps.setInt(23, hpMpApUsed);
@@ -3962,17 +3971,15 @@ public void mobKilled(int id) {
                 this.npcExpRate = 2;
             } else {
                 this.expRate = 2 * worldz.getExpRate();
-                this.npcExpRate = 2*worldz.getNPCExpRate();
-                
+                this.npcExpRate = 2 * worldz.getNPCExpRate();
+
             }
+        } else if (isBeginnerJob()) {
+            this.expRate = 1;
+            this.npcExpRate = 1;
         } else {
-            if (isBeginnerJob()) {
-                this.expRate = 1;
-                this.npcExpRate = 1;
-            } else {
-                this.expRate = worldz.getExpRate();
-                this.npcExpRate = worldz.getNPCExpRate();
-            }
+            this.expRate = worldz.getExpRate();
+            this.npcExpRate = worldz.getNPCExpRate();
         }
     }
 
@@ -4214,17 +4221,15 @@ public void mobKilled(int id) {
                 this.omokties++;
                 visitor.omokties++;
             }
+        } else if (winnerslot == 1) {
+            this.matchcardwins++;
+            visitor.matchcardlosses++;
+        } else if (winnerslot == 2) {
+            visitor.matchcardwins++;
+            this.matchcardlosses++;
         } else {
-            if (winnerslot == 1) {
-                this.matchcardwins++;
-                visitor.matchcardlosses++;
-            } else if (winnerslot == 2) {
-                visitor.matchcardwins++;
-                this.matchcardlosses++;
-            } else {
-                this.matchcardties++;
-                visitor.matchcardties++;
-            }
+            this.matchcardties++;
+            visitor.matchcardties++;
         }
     }
 
@@ -4289,7 +4294,7 @@ public void mobKilled(int id) {
 
             saveToDB();
             if (update) {
-                client.announce(MaplePacketCreator.updateInventorySlotLimit(type, slots));
+                client.announce(CWvsContext.updateInventorySlotLimit(type, slots));
             }
 
             return true;
@@ -4430,7 +4435,9 @@ public void mobKilled(int id) {
                     pet.setFullness(newFullness);
                     pet.saveToDb();
                     Item petz = getInventory(MapleInventoryType.CASH).getItem(pet.getPosition());
-                    forceUpdateItem(petz);
+                    if (petz != null) {
+                        forceUpdateItem(petz);
+                    }
                 }
             }
         }, 180000, 18000);
@@ -4475,9 +4482,9 @@ public void mobKilled(int id) {
             this.getPet(this.getPetIndex(pet)).saveToDb();
         }
         cancelFullnessSchedule(getPetIndex(pet));
-         
+
         getMap().broadcastMessage(this, MaplePacketCreator.showPet(this, pet, true, hunger), true);
-        client.announce(MaplePacketCreator.petStatUpdate(this));
+        client.announce(CWvsContext.petStatUpdate(this));
         client.announce(CWvsContext.enableActions());
         removePet(pet, shift_left);
     }
@@ -4512,27 +4519,27 @@ public void mobKilled(int id) {
 
         quests.put(q.getId(), qs);
 
-        announce(MaplePacketCreator.updateQuest(qs, false));
+        announce(CWvsContext.updateQuest(qs, false));
         if (qs.getQuest().getInfoNumber() > 0) {
-            announce(MaplePacketCreator.updateQuest(qs, true));
+            announce(CWvsContext.updateQuest(qs, true));
         }
         announce(CFieldPacket.updateQuestInfo((short) qs.getQuest().getId(), qs.getNpc()));
     }
-    
+
     public void updateQuest(MapleQuestStatus quest) {
         quests.put(quest.getQuestID(), quest);
         if (quest.getStatus().equals(MapleQuestStatus.Status.STARTED)) {
-            announce(MaplePacketCreator.updateQuest(quest, false));
+            announce(CWvsContext.updateQuest(quest, false));
             if (quest.getQuest().getInfoNumber() > 0) {
-                announce(MaplePacketCreator.updateQuest(quest, true));
+                announce(CWvsContext.updateQuest(quest, true));
             }
             announce(CFieldPacket.updateQuestInfo((short) quest.getQuest().getId(), quest.getNpc()));
         } else if (quest.getStatus().equals(MapleQuestStatus.Status.COMPLETED)) {
-            announce(MaplePacketCreator.completeQuest((short) quest.getQuest().getId(), quest.getCompletionTime()));
+            announce(CWvsContext.completeQuest((short) quest.getQuest().getId(), quest.getCompletionTime()));
         } else if (quest.getStatus().equals(MapleQuestStatus.Status.NOT_STARTED)) {
-            announce(MaplePacketCreator.updateQuest(quest, false));
+            announce(CWvsContext.updateQuest(quest, false));
             if (quest.getQuest().getInfoNumber() > 0) {
-                announce(MaplePacketCreator.updateQuest(quest, true));
+                announce(CWvsContext.updateQuest(quest, true));
             }
         }
     }
@@ -4556,7 +4563,7 @@ public void mobKilled(int id) {
     }
 
     private void updateSingleStat(MapleStat stat, int newval, boolean itemReaction) {
-        announce(MaplePacketCreator.updatePlayerStats(Collections.singletonList(new Pair<>(stat, newval)), itemReaction));
+        announce(CWvsContext.updatePlayerStats(Collections.singletonList(new Pair<>(stat, newval)), itemReaction));
     }
 
     public void announce(final byte[] packet) {
@@ -4582,7 +4589,7 @@ public void mobKilled(int id) {
     public void sendSpawnData(MapleClient client) {
         if (!this.isHidden() || client.getPlayer().gmLevel() > 0) {
             client.announce(MaplePacketCreator.spawnPlayerMapobject(this));
-            
+
             MaplePet[] pets = this.getPets();
             for (int i = 0; i < this.getPets().length; i++) {
                 if (pets[i] != null) {

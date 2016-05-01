@@ -31,7 +31,6 @@ import net.AbstractMaplePacketHandler;
 import tools.FilePrinter;
 import tools.packets.CWvsContext;
 import tools.packets.CashShopPacket;
-import tools.packets.MaplePacketCreator;
 
 public final class NoteActionHandler extends AbstractMaplePacketHandler {
 
@@ -80,7 +79,7 @@ public final class NoteActionHandler extends AbstractMaplePacketHandler {
             }
             if (fame > 0) {
                 c.getPlayer().gainFame(fame);
-                c.announce(MaplePacketCreator.getShowFameGain(fame));
+                c.announce(CWvsContext.getShowFameGain(fame));
             }
         }
     }

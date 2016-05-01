@@ -27,7 +27,7 @@ import provider.MapleData;
 import provider.MapleDataTool;
 import server.quest.MapleQuest;
 import server.quest.MapleQuestActionType;
-import tools.packets.MaplePacketCreator;
+import tools.packets.CWvsContext;
 
 /**
  *
@@ -52,6 +52,6 @@ public class FameAction extends MapleQuestAction {
 	public void run(MapleCharacter chr, Integer extSelection) {
 		chr.addFame(fame);
 		chr.updateSingleStat(MapleStat.FAME, chr.getFame());
-		chr.announce(MaplePacketCreator.getShowFameGain(fame));
+		chr.announce(CWvsContext.getShowFameGain(fame));
 	}
 } 

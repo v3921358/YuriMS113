@@ -28,7 +28,6 @@ import net.server.world.MapleParty;
 import net.server.world.MaplePartyCharacter;
 import net.server.world.PartyOperation;
 import net.server.world.World;
-import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packets.CWvsContext;
 
@@ -48,7 +47,7 @@ public final class PartyOperationHandler extends AbstractMaplePacketHandler {
                     party = world.createParty(partyplayer);
                     player.setParty(party);
                     player.setMPC(partyplayer);
-                    c.announce(MaplePacketCreator.partyCreated(player.getPartyId()));
+                    c.announce(CWvsContext.partyCreated(player.getPartyId()));
                 } else {
                     c.announce(CWvsContext.broadcastMsg(5, "你已經有組隊了。"));
                 }
@@ -82,7 +81,7 @@ public final class PartyOperationHandler extends AbstractMaplePacketHandler {
                             player.receivePartyMemberHP();
                             player.updatePartyMemberHP();
                         } else {
-                            c.announce(MaplePacketCreator.partyStatusMessage(17));
+                            c.announce(CWvsContext.partyStatusMessage(17));
                         }
                     } else {
                         c.announce(CWvsContext.broadcastMsg(5, "你邀請的人已經有一個組對了。"));
@@ -100,17 +99,17 @@ public final class PartyOperationHandler extends AbstractMaplePacketHandler {
                 if (invited != null) {
                     if (invited.getParty() == null) {
                         if (invited.isGM()) {
-                            c.announce(MaplePacketCreator.partyStatusMessage(32));
+                            c.announce(CWvsContext.partyStatusMessage(32));
                         } else if (party.getMembers().size() < 6) {
-                            invited.getClient().announce(MaplePacketCreator.partyInvite(player));
+                            invited.getClient().announce(CWvsContext.partyInvite(player));
                         } else {
-                            c.announce(MaplePacketCreator.partyStatusMessage(17));
+                            c.announce(CWvsContext.partyStatusMessage(17));
                         }
                     } else {
-                        c.announce(MaplePacketCreator.partyStatusMessage(16));
+                        c.announce(CWvsContext.partyStatusMessage(16));
                     }
                 } else {
-                    c.announce(MaplePacketCreator.partyStatusMessage(19));
+                    c.announce(CWvsContext.partyStatusMessage(19));
                 }
                 break;
             }

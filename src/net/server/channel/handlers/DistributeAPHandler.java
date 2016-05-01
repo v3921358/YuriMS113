@@ -80,7 +80,7 @@ public final class DistributeAPHandler extends AbstractMaplePacketHandler {
                 addMP(c.getPlayer(), addMP(c));
                 break;
             default:
-                c.announce(MaplePacketCreator.updatePlayerStats(PacketUtil.EMPTY_STATUPDATE, true));
+                c.announce(CWvsContext.updatePlayerStats(PacketUtil.EMPTY_STATUPDATE, true));
                 return false;
         }
         return true;

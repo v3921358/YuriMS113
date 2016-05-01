@@ -72,7 +72,7 @@ public class MapleMap {
     private final List<Rectangle> areas = new ArrayList<>();
     private MapleFootholdTree footholds = null;
     private final int mapid;
-    private int runningOid = 100;
+    private AtomicInteger runningOid = new AtomicInteger(100);
     private final int returnMapId;
     private final int channel, world;
     private byte monsterRate;
@@ -242,9 +242,9 @@ public class MapleMap {
     public void addMapObject(MapleMapObject mapobject) {
         objectWLock.lock();
         try {
-            mapobject.setObjectId(runningOid);
-            this.mapobjects.put(Integer.valueOf(runningOid), mapobject);
-            incrementRunningOid();
+            int curOID = getUsableOID();
+            mapobject.setObjectId(curOID);
+            this.mapobjects.put(curOID, mapobject);
         } finally {
             objectWLock.unlock();
         }
@@ -256,8 +256,11 @@ public class MapleMap {
 
     private void spawnAndAddRangedMapObject(MapleMapObject mapobject, DelayedPacketCreation packetbakery, SpawnCondition condition) {
         chrRLock.lock();
+        objectWLock.lock();
         try {
-            mapobject.setObjectId(runningOid);
+            int curOID = getUsableOID();
+            mapobject.setObjectId(curOID);
+            this.mapobjects.put(curOID, mapobject);
             for (MapleCharacter chr : characters) {
                 if (condition == null || condition.canSpawn(chr)) {
                     if (chr.getPosition().distanceSq(mapobject.getPosition()) <= 722500) {
@@ -268,30 +271,24 @@ public class MapleMap {
             }
         } finally {
             chrRLock.unlock();
-        }
-        objectWLock.lock();
-        try {
-            this.mapobjects.put(runningOid, mapobject);
-        } finally {
             objectWLock.unlock();
         }
-        incrementRunningOid();
     }
-
-    private void incrementRunningOid() {
-        runningOid++;
-        if (runningOid >= 30000) {
-            runningOid = 1000;//Lol, like there are monsters with the same oid NO
+    
+    private int getUsableOID() {
+        if (runningOid.incrementAndGet() > 2000000000) {
+            runningOid.set(1000);
         }
         objectRLock.lock();
         try {
-            if (!this.mapobjects.containsKey(runningOid)) {
-                return;
+            if (mapobjects.containsKey(runningOid.get())) {
+                while (mapobjects.containsKey(runningOid.incrementAndGet()));
             }
         } finally {
             objectRLock.unlock();
         }
-        throw new RuntimeException("Out of OIDs on map " + mapid + " (channel: " + channel + ")");
+
+        return runningOid.get();
     }
 
     public void removeMapObject(int num) {
@@ -438,6 +435,7 @@ public class MapleMap {
     public final void spawnMesoDrop(final int meso, final Point position, final MapleMapObject dropper, final MapleCharacter owner, final boolean playerDrop, final byte droptype) {
         final Point droppos = calcDropPos(position, position);
         final MapleMapItem mdrop = new MapleMapItem(meso, droppos, dropper, owner, droptype, playerDrop);
+        mdrop.setDropTime(System.currentTimeMillis());
 
         spawnAndAddRangedMapObject(mdrop, new DelayedPacketCreation() {
             @Override
@@ -1043,9 +1041,9 @@ public class MapleMap {
             public void sendPackets(MapleClient c) {
                 c.announce(MaplePacketCreator.spawnDoor(door.getOwner().getId(), door.getTargetPosition(), false));
                 if (door.getOwner().getParty() != null && (door.getOwner() == c.getPlayer() || door.getOwner().getParty().containsMembers(c.getPlayer().getMPC()))) {
-                    c.announce(MaplePacketCreator.partyPortal(door.getTown().getId(), door.getTarget().getId(), door.getTargetPosition()));
+                    c.announce(CWvsContext.partyPortal(door.getTown().getId(), door.getTarget().getId(), door.getTargetPosition()));
                 }
-                c.announce(MaplePacketCreator.spawnPortal(door.getTown().getId(), door.getTarget().getId(), door.getTargetPosition()));
+                c.announce(CWvsContext.spawnPortal(door.getTown().getId(), door.getTarget().getId(), door.getTargetPosition()));
                 c.announce(CWvsContext.enableActions());
             }
         }, new SpawnCondition() {

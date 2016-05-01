@@ -3,7 +3,7 @@ package net;
 public enum RecvOpcode {
 
     CUSTOM_PACKET(0x3713),
-    LOGIN_PASSWORD(0x01, false),
+    LOGIN_PASSWORD(0x01, true),
     SERVERLIST_REQUEST(0x03),
     CHARLIST_REQUEST(0x04, false),
     CHAR_SELECT(0x06, false),

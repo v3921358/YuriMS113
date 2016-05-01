@@ -73,7 +73,6 @@ function action(mode, type, selection) {
 	if (cm.getJobId() == 0) {
 		cm.changeJobById(100); // 劍士
 		cm.resetStats();
-		cm.getPlayer().setRemainingAp(31);
 	}
 	cm.gainItem(1402001, 1);
 	cm.sendOk("轉職成功 ! 請去開創天下吧.");

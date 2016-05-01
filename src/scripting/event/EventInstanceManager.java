@@ -39,6 +39,7 @@ import server.TimerManager;
 import server.life.MapleMonster;
 import server.maps.MapleMap;
 import server.maps.MapleMapFactory;
+import server.maps.MapleMapObject;
 import tools.DatabaseConnection;
 
 /**
@@ -190,8 +191,9 @@ public class EventInstanceManager {
         mobs.clear();
         killCount.clear();
         mapFactory = null;
-        if(em != null)
+        if (em != null) {
             em.disposeInstance(name);
+        }
         em = null;
     }
 
@@ -287,4 +289,12 @@ public class EventInstanceManager {
     public boolean isLeader(MapleCharacter chr) {
         return (chr.getParty().getLeader().getId() == chr.getId());
     }
+    
+	public void movePlayer(MapleCharacter chr) {
+		try {
+			em.getIv().invokeFunction("moveMap", this, chr);
+		} catch (ScriptException | NoSuchMethodException ex) {
+			ex.printStackTrace();
+		}
+	}
 }

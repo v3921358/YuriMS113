@@ -30,6 +30,35 @@ import tools.data.input.SeekableLittleEndianAccessor;
 
 public final class KeymapChangeHandler extends AbstractMaplePacketHandler {
 
+    private enum KeyMap {
+        REMOVE(0, "移除"),
+        SKILL(1, "技能"),
+        UES(2, "消秏"),
+        NORMAL(4, "一般"),
+        SPECIAL(4, "一般"), //功擊鍵 跳躍鍵 npc對話
+        FACE(6, "表情");
+
+        private int code = -1;
+        private String name = "未知";
+
+        private KeyMap(int code, String name) {
+            this.code = code;
+            this.name = name;
+        }
+
+        KeyMap(int code) {
+            this.code = code;
+        }
+
+        public int getValue() {
+            return code;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+
     @Override
     public final void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
         if (slea.available() != 8) {
@@ -39,8 +68,11 @@ public final class KeymapChangeHandler extends AbstractMaplePacketHandler {
                 int key = slea.readInt();
                 int type = slea.readByte();
                 int action = slea.readInt();
+                //System.err.println(String.format("key:%d---type:%d---action:%d", key,type,action));
                 Skill skill = SkillFactory.getSkill(action);
-                if (skill != null && c.getPlayer().getSkillLevel(skill) < 1) {
+                
+                if (KeyMap.SKILL.getValue()==type && skill != null && c.getPlayer().getSkillLevel(skill) < 1) {
+                    //System.err.println("skill != null && c.getPlayer().getSkillLevel(skill)");
                     continue;
                 }
                 c.getPlayer().changeKeybinding(key, new MapleKeyBinding(type, action));

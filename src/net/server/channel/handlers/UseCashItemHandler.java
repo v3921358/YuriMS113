@@ -192,11 +192,11 @@ public final class UseCashItemHandler extends AbstractMaplePacketHandler {
                             break;
                         }
                     default:
-                        c.announce(MaplePacketCreator.updatePlayerStats(PacketUtil.EMPTY_STATUPDATE, true));
+                        c.announce(CWvsContext.updatePlayerStats(PacketUtil.EMPTY_STATUPDATE, true));
                         return;
                 }
                 DistributeAPHandler.addStat(c, APTo);
-                c.announce(MaplePacketCreator.updatePlayerStats(statupdate, true));
+                c.announce(CWvsContext.updatePlayerStats(statupdate, true));
             }
             remove(c, itemId);
         } else if (itemType == 506) {
@@ -324,7 +324,7 @@ public final class UseCashItemHandler extends AbstractMaplePacketHandler {
                             return;
                         }
                     }
-                    Server.getInstance().broadcastMessage(c.getWorld(), MaplePacketCreator.getItemMegaphone(msg, whisper, c.getChannel(), item));
+                    Server.getInstance().broadcastMessage(c.getWorld(), CWvsContext.getItemMegaphone(msg, whisper, c.getChannel(), item));
                     break;
                 case 7: //triple megaphone
                     int lines = slea.readByte();
@@ -333,7 +333,7 @@ public final class UseCashItemHandler extends AbstractMaplePacketHandler {
                         msg2.add(slea.readMapleAsciiString());
                     }
                     whisper = slea.readByte() == 1;
-                    Server.getInstance().broadcastMessage(c.getWorld(), MaplePacketCreator.getMultiMegaphone(msg2, c.getChannel(), whisper));
+                    Server.getInstance().broadcastMessage(c.getWorld(), CWvsContext.getMultiMegaphone(msg2, c.getChannel(), whisper));
                     break;
             }
             remove(c, itemId);
@@ -479,7 +479,7 @@ public final class UseCashItemHandler extends AbstractMaplePacketHandler {
             for (int i = 0; i < 4; i++) {
                 lines.add(slea.readMapleAsciiString());
             }
-            Server.getInstance().broadcastMessage(c.getWorld(), MaplePacketCreator.getAvatarMega(c.getPlayer(), medal, c.getChannel(), itemId, lines, (slea.readByte() != 0)));
+            Server.getInstance().broadcastMessage(c.getWorld(), CWvsContext.getAvatarMega(c.getPlayer(), medal, c.getChannel(), itemId, lines, (slea.readByte() != 0)));
             remove(c, itemId);
         } else if (itemType == 545) { // MiuMiu's travel store
             if (player.getShop() == null) {

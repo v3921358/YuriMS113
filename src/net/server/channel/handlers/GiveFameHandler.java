@@ -25,8 +25,8 @@ import client.MapleCharacter;
 import client.MapleClient;
 import client.MapleStat;
 import net.AbstractMaplePacketHandler;
-import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CWvsContext;
 
 public final class GiveFameHandler extends AbstractMaplePacketHandler {
 
@@ -47,14 +47,14 @@ public final class GiveFameHandler extends AbstractMaplePacketHandler {
                 if (!player.isGM()) {
                     player.hasGivenFame(target);
                 }
-                c.announce(MaplePacketCreator.giveFameResponse(mode, target.getName(), target.getFame()));
-                target.getClient().announce(MaplePacketCreator.receiveFame(mode, player.getName()));
+                c.announce(CWvsContext.giveFameResponse(mode, target.getName(), target.getFame()));
+                target.getClient().announce(CWvsContext.receiveFame(mode, player.getName()));
                 break;
             case NOT_TODAY:
-                c.announce(MaplePacketCreator.giveFameErrorResponse(3));
+                c.announce(CWvsContext.giveFameErrorResponse(3));
                 break;
             case NOT_THIS_MONTH:
-                c.announce(MaplePacketCreator.giveFameErrorResponse(4));
+                c.announce(CWvsContext.giveFameErrorResponse(4));
                 break;
         }
     }

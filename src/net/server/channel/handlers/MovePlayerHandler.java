@@ -23,7 +23,6 @@ package net.server.channel.handlers;
 
 import java.util.List;
 import client.MapleClient;
-import client.autoban.AutobanManager;
 import server.movement.LifeMovementFragment;
 import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
@@ -31,26 +30,15 @@ import tools.data.input.SeekableLittleEndianAccessor;
 public final class MovePlayerHandler extends AbstractMovementPacketHandler {
 
     public final void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
-        
         slea.skip(33);
-        
         final List<LifeMovementFragment> res = parseMovement(slea);
-        
-        AutobanManager abm = c.getPlayer().getAutobanManager();
-        
         if (res != null) {
             updatePosition(res, c.getPlayer(), 0);
-            abm.updatePosition(c.getPlayer().getPosition());
-            
-            if( abm.getFastMoveCount() > 5 ) {
-                c.disconnect(false, false);
-                return;
-            }
             c.getPlayer().getMap().movePlayer(c.getPlayer(), c.getPlayer().getPosition());
             if (c.getPlayer().isHidden()) {
-                c.getPlayer().getMap().broadcastGMMessage(c.getPlayer(), MaplePacketCreator.movePlayer(c.getPlayer(), res), false);
+                c.getPlayer().getMap().broadcastGMMessage(c.getPlayer(), MaplePacketCreator.movePlayer(c.getPlayer().getId(), res), false);
             } else {
-                c.getPlayer().getMap().broadcastMessage(c.getPlayer(), MaplePacketCreator.movePlayer(c.getPlayer(), res), false);
+                c.getPlayer().getMap().broadcastMessage(c.getPlayer(), MaplePacketCreator.movePlayer(c.getPlayer().getId(), res), false);
             }
         }
     }

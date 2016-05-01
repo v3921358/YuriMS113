@@ -53,19 +53,19 @@ public final class PetLootHandler extends AbstractMaplePacketHandler {
         int oid = slea.readInt();
         MapleMapObject ob = chr.getMap().getMapObject(oid);
         if (ob == null || pet == null) {
-            c.announce(MaplePacketCreator.getInventoryFull());
+            c.announce(CWvsContext.getInventoryFull());
             return;
         }
         if (ob instanceof MapleMapItem) {
             MapleMapItem mapitem = (MapleMapItem) ob;
             synchronized (mapitem) {
                 if (!chr.needQuestItem(mapitem.getQuest(), mapitem.getItemId())) {
-                    c.announce(MaplePacketCreator.showItemUnavailable());
+                    c.announce(CWvsContext.showItemUnavailable());
                     c.announce(CWvsContext.enableActions());
                     return;
                 }
                 if (mapitem.isPickedUp()) {
-                    c.announce(MaplePacketCreator.getInventoryFull());
+                    c.announce(CWvsContext.getInventoryFull());
                     return;
                 }
                 if (mapitem.getDropper() == c.getPlayer()) {

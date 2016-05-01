@@ -31,8 +31,8 @@ import net.server.world.MaplePartyCharacter;
 import net.server.world.PartyOperation;
 import server.maps.MapleMap;
 import server.maps.MapleMapObject;
-import tools.packets.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packets.CWvsContext;
 
 /**
  *
@@ -69,7 +69,7 @@ public class PartySearchStartHandler extends AbstractMaplePacketHandler {
                                 c.getPlayer().receivePartyMemberHP();
                                 c.getPlayer().updatePartyMemberHP();
                             } else {
-                                c.announce(MaplePacketCreator.partyStatusMessage(17));
+                                c.announce(CWvsContext.partyStatusMessage(17));
                             }
                         }
                     }

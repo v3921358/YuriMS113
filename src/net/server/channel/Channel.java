@@ -126,7 +126,7 @@ public final class Channel {
             acceptor.getFilterChain().addLast("codec", (IoFilter) new ProtocolCodecFilter(new MapleCodecFactory()));
             acceptor.bind(new InetSocketAddress(port));
             ((SocketSessionConfig) acceptor.getSessionConfig()).setTcpNoDelay(true);
-
+            
             eventSM.init();
             System.out.println("\t頻道 " + getId() + ": 使用端口 " + port);
         } catch (IOException e) {
@@ -145,6 +145,7 @@ public final class Channel {
             acceptor.setCloseOnDeactivation(true);
             finishedShutdown = true;
             System.out.println("關閉 世界" + world + " 頻道 " + channel + "成功");
+            acceptor.dispose();
         } catch (Exception e) {
             System.err.println("Error while shutting down Channel " + channel + " on World " + world + "\r\n" + e);
         }

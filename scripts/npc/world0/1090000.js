@@ -72,7 +72,6 @@ function action(mode, type, selection) {
 	if (cm.getJobId() == 0) {
 		cm.changeJobById(500); // 海盜
 		cm.resetStats();
-		cm.getPlayer().setRemainingAp(31);
 	}
 	    cm.gainItem(1482014, 1);
 	    cm.gainItem(1492014, 1);

@@ -73,8 +73,8 @@ public final class ItemPickupHandler extends AbstractMaplePacketHandler {
                 }
                 mapitem.setPickedUp(true);
             } else {
-                c.announce(MaplePacketCreator.getInventoryFull());
-                c.announce(MaplePacketCreator.getShowInventoryFull());
+                c.announce(CWvsContext.getInventoryFull());
+                c.announce(CWvsContext.getShowInventoryFull());
                 return;
             }
             c.announce(CWvsContext.enableActions());
@@ -86,13 +86,13 @@ public final class ItemPickupHandler extends AbstractMaplePacketHandler {
             synchronized (mapitem) {
 
                 if (mapitem.getQuest() > 0 && !chr.needQuestItem(mapitem.getQuest(), mapitem.getItemId())) {
-                    c.announce(MaplePacketCreator.showItemUnavailable());
+                    c.announce(CWvsContext.showItemUnavailable());
                     c.announce(CWvsContext.enableActions());
                     return;
                 }
                 if (mapitem.isPickedUp()) {
-                    c.announce(MaplePacketCreator.getInventoryFull());
-                    c.announce(MaplePacketCreator.getShowInventoryFull());
+                    c.announce(CWvsContext.getInventoryFull());
+                    c.announce(CWvsContext.getShowInventoryFull());
                     return;
                 }
 

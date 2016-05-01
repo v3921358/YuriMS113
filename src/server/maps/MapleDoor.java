@@ -84,9 +84,9 @@ public class MapleDoor extends AbstractMapleMapObject {
         if (target.getId() == client.getPlayer().getMapId() || owner == client.getPlayer() && owner.getParty() == null) {
             client.announce(MaplePacketCreator.spawnDoor(owner.getId(), town.getId() == client.getPlayer().getMapId() ? townPortal.getPosition() : targetPosition, true));
             if (owner.getParty() != null && (owner == client.getPlayer() || owner.getParty().containsMembers(client.getPlayer().getMPC()))) {
-                client.announce(MaplePacketCreator.partyPortal(town.getId(), target.getId(), targetPosition));
+                client.announce(CWvsContext.partyPortal(town.getId(), target.getId(), targetPosition));
             }
-            client.announce(MaplePacketCreator.spawnPortal(town.getId(), target.getId(), targetPosition));
+            client.announce(CWvsContext.spawnPortal(town.getId(), target.getId(), targetPosition));
         }
     }
 
@@ -94,7 +94,7 @@ public class MapleDoor extends AbstractMapleMapObject {
     public void sendDestroyData(MapleClient client) {
         if (target.getId() == client.getPlayer().getMapId() || owner == client.getPlayer() || owner.getParty() != null && owner.getParty().containsMembers(client.getPlayer().getMPC())) {
             if (owner.getParty() != null && (owner == client.getPlayer() || owner.getParty().containsMembers(client.getPlayer().getMPC()))) {
-                client.announce(MaplePacketCreator.partyPortal(999999999, 999999999, new Point(-1, -1)));
+                client.announce(CWvsContext.partyPortal(999999999, 999999999, new Point(-1, -1)));
             }
             client.announce(MaplePacketCreator.removeDoor(owner.getId(), false));
             client.announce(MaplePacketCreator.removeDoor(owner.getId(), true));
