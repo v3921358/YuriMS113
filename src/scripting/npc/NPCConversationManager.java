@@ -317,7 +317,8 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     }
 
     public void gainMeso(int gain) {
-        gain = gain * getPlayer().getNpcMesoRate();
+        if (gain>0)
+            gain = gain * getPlayer().getNpcMesoRate();
         getPlayer().gainMeso(gain, true, false, true);
     }
 

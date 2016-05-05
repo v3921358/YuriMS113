@@ -79,7 +79,7 @@ public class PlayerCommand {
             }
 
         } else if (splitted[0].equalsIgnoreCase("getPos")) {
-                c.getPlayer().dropMessage(5, String.format("x is %d, y is %d", c.getPlayer().getPosition().x, c.getPlayer().getPosition().y));
+            c.getPlayer().dropMessage(5, String.format("x is %d, y is %d", c.getPlayer().getPosition().x, c.getPlayer().getPosition().y));
 
         } else if (splitted[0].equalsIgnoreCase("mob") || splitted[0].equalsIgnoreCase("怪物")) {
             MapleMonster mob = null;
@@ -95,20 +95,23 @@ public class PlayerCommand {
             }
 
         } else if (splitted[0].equalsIgnoreCase("mapid") || splitted[0].equalsIgnoreCase("地圖編號")) {
-                    c.getPlayer().dropMessage(6, "地圖編號 " + Integer.toString(c.getPlayer().getMapId()));
-        }else if (splitted[0].equalsIgnoreCase("allnpc")){
-                for(final MapleMapObject npcobject : c.getPlayer().getMap().getMapObjects()){
-                    MapleNPC npc = (MapleNPC) npcobject;
-                    System.err.println(npc.getId());
-                    
-                }
-        }else if (splitted[0].equalsIgnoreCase("gms")){
-        for (Channel w : Server.getInstance().getAllChannels()) {
-            for(MapleCharacter chr:w.getPlayerStorage().getAllCharacters()){
-                if(chr.isGM())
-                    c.getPlayer().dropMessage(6, "己上線的GM "+chr.getName());
+            c.getPlayer().dropMessage(6, "地圖編號 " + Integer.toString(c.getPlayer().getMapId()));
+        } else if (splitted[0].equalsIgnoreCase("allnpc")) {
+            for (final MapleMapObject npcobject : c.getPlayer().getMap().getMapObjects()) {
+                MapleNPC npc = (MapleNPC) npcobject;
+                System.err.println(npc.getId());
+
             }
-        }
+        } else if (splitted[0].equalsIgnoreCase("gms")) {
+            for (Channel w : Server.getInstance().getAllChannels()) {
+                for (MapleCharacter chr : w.getPlayerStorage().getAllCharacters()) {
+                    if (chr.isGM()) {
+                        c.getPlayer().dropMessage(6, "己上線的GM " + chr.getName());
+                    }
+                }
+            }
+        }else if (splitted[0].equalsIgnoreCase("jobid")) {
+            c.getPlayer().dropMessage(6, String.format("JobID:%d", c.getPlayer().getJob().getId()));
         } else if (splitted[0].equalsIgnoreCase("幫助") || splitted[0].equalsIgnoreCase("help")) {
             c.getPlayer().dropMessage(5, "SyncMs 玩家指令");
             c.getPlayer().dropMessage(5, "@解卡/@ea <解除異常>");

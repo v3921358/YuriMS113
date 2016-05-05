@@ -26,6 +26,7 @@ import client.MapleJob;
 import client.inventory.Item;
 import client.inventory.MapleInventory;
 import client.inventory.MapleInventoryType;
+import constants.JobTypeMappingJob;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -58,7 +59,7 @@ public class ItemAction extends MapleQuestAction {
     public void processData(MapleData data) {
         for (MapleData iEntry : data.getChildren()) {
             int id = MapleDataTool.getInt(iEntry.getChildByPath("id"));
-            int count = MapleDataTool.getInt(iEntry.getChildByPath("count"), 1);
+            int count = MapleDataTool.getInt(iEntry.getChildByPath("count"), 0);
 
             Integer prop = null;
             MapleData propData = iEntry.getChildByPath("prop");
@@ -71,10 +72,8 @@ public class ItemAction extends MapleQuestAction {
                 gender = MapleDataTool.getInt(iEntry.getChildByPath("gender"));
             }
 
-            int job = -1;
-            if (iEntry.getChildByPath("job") != null) {
-                job = MapleDataTool.getInt(iEntry.getChildByPath("job"));
-            }
+           Item equip =MapleItemInformationProvider.getInstance().getEquipById(id);
+            int job = JobTypeMappingJob.ALL.getJob(equip.getJob());
 
             items.put(id, new ItemData(id, count, prop, job, gender));
         }
@@ -110,9 +109,9 @@ public class ItemAction extends MapleQuestAction {
                 }
             }
 
-            if (iEntry.getCount() < 0) { // Remove Items
+            if (iEntry.getCount() <= 0) { // Remove Items
                 MapleInventoryType type = ii.getInventoryType(iEntry.getId());
-                int quantity = iEntry.getCount() * -1; // Invert
+                int quantity = iEntry.getCount();
                 if (type.equals(MapleInventoryType.EQUIP)) {
                     if (chr.getInventory(type).countById(iEntry.getId()) < quantity) {
                         // Not enough in the equip inventoty, so check Equipped...
@@ -121,9 +120,11 @@ public class ItemAction extends MapleQuestAction {
                             type = MapleInventoryType.EQUIPPED;
                         }
                     }
+                } else if (iEntry.getCount() == 0) {
+                    quantity = chr.getInventory(type).countById(iEntry.getId());
                 }
                 MapleInventoryManipulator.removeById(chr.getClient(), type, iEntry.getId(), quantity, true, false);
-                chr.announce(CWvsContext.getShowItemGain(iEntry.getId(), (short) iEntry.getCount(), true));
+                chr.announce(CWvsContext.getShowItemGain(iEntry.getId(), (short) (quantity*-1), true));
             } else if (chr.getInventory(MapleItemInformationProvider.getInstance().getInventoryType(iEntry.getId())).getNextFreeSlot() > -1) {
                 MapleInventoryManipulator.addById(chr.getClient(), iEntry.getId(), (short) iEntry.getCount());
                 chr.announce(CWvsContext.getShowItemGain(iEntry.getId(), (short) iEntry.getCount(), true));
@@ -183,12 +184,8 @@ public class ItemAction extends MapleQuestAction {
             return false;
         }
 
-        if (item.getJob() != -1) {
-            if (item.getJob() != chr.getJob().getId()) {
+        if (item.getJob() != -1 && (item.getJob() != chr.getJob().getId()/100)) {
                 return false;
-            } else if (MapleJob.getBy5ByteEncoding(item.getJob()).getId() / 100 != chr.getJob().getId() / 100) {
-                return false;
-            }
         }
         return true;
     }

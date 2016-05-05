@@ -25,6 +25,7 @@ public class Equip extends Item {
     private byte upgradeSlots;
     private byte level, flag, itemLevel;
     private short str, dex, _int, luk, hp, mp, watk, matk, wdef, mdef, acc, avoid, hands, speed, jump, vicious;
+    private int job=-1;
     private float itemExp;
     private int ringid = -1;
     private boolean wear = false;
@@ -67,6 +68,7 @@ public class Equip extends Item {
         ret.itemExp = itemExp;
         ret.level = level;
         ret.log = new LinkedList<>(log);
+        ret.job = job;
         ret.setOwner(getOwner());
         ret.setQuantity(getQuantity());
         ret.setExpiration(getExpiration());
@@ -74,6 +76,21 @@ public class Equip extends Item {
         return ret;
     }
 
+    
+    @Override
+    public void setJob(short job) {
+        this.job = job;
+    }
+    
+    /**
+     *
+     * @return
+     */
+    @Override
+    public int getJob() {
+        return this.job;
+    }
+    
     @Override
     public byte getFlag() {
         return flag;

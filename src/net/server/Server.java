@@ -277,7 +277,8 @@ public class Server implements Runnable {
 
         CashItemFactory.getInstance().initialize();
         System.out.println("\t物品資料於 " + ((System.currentTimeMillis() - timeToTake) / 1000.0) + " 秒 讀取完畢");
-
+        
+        
         try {
             for (int i = 0; i < 1; i++) {
                 //int i = 1;

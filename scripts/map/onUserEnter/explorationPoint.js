@@ -38,7 +38,7 @@ function start(ms) {
 	} else if (ms.getPlayer().getMapId() >= 250000000 && ms.getPlayer().getMapId() <= 251010500) {
 		ms.explorerQuest(29009, "Mu Lung Explorer");//Mu Lung Explorer
 	} else if (ms.getPlayer().getMapId() >= 260000000 && ms.getPlayer().getMapId() <= 261030000) {
-		ms.explorerQuest(29010, "Nihal Desert Explorer");//Nihal Desert Explorer
+		ms.explorerQuest(29010, "納希沙漠探險家");//Nihal Desert Explorer
 	} else if (ms.getPlayer().getMapId() >= 240000000 && ms.getPlayer().getMapId() <= 240050000) {
 		ms.explorerQuest(29011, "Minar Forest Explorer");//Minar Forest Explorer
 	} 

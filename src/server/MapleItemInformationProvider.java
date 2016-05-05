@@ -428,7 +428,7 @@ public class MapleItemInformationProvider {
             /*else if (data.getName().startsWith("req"))
              ret.put(data.getName(), MapleDataTool.getInt(data.getName(), info, 0));*/
         }
-        ret.put("reqJob", MapleDataTool.getInt("reqJob", info, 0));
+        ret.put("reqJob", MapleDataTool.getInt("reqJob", info, -1));
         ret.put("reqLevel", MapleDataTool.getInt("reqLevel", info, 0));
         ret.put("reqDEX", MapleDataTool.getInt("reqDEX", info, 0));
         ret.put("reqSTR", MapleDataTool.getInt("reqSTR", info, 0));
@@ -654,6 +654,8 @@ public class MapleItemInformationProvider {
                     nEquip.setMp((short) stat.getValue().intValue());
                 } else if (stat.getKey().equals("tuc")) {
                     nEquip.setUpgradeSlots((byte) stat.getValue().intValue());
+                }else if (stat.getKey().equals("reqJob")) {
+                    nEquip.setJob((byte) stat.getValue().intValue());
                 } else if (isDropRestricted(equipId)) {
                     byte flag = nEquip.getFlag();
                     flag |= ItemConstants.UNTRADEABLE;

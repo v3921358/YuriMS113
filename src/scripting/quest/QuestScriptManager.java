@@ -83,6 +83,7 @@ public class QuestScriptManager extends AbstractScriptManager {
 
     public void start(MapleClient c, byte mode, byte type, int selection) {
         Invocable iv = scripts.get(c);
+        System.err.println("MapleClient c, byte mode, byte type, int selection");
         if (iv != null) {
             try {
                 iv.invokeFunction("start", mode, type, selection);
@@ -133,6 +134,7 @@ public class QuestScriptManager extends AbstractScriptManager {
 
     public void end(MapleClient c, byte mode, byte type, int selection) {
         Invocable iv = scripts.get(c);
+        System.err.println("MapleClient c, byte mode, byte type, int selection");
         if (iv != null) {
             try {
                 iv.invokeFunction("end", mode, type, selection);

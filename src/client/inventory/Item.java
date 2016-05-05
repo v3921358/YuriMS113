@@ -11,6 +11,7 @@ public class Item implements Comparable<Item> {
     private byte position;
     private short quantity;
     private int petid = -1;
+    private int job=-1;
     private MaplePet pet = null;
     private String owner = "";
     protected List<String> log;
@@ -60,6 +61,14 @@ public class Item implements Comparable<Item> {
         return ret;
     }
 
+    public void setJob(short job) {
+        this.job = job;
+    }
+    
+    public int getJob() {
+        return this.job;
+    }
+    
     public void setPosition(byte position) {
         this.position = position;
     }
